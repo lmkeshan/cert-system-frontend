@@ -1,15 +1,5 @@
 import React from 'react'
-
-function TitleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 3h12" />
-      <path d="M6 21h12" />
-      <path d="M8 5c0 4 8 4 8 8s-8 4-8 8" />
-      <path d="M16 5c0 4-8 4-8 8s8 4 8 8" />
-    </svg>
-  )
-}
+import AdminHeader from '../../components/AdminHeader'
 
 function ImagePlaceholder() {
   return (
@@ -26,13 +16,11 @@ function ImagePlaceholder() {
 export default function Pending() {
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center gap-2">
-        <TitleIcon />
-        <h2 className="text-2xl font-bold text-gray-900">Pending Approvals</h2>
-      </div>
-      <p className="text-sm text-gray-500 mt-1">
-        Review and approve or reject university registration requests
-      </p>
+      <AdminHeader
+        title="Pending Approvals"
+        subtitle="Review and approve or reject university registration requests"
+        showLogout={false}
+      />
 
       <div className="mt-6 bg-white rounded-2xl shadow-[0_10px_22px_rgba(0,0,0,0.08)] px-6 py-5 overflow-x-auto transition-transform duration-200 hover:scale-[1.01]">
         <table className="min-w-[900px] w-full text-left text-sm">

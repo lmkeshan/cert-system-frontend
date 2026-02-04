@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import AdminHeader from '../../components/AdminHeader'
 
 function StatCard({ title, value, accent }) {
   return (
@@ -14,18 +15,11 @@ export default function Dashboard() {
   const navigate = useNavigate()
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <section className="bg-white rounded-2xl shadow-[0_10px_22px_rgba(0,0,0,0.08)] px-8 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-transform duration-200 hover:scale-[1.01]">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h2>
-          <p className="text-sm sm:text-base text-gray-500 mt-1">
-            Manage Universities, approve registrations, and monitor system statistics
-          </p>
-        </div>
-        <button className="self-start sm:self-auto bg-[#6d34d6] text-white font-semibold px-6 py-2.5 rounded-xl shadow-sm">
-          Log Out
-        </button>
-      </section>
+    <div className="max-w-6xl mx-auto p-6">
+      <AdminHeader
+        title="Admin Dashboard"
+        subtitle="Manage Universities, approve registrations, and monitor system statistics"
+      />
 
       <section className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
         <StatCard title="Total Students" value="8" accent="text-[#6d34d6]" />
@@ -40,7 +34,7 @@ export default function Dashboard() {
         <div className="h-px bg-gray-300 mt-3 mb-6" />
         <div className="flex flex-col sm:flex-row gap-4">
           <button
-            onClick={() => navigate('/pending')}
+            onClick={() => navigate('/admin/approvals')}
             className="w-full sm:w-auto bg-amber-500 text-white font-semibold px-6 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2"
           >
             <span className="inline-flex">
@@ -54,7 +48,7 @@ export default function Dashboard() {
             Review Pending Approvals
           </button>
           <button
-            onClick={() => navigate('/universities')}
+            onClick={() => navigate('/admin/institutes')}
             className="w-full sm:w-auto border border-gray-300 text-[#6d34d6] font-semibold px-6 py-3 rounded-xl flex items-center justify-center gap-2"
           >
             <span className="inline-flex">

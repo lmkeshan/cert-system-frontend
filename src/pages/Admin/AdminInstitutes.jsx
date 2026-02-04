@@ -1,29 +1,14 @@
 import React from 'react'
-
-function TitleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 10h18" />
-      <path d="M5 10v8" />
-      <path d="M9 10v8" />
-      <path d="M15 10v8" />
-      <path d="M19 10v8" />
-      <path d="M2 20h20" />
-      <path d="M12 3l9 5H3l9-5z" />
-    </svg>
-  )
-}
+import AdminHeader from '../../components/AdminHeader'
 
 export default function Universities() {
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center gap-2">
-        <TitleIcon />
-        <h2 className="text-2xl font-bold text-gray-900">Manage Universities</h2>
-      </div>
-      <p className="text-sm text-gray-500 mt-1">
-        View all registered universities and manage their issuer status
-      </p>
+      <AdminHeader
+        title="Manage Universities"
+        subtitle="View all registered universities and manage their issuer status"
+        showLogout={false}
+      />
 
       <div className="mt-6 bg-white rounded-2xl shadow-[0_10px_22px_rgba(0,0,0,0.08)] px-6 py-5 overflow-x-auto transition-transform duration-200 hover:scale-[1.01]">
         <table className="min-w-[900px] w-full text-left text-sm">
