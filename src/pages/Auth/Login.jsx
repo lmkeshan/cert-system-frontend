@@ -70,8 +70,8 @@ export default function Login() {
 
           {/* Student Login Form */}
           {userType === 'student' && (
-            <div className="flex flex-col lg:flex-row items-stretch gap-0 bg-white rounded-3xl shadow-lg overflow-hidden">
-              {/* Left Side - Form */}
+            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white rounded-3xl shadow-lg overflow-hidden">
+              {/* Right Side - Form */}
               <div className="flex-1">
                 <form onSubmit={handleSubmit} className="p-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
@@ -111,7 +111,7 @@ export default function Login() {
                 </form>
               </div>
 
-              {/* Right Side - Image */}
+              {/* Left Side - Image */}
               <div className="flex flex-1">
                 <div className="bg-purple-100 p-8 w-full flex items-center justify-center h-full">
                   <div className="text-left ml-8">
