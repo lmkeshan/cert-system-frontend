@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { UploadCloud } from "lucide-react";
 import { universityAPI, authAPI } from "../../services/api";
-import useMetaMask from "../../hooks/useMetaMask";
+import { useMetaMaskContext } from "../../context/MetaMaskContext";
 
 const BulkUpload = () => {
   const fileInputRef = useRef(null);
@@ -14,13 +14,11 @@ const BulkUpload = () => {
   const [preview, setPreview] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
   
-  // MetaMask integration
+  // MetaMask integration from global context
   const { 
     connected: metamaskConnected, 
-    address: metamaskAddress, 
-    connect: connectMetaMask,
-    error: metamaskError
-  } = useMetaMask();
+    address: metamaskAddress
+  } = useMetaMaskContext();
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -117,7 +115,7 @@ const BulkUpload = () => {
 
     // Check MetaMask connection
     if (!metamaskConnected) {
-      setMessage({ type: 'error', text: '❌ Please connect MetaMask first to sign certificates for blockchain' });
+      setMessage({ type: 'error', text: '❌ Please connect MetaMask from the header first to sign certificates for blockchain' });
       return;
     }
 
@@ -398,44 +396,6 @@ const BulkUpload = () => {
               'bg-red-50 border-red-200 text-red-700'
             } border rounded-lg p-4`}>
               <p className="font-semibold text-sm">{message.text}</p>
-            </div>
-          )}
-
-          {/* MetaMask Connection Status */}
-          {preview.length > 0 && !loading && uploadProgress === 0 && (
-            <div className={`${
-              metamaskConnected ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'
-            } border p-4 rounded-lg`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{metamaskConnected ? '✅' : '⚠️'}</span>
-                  <div>
-                    <p className={`${
-                      metamaskConnected ? 'text-green-700' : 'text-orange-700'
-                    } font-bold text-sm`}>
-                      MetaMask Status: {metamaskConnected ? 'Connected' : 'Not Connected'}
-                    </p>
-                    {metamaskConnected && (
-                      <p className="text-xs text-gray-600 font-mono">
-                        {metamaskAddress?.slice(0, 6)}...{metamaskAddress?.slice(-4)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {!metamaskConnected && (
-                  <button
-                    onClick={connectMetaMask}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all"
-                  >
-                    Connect MetaMask
-                  </button>
-                )}
-              </div>
-              {!metamaskConnected && (
-                <p className="text-orange-600 text-xs mt-2">
-                  🔒 MetaMask is required to sign and authorize certificates for blockchain issuance
-                </p>
-              )}
             </div>
           )}
 

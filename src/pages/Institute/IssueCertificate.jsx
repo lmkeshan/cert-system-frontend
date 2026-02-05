@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { universityAPI, authAPI } from "../../services/api";
-import useMetaMask from "../../hooks/useMetaMask";
+import { useMetaMaskContext } from "../../context/MetaMaskContext";
 
 const IssueCertificate = () => {
   const [formData, setFormData] = useState({
@@ -12,13 +12,11 @@ const IssueCertificate = () => {
   const [currentStep, setCurrentStep] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   
-  // MetaMask integration
+  // MetaMask integration from global context
   const { 
     connected: metamaskConnected, 
-    address: metamaskAddress, 
-    connect: connectMetaMask,
-    error: metamaskError
-  } = useMetaMask();
+    address: metamaskAddress
+  } = useMetaMaskContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +37,7 @@ const IssueCertificate = () => {
 
     // Check MetaMask connection
     if (!metamaskConnected) {
-      setMessage({ type: 'error', text: '⚠️ Please connect MetaMask first' });
+      setMessage({ type: 'error', text: '⚠️ Please connect MetaMask from the header first' });
       return;
     }
 
@@ -94,43 +92,6 @@ const IssueCertificate = () => {
             Issue a blockchain verified certificate for a student
           </p>
         </div>
-      </div>
-
-      {/* MetaMask Connection Status */}
-      <div className={`${
-        metamaskConnected ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'
-      } border-2 rounded-2xl p-5`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">{metamaskConnected ? '✅' : '⚠️'}</span>
-            <div>
-              <p className={`${
-                metamaskConnected ? 'text-green-700' : 'text-orange-700'
-              } font-bold text-base`}>
-                MetaMask Status: {metamaskConnected ? 'Connected' : 'Not Connected'}
-              </p>
-              {metamaskConnected && (
-                <p className="text-xs text-gray-600 font-mono mt-1">
-                  {metamaskAddress?.slice(0, 6)}...{metamaskAddress?.slice(-4)}
-                </p>
-              )}
-            </div>
-          </div>
-          {!metamaskConnected && (
-            <button
-              type="button"
-              onClick={connectMetaMask}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-all"
-            >
-              Connect MetaMask
-            </button>
-          )}
-        </div>
-        {!metamaskConnected && (
-          <p className="text-orange-600 text-xs mt-3">
-            🔒 MetaMask is required to sign and authorize the certificate for blockchain issuance
-          </p>
-        )}
       </div>
 
       {/* 2. Main Form Card */}

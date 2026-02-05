@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Copy, CheckCircle2 } from "lucide-react";
 import { universityAPI, paymentAPI } from "../../services/api";
-import useMetaMask from "../../hooks/useMetaMask";
+import { useMetaMaskContext } from "../../context/MetaMaskContext";
 
 const WalletPage = () => {
   const [walletData, setWalletData] = useState({
@@ -17,16 +17,15 @@ const WalletPage = () => {
   const [copied, setCopied] = useState(false);
   const [depositing, setDepositing] = useState(false);
   
-  // MetaMask integration
+  // MetaMask integration from global context
   const { 
     connected: metamaskConnected, 
     address: metamaskAddress, 
     balance: metamaskBalance,
-    connect: connectMetaMask, 
     deposit: depositToContract,
     loading: metamaskLoading,
     error: metamaskError
-  } = useMetaMask();
+  } = useMetaMaskContext();
 
   useEffect(() => {
     loadWalletData();
