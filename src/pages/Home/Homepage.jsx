@@ -32,7 +32,7 @@ export default function Homepage() {
               <span className="text-black text-4xl md:text-6xl lg:text-[75px] leading-tight">
                 Certi
               </span>
-              <span className="text-(--color-primary-violet) text-4xl md:text-6xl lg:text-[75px] leading-tight">
+              <span className="text-purple-600 text-4xl md:text-6xl lg:text-[75px] leading-tight">
                 Chain
               </span>
             </h1>
@@ -50,13 +50,13 @@ export default function Homepage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 id="verifyCertificate"
-                className="bg-white text-(--color-primary-violet) border-2 border-(--color-primary-violet) rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-(--color-primary-violet) hover:text-white"
+                className="bg-white text-purple-600 border-2 border-purple-600 rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-purple-600 hover:text-white"
               >
                 Verify Certificate
               </button>
               <button
                 id="howItWorks"
-                className="bg-(--color-primary-violet) text-white border-2 border-(--color-primary-violet) rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-white hover:text-(--color-primary-violet)"
+                className="bg-purple-600 text-white border-2 border-purple-600 rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-white hover:text-purple-600"
               >
                 How it Works
               </button>
@@ -132,7 +132,7 @@ export default function Homepage() {
 
       {/* How it works Section */}
       <section id="how-it-works" className="py-12 px-4 md:py-16 lg:py-20 bg-white">
-        <div className="max-w-312 mx-auto bg-white rounded-3xl border border-(--color-primary-violet) p-6 md:p-10 lg:p-12">
+        <div className="max-w-312 mx-auto bg-white rounded-3xl border border-purple-600 p-6 md:p-10 lg:p-12">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-black mb-8">How it works</h2>
           
           {/* Three Facts in a Line */}
@@ -201,7 +201,7 @@ export default function Homepage() {
                 <li>Get personalized career path suggestions based on results.</li>
               </ul>
               <div className="mt-auto pt-6 flex justify-center">
-                <button className="bg-white text-(--color-primary-violet) border-2 border-(--color-primary-violet) rounded-lg px-5 py-2.5 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-(--color-primary-violet) hover:text-white">Create Student Account</button>
+                <button className="bg-white text-purple-600 border-2 border-purple-600 rounded-lg px-5 py-2.5 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-purple-600 hover:text-white">Create Student Account</button>
               </div>
             </div>
             <div className="bg-white/95 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col h-full">
@@ -214,7 +214,7 @@ export default function Homepage() {
                 <li>Manage and track all issued certificates.</li>
               </ul>
               <div className="mt-auto pt-6 flex justify-center">
-                <button className="bg-white text-(--color-primary-violet) border-2 border-(--color-primary-violet) rounded-lg px-5 py-2.5 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-(--color-primary-violet) hover:text-white">Create Institute Account</button>
+                <button className="bg-white text-purple-600 border-2 border-purple-600 rounded-lg px-5 py-2.5 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-purple-600 hover:text-white">Create Institute Account</button>
               </div>
             </div>
           </div>
@@ -223,10 +223,10 @@ export default function Homepage() {
 
       {/* Automated Certificate Generation Section */}
       <section id="auto-generation" className="py-12 px-4 md:py-16 lg:py-20" style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }}>
-        <div className="max-w-312 mx-auto bg-white rounded-3xl border border-(--color-primary-violet) p-6 md:p-10 lg:p-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-(--color-primary-violet) mb-8">Automated Certificate Generation</h2>
+        <div className="max-w-312 mx-auto bg-white rounded-3xl border border-purple-600 p-6 md:p-10 lg:p-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-600 mb-8">Automated Certificate Generation</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="rounded-3xl border border-(--color-primary-violet) p-6 md:p-8 flex items-center justify-center">
+            <div className="rounded-3xl border border-purple-600 p-6 md:p-8 flex items-center justify-center">
               <div className="w-full max-w-130 h-70 md:h-85 rounded-2xl flex items-center justify-center text-gray-600">Certificate Preview</div>
             </div>
             <div className="rounded-3xl p-6 md:p-8">

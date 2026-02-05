@@ -11,6 +11,13 @@ const Overview = () => {
     /* Added pb-12 (mobile) and md:pb-20 (desktop) to push the layout footer down */
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12 md:pb-20">
       
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          <p className="font-semibold">Error</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+      
       {/* 1. Main Dashboard Header Banner */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="bg-[#E9D5FF] p-3 rounded-xl flex items-center justify-center shrink-0">
@@ -64,4 +71,4 @@ const Overview = () => {
   );
 };
 
-export default Overview;
+export default InstituteDashboard;

@@ -39,6 +39,13 @@ const HistoryPage = () => {
         </div>
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          <p className="font-semibold">Error</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
       {/* Main Container */}
       <div className="bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden">
         {/* DESKTOP VIEW */}

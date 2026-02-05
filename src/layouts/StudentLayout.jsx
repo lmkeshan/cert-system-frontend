@@ -1,12 +1,10 @@
 import { Outlet } from 'react-router-dom'
-import Sidebar from '../components/Sidebar'
-import Navbar from '../components/Navbar'
+import StudentHeader from '../components/StudentHeader'
 
 export default function StudentLayout() {
  return (
  <div className="">
- <Navbar />
- <Sidebar items={[]} title="Student" />
+ <StudentHeader />
  <main className="">
  {/* Header */}
  <Outlet />

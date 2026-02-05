@@ -2,6 +2,144 @@ import React from "react";
 import { UploadCloud } from "lucide-react";
 
 const BulkUpload = () => {
+  const fileInputRef = useRef(null);
+  const [csvData, setCsvData] = useState([]);
+  const [fileName, setFileName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [preview, setPreview] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const parseCSV = (text) => {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const studentIdIdx = headers.indexOf('student_id');
+    const courseIdx = headers.indexOf('course_name');
+    const gradeIdx = headers.indexOf('grade');
+
+    if (studentIdIdx === -1 || courseIdx === -1 || gradeIdx === -1) {
+      return [];
+    }
+
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(',');
+      if (parts.length > gradeIdx && parts[studentIdIdx]?.trim()) {
+        data.push({
+          student_id: parts[studentIdIdx].trim(),
+          course_name: parts[courseIdx].trim(),
+          grade: parts[gradeIdx].trim(),
+        });
+      }
+    }
+    return data;
+  };
+
+  const handleFileSelect = (file) => {
+    if (!file) return;
+
+    if (!file.name.endsWith('.csv')) {
+      setMessage({ type: 'error', text: '❌ Please upload a CSV file' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const data = parseCSV(text);
+
+      if (data.length === 0) {
+        setMessage({ 
+          type: 'error', 
+          text: '❌ Invalid CSV format. Required columns: student_id, course_name, grade' 
+        });
+        return;
+      }
+
+      if (data.length > 500) {
+        setMessage({ 
+          type: 'error', 
+          text: '❌ Maximum 500 certificates per upload. Please split your file.' 
+        });
+        return;
+      }
+
+      setCsvData(data);
+      setFileName(file.name);
+      setPreview(data.slice(0, 5));
+      setMessage({ type: 'success', text: `✅ ${file.name} ready! (${data.length} certificates)` });
+    };
+    reader.readAsText(file);
+  };
+
+  const handleDragDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    handleFileSelect(file);
+  };
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleInputChange = (e) => {
+    handleFileSelect(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (csvData.length === 0) {
+      setMessage({ type: 'error', text: '❌ No CSV file selected' });
+      return;
+    }
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+    setUploadProgress(0);
+
+    try {
+      // Simulate progress updates while uploading
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 30;
+        });
+      }, 200);
+
+      const response = await universityAPI.bulkIssueCertificates({
+        certificates: csvData,
+      });
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      const successCount = response.data?.successCount ?? response.data?.successful ?? csvData.length;
+      const failureCount = response.data?.failureCount ?? 0;
+      const totalCount = successCount + failureCount || csvData.length;
+      setMessage({ 
+        type: 'success', 
+        text: `✅ Successfully uploaded ${successCount} out of ${totalCount} certificates!` 
+      });
+
+      // Reset form after 2 seconds
+      setTimeout(() => {
+        setCsvData([]);
+        setFileName('');
+        setPreview([]);
+        setUploadProgress(0);
+        setMessage({ type: '', text: '' });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }, 2000);
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to upload certificates';
+      setMessage({ type: 'error', text: '❌ ' + errorMsg });
+      setUploadProgress(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-start gap-4 shadow-sm min-h-[120px]">
@@ -54,7 +192,7 @@ const BulkUpload = () => {
               <div className="flex items-center gap-3">
                 <span className="text-2xl">📂</span>
                 <span className="text-[#3B82F6] font-bold text-lg md:text-xl underline">
-                  Click to upload CSV or drag & drop
+                  {fileName ? `✅ ${fileName}` : 'Click to upload CSV or drag & drop'}
                 </span>
               </div>
               <p className="text-gray-400 text-sm font-medium">

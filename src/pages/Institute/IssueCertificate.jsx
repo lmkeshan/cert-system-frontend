@@ -1,6 +1,57 @@
 import React from "react";
 
 const IssueCertificate = () => {
+  const [formData, setFormData] = useState({
+    studentId: '',
+    courseName: '',
+    grade: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.studentId.trim() || !formData.courseName.trim() || !formData.grade.trim()) {
+      setMessage({ type: 'error', text: 'All fields are required' });
+      return;
+    }
+
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await universityAPI.issueCertificate({
+        student_id: formData.studentId,
+        course_name: formData.courseName,
+        grade: formData.grade,
+      });
+
+      const certificateId = response.data?.certificate?.certificate_id || response.data?.certificate_id || response.data?.certificateId || '-'
+      setMessage({ 
+        type: 'success', 
+        text: '✅ Certificate issued successfully! Certificate ID: ' + certificateId 
+      });
+      setFormData({ studentId: '', courseName: '', grade: '' });
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to issue certificate';
+      setMessage({ type: 'error', text: '❌ ' + errorMsg });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
       {/* 1. Header Banner - Increased Height and Padding */}

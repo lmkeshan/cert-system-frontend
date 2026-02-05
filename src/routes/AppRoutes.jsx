@@ -17,6 +17,7 @@ import AdminDashboard from '../pages/Admin/AdminDashboard'
 import AdminApprovals from '../pages/Admin/AdminApprovals'
 import AdminInstitutes from '../pages/Admin/AdminInstitutes'
 import AdminLogin from '../pages/Admin/AdminLogin'
+import { ProtectedStudentRoute, ProtectedInstituteRoute, ProtectedAdminRoute } from './ProtectedRoutes'
 
 export default function AppRoutes() {
   return (
@@ -27,13 +28,13 @@ export default function AppRoutes() {
       <Route path="/verify" element={<VerifyPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
 
-      <Route path="/studentdashboard" element={<StudentLayout />}>
+      <Route path="/studentdashboard" element={<ProtectedStudentRoute><StudentLayout /></ProtectedStudentRoute>}>
         <Route index element={<StudentDashboard />} />
       </Route>
 
-      <Route path="/studentportfolio" element={<StudentPortfolio />} />
+      <Route path="/studentportfolio" element={<ProtectedStudentRoute><StudentPortfolio /></ProtectedStudentRoute>} />
 
-      <Route path="/institute" element={<InstituteLayout />}>
+      <Route path="/institute" element={<ProtectedInstituteRoute><InstituteLayout /></ProtectedInstituteRoute>}>
         <Route path="dashboard" element={<InstituteDashboard />} />
         <Route path="issue" element={<IssueCertificate />} />
         <Route path="bulk-issue" element={<BulkIssue />} />
@@ -41,7 +42,7 @@ export default function AppRoutes() {
         <Route path="wallet" element={<Wallet />} />
       </Route>
 
-      <Route path="/admin" element={<AdminLayout />}>
+      <Route path="/admin" element={<ProtectedAdminRoute><AdminLayout /></ProtectedAdminRoute>}>
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="approvals" element={<AdminApprovals />} />
         <Route path="institutes" element={<AdminInstitutes />} />
