@@ -1,104 +1,176 @@
 import { useState } from 'react'
-import { verifyAPI } from '../../services/api'
+import Navbar from '../../components/Navbar'
+import verifyImage from '../../assets/images/verifyImage.png'
 
 export default function VerifyPage() {
-	const [certificateId, setCertificateId] = useState('')
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState('')
-	const [result, setResult] = useState(null)
+  const [certificateId, setCertificateId] = useState('')
+  const [verificationResult, setVerificationResult] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-	const handleVerify = async (e) => {
-		e.preventDefault()
-		if (!certificateId.trim()) {
-			setError('Please enter a certificate ID')
-			return
-		}
+  const handleVerify = async () => {
+    if (!certificateId.trim()) {
+      alert('Please enter a certificate ID')
+      return
+    }
 
-		try {
-			setLoading(true)
-			setError('')
-			setResult(null)
-			const response = await verifyAPI.verifyCertificate(certificateId.trim())
-			setResult(response.data)
-		} catch (err) {
-			setError(err.response?.data?.error || err.message || 'Failed to verify certificate')
-		} finally {
-			setLoading(false)
-		}
-	}
+    setIsLoading(true)
+    
+    // Simulate API call - replace with actual verification logic
+    setTimeout(() => {
+      // Mock verification result
+      setVerificationResult({
+        valid: true,
+        certificateId: certificateId,
+        studentName: 'John Doe',
+        courseName: 'Web Development Bootcamp',
+        instituteName: 'Tech Academy',
+        issueDate: '2024-01-15',
+        grade: 'A'
+      })
+      setIsLoading(false)
+    }, 1500)
+  }
 
-	const certificate = result?.certificate
-	const onchain = result?.onchain
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleVerify()
+    }
+  }
 
-	return (
-		<div className="min-h-screen bg-gray-50 py-10 px-4">
-			<div className="max-w-3xl mx-auto">
-				<div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-					<h1 className="text-2xl font-bold text-gray-900">Verify Certificate</h1>
-					<p className="text-sm text-gray-500 mt-1">Enter a certificate ID to verify its authenticity.</p>
+  return (
+    <div className="min-h-screen bg-linear-to-br from-purple-100 via-blue-50 to-purple-50">
+      <Navbar />
+      
+      <main className="max-w-300 mx-auto px-4 py-8 md:py-12">
+        {/* Main Container */}
+        <div className="bg-purple-200/60 rounded-3xl p-6 md:p-12 shadow-lg backdrop-blur-sm">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
+              Verify Certificate
+            </h1>
+            <p className="text-gray-700 text-base md:text-lg">
+              Instantly verify the authenticity of any certificate using its unique ID.
+            </p>
+          </div>
 
-					<form onSubmit={handleVerify} className="mt-6 flex flex-col sm:flex-row gap-3">
-						<input
-							type="text"
-							value={certificateId}
-							onChange={(e) => setCertificateId(e.target.value)}
-							placeholder="CERT123456"
-							className="flex-1 rounded-xl border border-gray-300 px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6d34d6]"
-						/>
-						<button
-							type="submit"
-							disabled={loading}
-							className="bg-[#6d34d6] text-white font-semibold px-6 py-3 rounded-xl disabled:opacity-60"
-						>
-							{loading ? 'Verifying...' : 'Verify'}
-						</button>
-					</form>
+          {/* Input Section */}
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
+            <input
+              type="text"
+              placeholder="Enter Your Certificate ID"
+              value={certificateId}
+              onChange={(e) => setCertificateId(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="w-full md:w-100 px-6 py-3 rounded-full border-2 border-gray-300 focus:outline-none focus:border-purple-500 text-gray-700 placeholder-gray-400"
+            />
+            <button
+              onClick={handleVerify}
+              disabled={isLoading}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-30"
+            >
+              {isLoading ? 'Verifying...' : 'Verify'}
+            </button>
+          </div>
 
-					{error && (
-						<div className="mt-4 bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
-							{error}
-						</div>
-					)}
-				</div>
+          {/* Result Card */}
+          <div className="bg-white rounded-2xl p-8 md:p-12 shadow-md min-h-87.5 flex items-center justify-center">
+            {!verificationResult ? (
+              <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-3xl">
+                {/* Illustration */}
+                <div className="flex-shrink-0">
+                  <img 
+                    src={verifyImage} 
+                    alt="Certificate verification illustration" 
+                    className="w-48 h-48 md:w-64 md:h-64 object-contain"
+                  />
+                </div>
+                <p className="text-gray-500 text-base md:text-lg text-center md:text-left">
+                  Enter a certificate ID above to view and verify certificate details here.
+                </p>
+              </div>
+            ) : (
+              <div className="w-full">
+                {verificationResult.valid ? (
+                  <div className="space-y-6">
+                    {/* Success Badge */}
+                    <div className="flex items-center justify-center gap-3 mb-6">
+                      <div className="bg-green-100 text-green-700 px-6 py-3 rounded-full flex items-center gap-2">
+                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="font-semibold">Certificate Valid</span>
+                      </div>
+                    </div>
 
-				{result && (
-					<div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-						<div className="flex items-center justify-between">
-							<h2 className="text-lg font-bold text-gray-900">Verification Result</h2>
-							<span className={`px-3 py-1 rounded-full text-xs font-semibold ${onchain?.verified ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-								{onchain?.verified ? 'Verified' : 'Not Verified'}
-							</span>
-						</div>
+                    {/* Certificate Details */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Certificate ID</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.certificateId}</p>
+                      </div>
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Student Name</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.studentName}</p>
+                      </div>
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Course Name</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.courseName}</p>
+                      </div>
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Institute</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.instituteName}</p>
+                      </div>
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Issue Date</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.issueDate}</p>
+                      </div>
+                      <div className="bg-purple-50 p-4 rounded-lg">
+                        <p className="text-sm text-gray-600 mb-1">Grade</p>
+                        <p className="font-semibold text-gray-800">{verificationResult.grade}</p>
+                      </div>
+                    </div>
 
-						<div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-							<div>
-								<div className="text-gray-500">Certificate ID</div>
-								<div className="font-semibold text-gray-900">{certificate?.certificate_id || certificateId}</div>
-							</div>
-							<div>
-								<div className="text-gray-500">Student Name</div>
-								<div className="font-semibold text-gray-900">{certificate?.student_name || '-'}</div>
-							</div>
-							<div>
-								<div className="text-gray-500">Course</div>
-								<div className="font-semibold text-gray-900">{certificate?.course || '-'}</div>
-							</div>
-							<div>
-								<div className="text-gray-500">Institute</div>
-								<div className="font-semibold text-gray-900">{certificate?.institute_name || '-'}</div>
-							</div>
-							<div>
-								<div className="text-gray-500">Issued Date</div>
-								<div className="font-semibold text-gray-900">{certificate?.issued_date || '-'}</div>
-							</div>
-							<div>
-								<div className="text-gray-500">Grade</div>
-								<div className="font-semibold text-gray-900">{certificate?.grade || '-'}</div>
-							</div>
-						</div>
-					</div>
-				)}
-			</div>
-		</div>
-	)
+                    {/* Action Buttons */}
+                    <div className="flex justify-center gap-4 mt-6">
+                      <button
+                        onClick={() => {
+                          setCertificateId('')
+                          setVerificationResult(null)
+                        }}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full transition-colors"
+                      >
+                        Verify Another
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div className="bg-red-100 text-red-700 px-6 py-3 rounded-full inline-flex items-center gap-2 mb-4">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                      <span className="font-semibold">Certificate Invalid</span>
+                    </div>
+                    <p className="text-gray-600 mb-6">
+                      The certificate ID you entered could not be verified. Please check and try again.
+                    </p>
+                    <button
+                      onClick={() => {
+                        setCertificateId('')
+                        setVerificationResult(null)
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full transition-colors"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  )
 }

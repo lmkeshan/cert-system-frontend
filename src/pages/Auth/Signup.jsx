@@ -188,15 +188,15 @@ export default function Signup() {
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
-          <h1 className="text-2xl font-bold text-white">CertiChain</h1>
-          <div className="flex items-center gap-8">
+          <h1 className="text-xl md:text-2xl font-bold text-white">CertiChain</h1>
+          <div className="flex items-center gap-4 md:gap-8">
             <a
               href="/login"
-              className="inline-flex items-center justify-center text-white border border-white/70 rounded-lg px-3 py-1.5 font-semibold hover:bg-white hover:text-gray-900 transition-colors"
+              className="inline-flex items-center justify-center text-white border border-white/70 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold hover:bg-white hover:text-gray-900 transition-colors"
             >
               Log In
             </a>
-            <button className="inline-flex items-center justify-center bg-white text-gray-900 rounded-lg px-3 py-1.5 font-semibold border border-white/70 hover:bg-transparent hover:text-white transition-colors">
+            <button className="inline-flex items-center justify-center bg-white text-gray-900 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold border border-white/70 hover:bg-transparent hover:text-white transition-colors">
               Verify
             </button>
           </div>
@@ -285,16 +285,6 @@ export default function Signup() {
                       className="col-span-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
                     />
                   </div>
-
-                  <input
-                    type="text"
-                    name="userName"
-                    placeholder="User Name"
-                    value={studentForm.userName}
-                    onChange={handleStudentChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
-                  />
 
                   <input
                     type="email"

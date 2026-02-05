@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { universityAPI } from '../../services/api';
+import React from "react";
 
 const IssueCertificate = () => {
   const [formData, setFormData] = useState({
@@ -55,76 +54,82 @@ const IssueCertificate = () => {
   };
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="bg-white rounded-2xl border border-gray-300 p-6 flex items-start gap-4 shadow-sm">
-        <div className="text-2xl bg-[#E9D5FF] p-2 rounded-lg">🎟️</div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-800">Issue Certificate</h2>
-          <p className="text-sm text-gray-400 font-medium">Issue a blockchain verified certificate for a student</p>
+      {/* 1. Header Banner - Increased Height and Padding */}
+      <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
+        <div className="text-3xl bg-[#E9D5FF] p-3 rounded-xl flex items-center justify-center shrink-0">
+          🎟️
+        </div>
+        <div className="flex flex-col justify-center">
+          <h2 className="text-2xl font-bold text-gray-800 leading-tight">
+            Issue Certificate
+          </h2>
+          <p className="text-sm md:text-base text-gray-400 font-medium mt-1">
+            Issue a blockchain verified certificate for a student
+          </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] p-8 md:p-14 shadow-2xl border border-gray-50">
-        {message.text && (
-          <div className={`mb-6 p-4 rounded-lg ${
-            message.type === 'success' 
-              ? 'bg-green-50 border border-green-200 text-green-700' 
-              : 'bg-red-50 border border-red-200 text-red-700'
-          }`}>
-            {message.text}
-          </div>
-        )}
-
-        <form className="space-y-6 max-w-2xl mx-auto" onSubmit={handleSubmit}>
-          <div className="space-y-2">
-            <label className="block text-gray-800 font-bold text-lg">Student ID</label>
-            <input 
-              type="text" 
-              name="studentId"
-              value={formData.studentId}
-              onChange={handleChange}
-              placeholder="STU12345...." 
-              className="w-full p-3.5 rounded-xl border-2 border-gray-300 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium" 
+      {/* 2. Main Form Card */}
+      <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl border border-gray-50">
+        <form
+          className="space-y-5 max-w-2xl mx-auto"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          {/* Student ID - Reduced input height */}
+          <div className="space-y-1.5">
+            <label className="block text-gray-800 font-bold text-base">
+              Student ID
+            </label>
+            <input
+              type="text"
+              placeholder="STU12345...."
+              className="w-full p-2.5 rounded-lg border-2 border-gray-200 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium text-sm"
             />
-            <p className="text-gray-400 text-sm font-medium">Enter the registered student ID</p>
+            <p className="text-gray-400 text-[11px] font-medium">
+              Enter the registered student ID
+            </p>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-gray-800 font-bold text-lg">Course/Program Name</label>
-            <input 
-              type="text" 
-              name="courseName"
-              value={formData.courseName}
-              onChange={handleChange}
-              placeholder="e.g..B.Tech Computer science" 
-              className="w-full p-3.5 rounded-xl border-2 border-gray-300 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium" 
+          {/* Course Name - Reduced input height */}
+          <div className="space-y-1.5">
+            <label className="block text-gray-800 font-bold text-base">
+              Course/Program Name
+            </label>
+            <input
+              type="text"
+              placeholder="e.g..B.Tech Computer science"
+              className="w-full p-2.5 rounded-lg border-2 border-gray-200 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium text-sm"
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-gray-800 font-bold text-lg">Grade/Score</label>
-            <input 
-              type="text" 
-              name="grade"
-              value={formData.grade}
-              onChange={handleChange}
-              placeholder="e.g.. A, 95% , First Class" 
-              className="w-full p-3.5 rounded-xl border-2 border-gray-300 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium" 
+          {/* Grade/Score - Reduced input height */}
+          <div className="space-y-1.5">
+            <label className="block text-gray-800 font-bold text-base">
+              Grade/Score
+            </label>
+            <input
+              type="text"
+              placeholder="e.g.. A, 95% , First Class"
+              className="w-full p-2.5 rounded-lg border-2 border-gray-200 focus:border-[#9366E4] outline-none transition-all placeholder:text-gray-300 font-medium text-sm"
             />
           </div>
 
-          <div className="pt-6">
-            <button 
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#A78BFA] hover:bg-[#8B5CF6] disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold py-4 rounded-xl transition-all shadow-lg text-lg"
-            >
-              {loading ? '⏳ Issuing...' : 'Issue Certificate'}
+          {/* Action Button - Reduced height and padding */}
+          <div className="pt-4">
+            <button className="w-full bg-[#A78BFA] hover:bg-[#8B5CF6] text-white font-extrabold py-3 rounded-xl transition-all shadow-md text-base active:scale-95">
+              Issue Certificate
             </button>
           </div>
 
-          <p className="text-[11px] text-gray-400 text-center leading-relaxed font-medium px-6">
-            <span className="font-bold text-gray-600">Note :</span> The certificate will be stored on the block chain. Make sure all information is accurate before submitting. The student will be able to view and share this certificate once issued.
-          </p>
+          {/* Note Section - Large, clean text without background */}
+          <div className="mt-8 px-6">
+            <p className="text-base md:text-lg text-gray-500 text-center leading-relaxed font-medium">
+              <span className="font-bold text-gray-700">Note :</span> The
+              certificate will be stored on the block chain. Make sure all
+              information is accurate before submitting. The student will be
+              able to view and share this certificate once issued.
+            </p>
+          </div>
         </form>
       </div>
     </div>

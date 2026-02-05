@@ -76,15 +76,15 @@ export default function Login() {
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
-          <h1 className="text-2xl font-bold text-white">CertiChain</h1>
-          <div className="flex items-center gap-8">
+          <h1 className="text-xl md:text-2xl font-bold text-white">CertiChain</h1>
+          <div className="flex items-center gap-4 md:gap-8">
             <a
               href="/signup"
-              className="inline-flex items-center justify-center text-white border border-white/70 rounded-lg px-3 py-1.5 font-semibold hover:bg-white hover:text-gray-900 transition-colors"
+              className="inline-flex items-center justify-center text-white border border-white/70 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold hover:bg-white hover:text-gray-900 transition-colors"
             >
               Sign Up
             </a>
-            <button className="inline-flex items-center justify-center bg-white text-gray-900 rounded-lg px-3 py-1.5 font-semibold border border-white/70 hover:bg-transparent hover:text-white transition-colors">
+            <button className="inline-flex items-center justify-center bg-white text-gray-900 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold border border-white/70 hover:bg-transparent hover:text-white transition-colors">
               Verify
             </button>
           </div>
@@ -121,18 +121,17 @@ export default function Login() {
 
           {/* Student Login Form */}
           {userType === 'student' && (
-            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white rounded-3xl shadow-lg overflow-hidden">
+            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
               {/* Right Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleStudentLogin} className="p-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Student Login</h2>
-                  <p className="text-gray-600 text-sm mb-6">Enter your account details</p>
+                <form onSubmit={handleSubmit} className="p-8">
+                  {/* Image inside form - Mobile only */}
+                  <div className="lg:hidden flex items-center justify-center mb-6">
+                    <img src={studentImage} alt="Student" className="w-full h-auto max-w-xs" />
+                  </div>
 
-                  {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                      {error}
-                    </div>
-                  )}
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+                  <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
 
                   <input
                     type="email"
@@ -162,7 +161,7 @@ export default function Login() {
                     {loading ? 'Logging in...' : 'Log In'}
                   </button>
 
-                  <div className="text-center text-sm">
+                  <div className="text-center text-sm mb-6">
                     <span className="text-gray-600">Don't have an account? </span>
                     <a href="/signup" className="text-purple-600 hover:underline font-semibold">
                       Sign Up
@@ -171,8 +170,8 @@ export default function Login() {
                 </form>
               </div>
 
-              {/* Left Side - Image */}
-              <div className="flex flex-1">
+              {/* Left Side - Image - Desktop only */}
+              <div className="hidden lg:flex flex-1">
                 <div className="bg-purple-100 p-8 w-full flex items-center justify-center h-full">
                   <div className="text-left ml-8">
                     <h2 className="text-5xl font-bold text-black mb-2">
@@ -189,9 +188,9 @@ export default function Login() {
 
           {/* Institute Login Form */}
           {userType === 'institute' && (
-            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white rounded-3xl shadow-lg overflow-hidden">
-              {/* Right Side - Image */}
-              <div className="flex flex-1">
+            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
+              {/* Right Side - Image - Desktop only */}
+              <div className="hidden lg:flex flex-1">
                 <div className="bg-purple-100 p-8 w-full flex items-center justify-center h-full">
                   <div className="text-left ml-8">
                     <h2 className="text-5xl font-bold text-black mb-2">
@@ -206,15 +205,14 @@ export default function Login() {
 
               {/* Left Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleInstituteLogin} className="p-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Institute Login</h2>
-                  <p className="text-gray-600 text-sm mb-6">Enter your account details</p>
+                <form onSubmit={handleSubmit} className="p-8">
+                  {/* Image inside form - Mobile only */}
+                  <div className="lg:hidden flex items-center justify-center mb-6">
+                    <img src={instituteImage} alt="Institute" className="w-full h-auto max-w-xs" />
+                  </div>
 
-                  {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                      {error}
-                    </div>
-                  )}
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+                  <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
 
                   <input
                     type="email"
@@ -244,12 +242,13 @@ export default function Login() {
                     {loading ? 'Logging in...' : 'Log In'}
                   </button>
 
-                  <div className="text-center text-sm">
+                  <div className="text-center text-sm mb-6">
                     <span className="text-gray-600">Don't have an account? </span>
                     <a href="/signup" className="text-purple-600 hover:underline font-semibold">
                       Sign Up
                     </a>
                   </div>
+
                 </form>
               </div>
             </div>
