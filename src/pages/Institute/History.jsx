@@ -67,7 +67,7 @@ const HistoryPage = () => {
                   <td className="py-6 px-2">{item.course}</td>
                   <td className="py-6 px-2 font-bold">{item.grade}</td>
                   <td className="py-6 px-2">{item.date}</td>
-                  <td className="py-6 px-2 font-mono text-xs text-gray-400 truncate max-w-[120px]">
+                  <td className="py-6 px-2 font-mono text-xs text-gray-400 truncate max-w-30">
                     {item.tx}
                   </td>
                 </tr>

@@ -1,10 +1,11 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import logo from '../assets/images/logo.png'
 
 const items = [
-  { path: '/', label: 'Dashboard', color: 'text-sky-200', icon: DashboardIcon },
-  { path: '/pending', label: 'Pending', color: 'text-amber-200', icon: HourglassIcon },
-  { path: '/universities', label: 'Universities', color: 'text-violet-200', icon: BankIcon },
+  { path: '/admin/dashboard', label: 'Dashboard', color: 'text-sky-200', icon: DashboardIcon },
+  { path: '/admin/approvals', label: 'Pending', color: 'text-amber-200', icon: HourglassIcon },
+  { path: '/admin/institutes', label: 'Universities', color: 'text-violet-200', icon: BankIcon },
 ]
 
 function ArrowIcon() {
@@ -61,8 +62,7 @@ function BankIcon() {
   )
 }
 
-
-export default function Sidebar({ open, onToggle, onNavigate }) {
+export default function AdminSidebar({ open, onToggle, onNavigate }) {
   const location = useLocation()
 
   return (
@@ -70,8 +70,8 @@ export default function Sidebar({ open, onToggle, onNavigate }) {
       <aside className={`fixed left-0 top-0 bottom-0 bg-[#6d34d6] text-white hidden sm:flex flex-col py-6 shadow-[4px_0_12px_rgba(0,0,0,0.15)] transition-[width] duration-300 z-30 ${open ? 'w-64 px-6' : 'w-20 items-center px-0'}`}>
         <button
           onClick={onToggle}
-          aria-label="Toggle sidebar"
-          className="w-10 h-10 rounded-full border-2 border-white/70 flex items-center justify-center self-start"
+          aria-label="Expand sidebar"
+          className={`w-10 h-10 rounded-full border-2 border-white/70 flex items-center justify-center ${open ? 'hidden' : 'self-center'}`}
         >
           <ArrowIcon />
         </button>
@@ -111,19 +111,36 @@ export default function Sidebar({ open, onToggle, onNavigate }) {
     </aside>
 
       <div className="sm:hidden fixed left-0 right-0 top-0 z-30">
-        <div className="bg-gradient-to-r from-[#6d34d6] to-[#7a46e6] text-white px-4 py-3 flex items-center justify-between">
-          <div className="font-semibold tracking-wide">certichain</div>
-          <button onClick={onToggle} aria-label="Toggle mobile menu" className="text-2xl leading-none">
-            {open ? '×' : '≡'}
+        <div className="bg-gradient-to-r from-[#6d34d6] to-[#7a46e6] text-white px-4 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-semibold tracking-wide">
+            <img src={logo} alt="CertiChain logo" className="w-40 h-8 object-cover" />
+            <span className="sr-only">CertiChain</span>
+          </div>
+          <button onClick={onToggle} aria-label="Toggle mobile menu" className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
+            {open ? (
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 6h18" />
+                <path d="M3 12h18" />
+                <path d="M3 18h18" />
+              </svg>
+            )}
           </button>
         </div>
         {open && (
-          <div className="bg-[#b9a6e6] text-center py-6 space-y-4">
+          <div className="bg-[#b9a6e6] text-center py-4 space-y-3 text-sm">
             {items.map((item) => (
               <button
                 key={item.path}
-                onClick={() => onNavigate(item.path)}
-                className="block w-full text-base font-semibold text-gray-900"
+                onClick={() => {
+                  onNavigate(item.path)
+                  onToggle()
+                }}
+                className="block w-full font-semibold text-gray-900"
               >
                 {item.label}
               </button>

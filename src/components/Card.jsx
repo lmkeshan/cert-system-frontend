@@ -1,8 +1,7 @@
-export default function Card() {
- return (
- <div className="">
- {/* Card header with title and action */}
- {/* Card content */}
- </div>
- )
+export default function Card({ as: Component = 'div', className = '', children, ...props }) {
+	return (
+		<Component className={className} {...props}>
+			{children}
+		</Component>
+	)
 }

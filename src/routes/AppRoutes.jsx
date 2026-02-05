@@ -27,10 +27,11 @@ export default function AppRoutes() {
       <Route path="/verify" element={<VerifyPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
 
-      <Route path="/student" element={<StudentLayout />}>
-        <Route path="dashboard" element={<StudentDashboard />} />
-        <Route path=":id" element={<StudentPortfolio />} />
+      <Route path="/studentdashboard" element={<StudentLayout />}>
+        <Route index element={<StudentDashboard />} />
       </Route>
+
+      <Route path="/studentportfolio" element={<StudentPortfolio />} />
 
       <Route path="/institute" element={<InstituteLayout />}>
         <Route path="dashboard" element={<InstituteDashboard />} />

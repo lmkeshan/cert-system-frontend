@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom';
+import logo from '../assets/images/logo.png'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -18,10 +19,10 @@ export default function Navbar() {
 
   return (
     <header className="relative md:sticky top-0 z-50 bg-gradient-primary text-white">
-      <div className="max-w-[1248px] mx-auto flex items-center justify-between gap-4 px-4 py-3">
+      <div className="max-w-[1248px] mx-auto flex items-center justify-between gap-3 px-3 md:px-4 py-3">
         <div className="flex items-center">
           <Link to="/" aria-label="Homepage" className="inline-block w-[140px] h-9 hover:opacity-90" onClick={handleHomeClick}>
-            {/* Logo placeholder */}
+            <img src={logo} alt="CertiChain logo" className="w-full h-full object-contain" />
           </Link>
         </div>
 
