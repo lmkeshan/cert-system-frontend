@@ -1,15 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import backgroundImage from '../../assets/images/background.png'
 import studentImage from '../../assets/images/studentLogin.png'
 import instituteImage from '../../assets/images/instituteLogin.png'
-import { authAPI, setStudentToken, setUniversityToken } from '../../services/api'
 
 export default function Login() {
-  const navigate = useNavigate()
   const [userType, setUserType] = useState('student')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,57 +13,11 @@ export default function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    setError('')
   }
 
-  const handleStudentLogin = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    setError('')
-
-    if (!formData.email || !formData.password) {
-      setError('Please fill in all fields')
-      return
-    }
-
-    try {
-      setLoading(true)
-      const response = await authAPI.loginStudent({
-        email: formData.email,
-        password: formData.password,
-      })
-
-      setStudentToken(response.data.token)
-      navigate('/studentdashboard')
-    } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Login failed')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleInstituteLogin = async (e) => {
-    e.preventDefault()
-    setError('')
-
-    if (!formData.email || !formData.password) {
-      setError('Please fill in all fields')
-      return
-    }
-
-    try {
-      setLoading(true)
-      const response = await authAPI.loginUniversity({
-        email: formData.email,
-        password: formData.password,
-      })
-
-      setUniversityToken(response.data.token)
-      navigate('/institute/dashboard')
-    } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.message || 'Login failed')
-    } finally {
-      setLoading(false)
-    }
+    console.log('Form submitted:', userType, formData)
   }
 
   return (
@@ -124,15 +73,9 @@ export default function Login() {
             <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white rounded-3xl shadow-lg overflow-hidden">
               {/* Right Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleStudentLogin} className="p-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Student Login</h2>
-                  <p className="text-gray-600 text-sm mb-6">Enter your account details</p>
-
-                  {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                      {error}
-                    </div>
-                  )}
+                <form onSubmit={handleSubmit} className="p-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+                  <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
 
                   <input
                     type="email"
@@ -140,7 +83,6 @@ export default function Login() {
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -150,16 +92,14 @@ export default function Login() {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
                   />
 
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4"
                   >
-                    {loading ? 'Logging in...' : 'Log In'}
+                    Log In
                   </button>
 
                   <div className="text-center text-sm">
@@ -178,8 +118,8 @@ export default function Login() {
                     <h2 className="text-5xl font-bold text-black mb-2">
                       certi<span className="text-purple-600">chain</span>
                     </h2>
-                    <p className="text-2xl text-gray-700 font-semibold mb-6">Welcome Back!</p>
-                    <p className="text-gray-600 text-sm mb-8">Login to access your portfolio and certificates</p>
+                    <p className="text-2xl text-gray-700 font-semibold mb-6">Welcome to Student Portal</p>
+                    <p className="text-gray-600 text-sm mb-8">Login to access your account!</p>
                     <img src={studentImage} alt="Student" className="w-full h-auto" />
                   </div>
                 </div>
@@ -198,7 +138,7 @@ export default function Login() {
                       certi<span className="text-purple-600">chain</span>
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-2">Welcome to Institution Portal</p>
-                    <p className="text-gray-600 text-sm mb-8">Login to manage your certificates and students</p>
+                    <p className="text-gray-600 text-sm mb-8">Login to manage your certificates.</p>
                     <img src={instituteImage} alt="Institute" className="w-full h-auto" />
                   </div>
                 </div>
@@ -206,15 +146,9 @@ export default function Login() {
 
               {/* Left Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleInstituteLogin} className="p-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Institute Login</h2>
-                  <p className="text-gray-600 text-sm mb-6">Enter your account details</p>
-
-                  {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-                      {error}
-                    </div>
-                  )}
+                <form onSubmit={handleSubmit} className="p-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
+                  <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
 
                   <input
                     type="email"
@@ -222,7 +156,6 @@ export default function Login() {
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -232,16 +165,14 @@ export default function Login() {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
-                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
                   />
 
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4"
                   >
-                    {loading ? 'Logging in...' : 'Log In'}
+                    Log In
                   </button>
 
                   <div className="text-center text-sm">

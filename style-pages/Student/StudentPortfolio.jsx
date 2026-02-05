@@ -1,5 +1,5 @@
 import Card from '../../components/Card'
-import StudentHeader from '../../components/StudentHeader'
+import StudentPortfolioNavbar from '../../components/StudentPortfolioNavbar'
 
 export default function StudentPortfolio() {
   // Sample portfolio data
@@ -63,7 +63,7 @@ export default function StudentPortfolio() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <StudentHeader />
+      <StudentPortfolioNavbar />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Profile Header */}

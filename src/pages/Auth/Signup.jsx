@@ -1,37 +1,151 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import backgroundImage from '../../assets/images/background.png'
 import studentImage from '../../assets/images/studentSignup.png'
 import instituteImage from '../../assets/images/instituteSignup.png'
+import { authAPI, setStudentToken, setUniversityToken } from '../../services/api'
 
 export default function Signup() {
+  const navigate = useNavigate()
   const [userType, setUserType] = useState('student')
-  const [formData, setFormData] = useState({
-    // Student fields
-    firstName: '',
-    lastName: '',
-    userName: '',
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  
+  const [studentForm, setStudentForm] = useState({
+    full_name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    // Institute fields
-    institutionName: '',
-    walletAddress: '',
-    verifiedDocuments: null,
-    instituteLogo: null,
+    gender: 'Male',
+    birthdate: '',
   })
 
-  const handleChange = (e) => {
+  const [instituteForm, setInstituteForm] = useState({
+    institute_name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    wallet_address: '',
+    logo: null,
+    verification_doc: null,
+  })
+
+  const handleStudentChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setStudentForm(prev => ({ ...prev, [name]: value }))
+    setError('')
   }
 
-  const handleFileChange = (e, fieldName) => {
-    setFormData(prev => ({ ...prev, [fieldName]: e.target.files[0] }))
+  const handleInstituteChange = (e) => {
+    const { name, value } = e.target
+    setInstituteForm(prev => ({ ...prev, [name]: value }))
+    setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e, fieldName, formType) => {
+    const file = e.target.files[0]
+    if (formType === 'institute') {
+      setInstituteForm(prev => ({ ...prev, [fieldName]: file }))
+    }
+    setError('')
+  }
+
+  const handleStudentSubmit = async (e) => {
     e.preventDefault()
-    console.log('Form submitted:', userType, formData)
+    setError('')
+    setSuccessMessage('')
+
+    // Validation
+    if (!studentForm.full_name || !studentForm.email || !studentForm.password || !studentForm.birthdate) {
+      setError('All fields are required')
+      return
+    }
+
+    if (studentForm.password !== studentForm.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (studentForm.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    try {
+      setLoading(true)
+      const response = await authAPI.registerStudent({
+        full_name: studentForm.full_name,
+        email: studentForm.email,
+        password: studentForm.password,
+        gender: studentForm.gender,
+        birthdate: studentForm.birthdate,
+      })
+
+      setSuccessMessage('Registration successful! Redirecting...')
+      setStudentToken(response.data.token)
+      
+      setTimeout(() => {
+        navigate('/studentdashboard')
+      }, 1500)
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleInstituteSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccessMessage('')
+
+    // Validation
+    if (!instituteForm.institute_name || !instituteForm.email || !instituteForm.password || !instituteForm.wallet_address) {
+      setError('All fields are required')
+      return
+    }
+
+    if (instituteForm.password !== instituteForm.confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    if (instituteForm.password.length < 6) {
+      setError('Password must be at least 6 characters')
+      return
+    }
+
+    if (!instituteForm.verification_doc) {
+      setError('Verification document is required')
+      return
+    }
+
+    try {
+      setLoading(true)
+      const formData = new FormData()
+      formData.append('institute_name', instituteForm.institute_name)
+      formData.append('email', instituteForm.email)
+      formData.append('password', instituteForm.password)
+      formData.append('wallet_address', instituteForm.wallet_address)
+      if (instituteForm.logo) {
+        formData.append('logo', instituteForm.logo)
+      }
+      formData.append('verification_doc', instituteForm.verification_doc)
+
+      const response = await authAPI.registerUniversity(formData)
+
+      setSuccessMessage('Registration successful! Awaiting admin approval...')
+      setUniversityToken(response.data.token)
+      
+      setTimeout(() => {
+        navigate('/institute/dashboard')
+      }, 1500)
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -101,32 +215,28 @@ export default function Signup() {
 
               {/* Left Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleSubmit} className="p-8">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <input
-                      type="text"
-                      name="firstName"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="col-span-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
-                    />
-                    <input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="col-span-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
-                    />
-                  </div>
+                <form onSubmit={handleStudentSubmit} className="p-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Student Registration</h2>
+
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
+                      {error}
+                    </div>
+                  )}
+
+                  {successMessage && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
+                      {successMessage}
+                    </div>
+                  )}
 
                   <input
                     type="text"
-                    name="userName"
-                    placeholder="User Name"
-                    value={formData.userName}
-                    onChange={handleChange}
+                    name="full_name"
+                    placeholder="Full Name"
+                    value={studentForm.full_name}
+                    onChange={handleStudentChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -134,17 +244,41 @@ export default function Signup() {
                     type="email"
                     name="email"
                     placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={studentForm.email}
+                    onChange={handleStudentChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
+
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <select
+                      name="gender"
+                      value={studentForm.gender}
+                      onChange={handleStudentChange}
+                      className="col-span-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+
+                    <input
+                      type="date"
+                      name="birthdate"
+                      value={studentForm.birthdate}
+                      onChange={handleStudentChange}
+                      required
+                      className="col-span-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
 
                   <input
                     type="password"
                     name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    placeholder="Password (min 6 characters)"
+                    value={studentForm.password}
+                    onChange={handleStudentChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -152,16 +286,18 @@ export default function Signup() {
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
+                    value={studentForm.confirmPassword}
+                    onChange={handleStudentChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
                   />
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4"
+                    disabled={loading}
+                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Register
+                    {loading ? 'Registering...' : 'Register'}
                   </button>
 
                   <div className="text-center text-sm">
@@ -194,22 +330,28 @@ export default function Signup() {
 
               {/* Left Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleSubmit} className="p-8">
-                  <input
-                    type="text"
-                    name="institutionName"
-                    placeholder="Institution Name"
-                    value={formData.institutionName}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
-                  />
+                <form onSubmit={handleInstituteSubmit} className="p-8 overflow-y-auto max-h-screen">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-6">Institute Registration</h2>
+
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                      {error}
+                    </div>
+                  )}
+
+                  {successMessage && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                      {successMessage}
+                    </div>
+                  )}
 
                   <input
                     type="text"
-                    name="userName"
-                    placeholder="User Name"
-                    value={formData.userName}
-                    onChange={handleChange}
+                    name="institute_name"
+                    placeholder="Institution Name"
+                    value={instituteForm.institute_name}
+                    onChange={handleInstituteChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -217,17 +359,19 @@ export default function Signup() {
                     type="email"
                     name="email"
                     placeholder="Official Email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={instituteForm.email}
+                    onChange={handleInstituteChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
                   <input
                     type="password"
                     name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    placeholder="Password (min 6 characters)"
+                    value={instituteForm.password}
+                    onChange={handleInstituteChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
@@ -235,56 +379,51 @@ export default function Signup() {
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
+                    value={instituteForm.confirmPassword}
+                    onChange={handleInstituteChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
                   <input
                     type="text"
-                    name="walletAddress"
-                    placeholder="Wallet Address"
-                    value={formData.walletAddress}
-                    onChange={handleChange}
+                    name="wallet_address"
+                    placeholder="Wallet Address (0x...)"
+                    value={instituteForm.wallet_address}
+                    onChange={handleInstituteChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
                   <label className="block mb-4">
+                    <span className="block text-sm font-semibold text-gray-700 mb-2">Institute Logo (Optional)</span>
                     <input
                       type="file"
-                      onChange={(e) => handleFileChange(e, 'instituteLogo')}
-                      className="hidden"
-                      id="instituteLogo"
+                      onChange={(e) => handleFileChange(e, 'logo', 'institute')}
+                      accept="image/*"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
                     />
-                    <label htmlFor="instituteLogo" className="w-full border border-blue-500 rounded-lg px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 cursor-pointer flex items-center gap-2 transition-colors">
-                      📁 Upload Institute Logo
-                    </label>
+                    {instituteForm.logo && <p className="text-sm text-green-600 mt-2">✓ {instituteForm.logo.name}</p>}
                   </label>
 
-                  <button
-                    type="button"
-                    className="w-full border-2 border-orange-500 rounded-lg px-4 py-2.5 text-sm font-semibold text-orange-600 hover:bg-orange-50 mb-4 transition-colors flex items-center justify-center gap-2"
-                  >
-                    🔗 Connect MetaMask
-                  </button>
-
-                  <label className="block mb-6">
+                  <label className="block mb-4">
+                    <span className="block text-sm font-semibold text-gray-700 mb-2">Verification Document (PDF/Image) *</span>
                     <input
                       type="file"
-                      onChange={(e) => handleFileChange(e, 'verifiedDocuments')}
-                      className="hidden"
-                      id="verifiedDocs"
+                      onChange={(e) => handleFileChange(e, 'verification_doc', 'institute')}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
                     />
-                    <label htmlFor="verifiedDocs" className="w-full border border-blue-500 rounded-lg px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 cursor-pointer flex items-center gap-2 transition-colors">
-                      📁 Upload Verified Documents
-                    </label>
+                    {instituteForm.verification_doc && <p className="text-sm text-green-600 mt-2">✓ {instituteForm.verification_doc.name}</p>}
                   </label>
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4"
+                    disabled={loading}
+                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Register
+                    {loading ? 'Registering...' : 'Register Institution'}
                   </button>
 
                   <div className="text-center text-sm">

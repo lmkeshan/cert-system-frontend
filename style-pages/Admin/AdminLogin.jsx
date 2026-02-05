@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { setAdminToken } from '../../services/api';
 
 const AdminLogin = ({ onLoginSuccess }) => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -50,24 +47,15 @@ const AdminLogin = ({ onLoginSuccess }) => {
 
       const data = await response.json();
       console.log('Login successful:', data);
-      
-      // Store the admin token
-      if (data.token) {
-        setAdminToken(data.token);
-      }
-      
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-      
-      // Navigate to admin dashboard
-      navigate('/admin/dashboard');
     } catch (err) {
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [formData, error, navigate]);
+  }, [formData, error]);
 
   const handleBackToHome = useCallback(() => {
     window.location.href = '/';
