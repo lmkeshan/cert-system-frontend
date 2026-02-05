@@ -11,7 +11,7 @@ export const useMetaMask = () => {
   const [address, setAddress] = useState(null);
   const [balance, setBalance] = useState('0.00');
   const [contractBalance, setContractBalance] = useState('0.00');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start as true to show we're checking
   const [error, setError] = useState(null);
 
   // Initialize MetaMask
@@ -30,6 +30,7 @@ export const useMetaMask = () => {
 
         if (!window.MetaMask.isInstalled()) {
           setError('MetaMask extension not installed. Please install it first.');
+          setLoading(false);
           return;
         }
 
@@ -42,8 +43,13 @@ export const useMetaMask = () => {
             await autoConnect(instance);
           }
         }
+
+        // Initialization complete
+        setLoading(false);
       } catch (err) {
+        console.error('MetaMask initialization error:', err);
         setError('Failed to initialize MetaMask: ' + err.message);
+        setLoading(false);
       }
     };
 

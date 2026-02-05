@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { universityAPI, authAPI } from "../../services/api";
 import { useMetaMaskContext } from "../../context/MetaMaskContext";
+import MetaMaskGuard from "../../components/MetaMaskGuard";
 
 const IssueCertificate = () => {
   const [formData, setFormData] = useState({
@@ -78,7 +79,8 @@ const IssueCertificate = () => {
     }
   };
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+    <MetaMaskGuard pageTitle="Issue Certificate">
+      <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
       {/* 1. Header Banner - Increased Height and Padding */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="text-3xl bg-[#E9D5FF] p-3 rounded-xl flex items-center justify-center shrink-0">
@@ -191,6 +193,7 @@ const IssueCertificate = () => {
         </form>
       </div>
     </div>
+    </MetaMaskGuard>
   );
 };
 

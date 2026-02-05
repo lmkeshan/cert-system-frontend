@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Copy, CheckCircle2 } from "lucide-react";
 import { universityAPI, paymentAPI } from "../../services/api";
 import { useMetaMaskContext } from "../../context/MetaMaskContext";
+import MetaMaskGuard from "../../components/MetaMaskGuard";
 
 const WalletPage = () => {
   const [walletData, setWalletData] = useState({
@@ -28,13 +29,24 @@ const WalletPage = () => {
   } = useMetaMaskContext();
 
   useEffect(() => {
-    loadWalletData();
-  }, []);
+    // Only load wallet data if MetaMask is connected
+    if (metamaskConnected) {
+      loadWalletData();
+    } else {
+      setLoading(false);
+    }
+  }, [metamaskConnected]);
 
   const loadWalletData = async () => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Safety check: only proceed if MetaMask is connected
+      if (!metamaskConnected) {
+        setLoading(false);
+        return;
+      }
       
       // Step 1: Get profile to get wallet address
       const profileResponse = await universityAPI.getProfile();
@@ -160,7 +172,8 @@ const WalletPage = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
+    <MetaMaskGuard pageTitle="Wallet & Balance">
+      <div className="max-w-5xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
       {/* 1. Header Banner - Increased Height & Padding */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="text-3xl bg-orange-50 p-3 rounded-xl flex items-center justify-center shrink-0">
@@ -364,6 +377,7 @@ const WalletPage = () => {
         </div>
       </div>
     </div>
+    </MetaMaskGuard>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { UploadCloud } from "lucide-react";
 import { universityAPI, authAPI } from "../../services/api";
 import { useMetaMaskContext } from "../../context/MetaMaskContext";
+import MetaMaskGuard from "../../components/MetaMaskGuard";
 
 const BulkUpload = () => {
   const fileInputRef = useRef(null);
@@ -320,7 +321,8 @@ const BulkUpload = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
+    <MetaMaskGuard pageTitle="Bulk Certificate Upload">
+      <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-start gap-4 shadow-sm min-h-[120px]">
         <div className="text-3xl text-blue-500 shrink-0">
           <UploadCloud size={32} />
@@ -534,6 +536,7 @@ const BulkUpload = () => {
         </div>
       </div>
     </div>
+    </MetaMaskGuard>
   );
 };
 
