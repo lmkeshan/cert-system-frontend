@@ -1,6 +1,13 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function Header({ open, setOpen }) {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    navigate('/admin/login')
+  }
   return (
     <header className="bg-white/60 backdrop-blur-sm sticky top-0 z-20">
       <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
@@ -20,7 +27,7 @@ export default function Header({ open, setOpen }) {
         </div>
 
         <div>
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-full">Log Out</button>
+          <button onClick={handleLogout} className="bg-purple-600 text-white px-4 py-2 rounded-full hover:bg-purple-700 transition-colors">Log Out</button>
         </div>
       </div>
     </header>

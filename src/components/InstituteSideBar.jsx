@@ -1,8 +1,20 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Award, Upload, History, Wallet, Landmark } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Award, Upload, History, Wallet, Landmark, LogOut } from 'lucide-react';
 
 const Sidebar = ({ closeMenu }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear institute token
+    localStorage.removeItem('instituteToken');
+    
+    // Close mobile menu if open
+    if (closeMenu) closeMenu();
+    
+    // Redirect to login
+    navigate('/login');
+  };
   const menuItems = [
     { name: 'Overview', path: '/institute/dashboard', icon: <LayoutDashboard size={18} /> },
     { name: 'Issue Certificate', path: '/institute/issue', icon: <Award size={18} /> },
@@ -41,7 +53,11 @@ const Sidebar = ({ closeMenu }) => {
       </nav>
 
       {/* Logout Footer */}
-      <button className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg flex justify-center items-center gap-2 font-bold mb-4 border border-white/20 transition-colors">
+      <button 
+        onClick={handleLogout}
+        className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg flex justify-center items-center gap-2 font-bold mb-4 border border-white/20 transition-colors"
+      >
+        <LogOut size={18} />
         Logout
       </button>
     </div>

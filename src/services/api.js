@@ -134,6 +134,9 @@ export const adminAPI = {
   rejectInstitute: (instituteId, data) => 
     api.post(`/admin/institutes/${instituteId}/reject`, data),
   
+  getIssuerStatus: (instituteId) => 
+    api.get(`/admin/institutes/${instituteId}/issuer-status`),
+  
   getStatistics: () => 
     api.get('/admin/statistics'),
 };
