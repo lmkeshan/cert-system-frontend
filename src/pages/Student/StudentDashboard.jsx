@@ -24,7 +24,6 @@ export default function StudentDashboard() {
       const response = await studentAPI.getDashboard();
       setDashboardData(response.data);
     } catch (err) {
-      console.error('Error fetching dashboard:', err);
       if (err.response?.status === 401) {
         navigate('/login');
       }
@@ -40,7 +39,6 @@ export default function StudentDashboard() {
       const response = await studentAPI.getCareerInsights(false);
       setCareerInsights(response.data.insights);
     } catch (err) {
-      console.error('Error fetching career insights:', err);
       setError(err.response?.data?.error || 'Failed to load career insights');
     } finally {
       setLoadingInsights(false);
@@ -53,7 +51,6 @@ export default function StudentDashboard() {
       const response = await studentAPI.getCareerInsights(true);
       setCareerInsights(response.data.insights);
     } catch (err) {
-      console.error('Error regenerating insights:', err);
       setError('Failed to regenerate insights');
     } finally {
       setLoadingInsights(false);

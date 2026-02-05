@@ -43,7 +43,6 @@ export const useMetaMask = () => {
           }
         }
       } catch (err) {
-        console.error('Failed to initialize MetaMask:', err);
         setError('Failed to initialize MetaMask: ' + err.message);
       }
     };
@@ -58,8 +57,7 @@ export const useMetaMask = () => {
       setAddress(addr);
       setConnected(true);
       await refreshBalance(instance, addr);
-    } catch (err) {
-      console.warn('Auto-connect failed (user may need to manually connect):', err.message);
+    } catch {
     }
   }, []);
 
@@ -73,8 +71,7 @@ export const useMetaMask = () => {
         const contractBal = await instance.getContractBalance(addr);
         setContractBalance(contractBal.pol.toFixed(4));
       }
-    } catch (err) {
-      console.error('Failed to refresh balance:', err);
+    } catch {
     }
   }, []);
 
@@ -169,7 +166,6 @@ export const useMetaMask = () => {
     try {
       return await metamask.getGasCost();
     } catch (err) {
-      console.error('Failed to get gas cost:', err);
       throw err;
     }
   }, [metamask, connected]);
@@ -183,7 +179,6 @@ export const useMetaMask = () => {
     try {
       return await metamask.verifyCertificate(certId);
     } catch (err) {
-      console.error('Failed to verify certificate:', err);
       throw err;
     }
   }, [metamask]);
