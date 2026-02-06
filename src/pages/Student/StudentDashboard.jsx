@@ -11,6 +11,9 @@ export default function StudentDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [careerInsights, setCareerInsights] = useState(null);
   const [loadingInsights, setLoadingInsights] = useState(false);
+  const [isPortfolioPublic, setIsPortfolioPublic] = useState(true); // Default to public, updated from backend
+  const [savingVisibility, setSavingVisibility] = useState(false);
+  const [visibilityMessage, setVisibilityMessage] = useState('');
 
   // Fetch dashboard data on mount
   useEffect(() => {
@@ -23,6 +26,11 @@ export default function StudentDashboard() {
       setError('');
       const response = await studentAPI.getDashboard();
       setDashboardData(response.data);
+      // Set portfolio visibility from student data
+      const visibility = response.data.student?.isPortfolioPublic ?? response.data.student?.is_portfolio_public;
+      if (visibility !== undefined && visibility !== null) {
+        setIsPortfolioPublic(Boolean(visibility));
+      }
     } catch (err) {
       if (err.response?.status === 401) {
         navigate('/login');
@@ -54,6 +62,29 @@ export default function StudentDashboard() {
       setError('Failed to regenerate insights');
     } finally {
       setLoadingInsights(false);
+    }
+  };
+
+  const handlePortfolioVisibilityChange = async (newValue) => {
+    try {
+      setSavingVisibility(true);
+      setVisibilityMessage('');
+      
+      const response = await studentAPI.updatePortfolioVisibility(newValue);
+      
+      // Update state from backend response
+      const updatedVisibility = response.data?.isPublic ?? response.data?.is_public ?? newValue;
+      setIsPortfolioPublic(updatedVisibility);
+      
+      setVisibilityMessage(`Portfolio is now ${updatedVisibility ? 'publicly visible' : 'private'}`);
+      setTimeout(() => setVisibilityMessage(''), 3000);
+    } catch (err) {
+      setVisibilityMessage('Failed to update portfolio visibility');
+      setTimeout(() => setVisibilityMessage(''), 3000);
+      // Refetch to get correct state
+      fetchDashboardData();
+    } finally {
+      setSavingVisibility(false);
     }
   };
 
@@ -103,11 +134,21 @@ export default function StudentDashboard() {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3">
-            <button className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors">
-              <span>🔒</span> Make Private
+            <button 
+              onClick={() => navigate('/studentportfolio')}
+              className="bg-white text-purple-600 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-purple-50 transition-colors shadow-md"
+            >
+              <span>👁️</span> View My Portfolio
             </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors">
-              <span>📤</span> Share
+            <button 
+              onClick={() => {
+                const link = `${window.location.origin}/portfolio/${student?.userId}`
+                navigator.clipboard.writeText(link)
+                alert('Portfolio link copied to clipboard!')
+              }}
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
+            >
+              <span>📤</span> Share Portfolio
             </button>
             <button className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors">
               <span>📥</span> Export
@@ -118,20 +159,29 @@ export default function StudentDashboard() {
 
       {/* Share Section */}
       <div className="max-w-6xl mx-auto px-4 mt-6">
-        <div className="bg-purple-100 rounded-2xl p-6 mb-8">
-          <h3 className="text-lg font-bold text-gray-800 mb-2">Share Your Portfolio</h3>
+        <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-8 border-2 border-purple-300">
+          <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <span>🔗</span> Share Your Portfolio
+          </h3>
           <p className="text-gray-600 text-sm mb-4">
-            Share this link to showcase your certificates with employers or peers:
+            Anyone with this link can view your certificates and career insights:
           </p>
           <div className="flex gap-3">
             <input
               type="text"
-              value={`http://localhost:3000/portfolio/${student?.userId}`}
+              value={`${window.location.origin}/portfolio/${student?.userId}`}
               readOnly
-              className="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-700"
+              className="flex-1 bg-white border border-purple-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 font-mono"
             />
-            <button className="bg-(--color-primary-violet) text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity flex items-center gap-2">
-              📋 Copy
+            <button 
+              onClick={() => {
+                const link = `${window.location.origin}/portfolio/${student?.userId}`
+                navigator.clipboard.writeText(link)
+                alert('Portfolio link copied!')
+              }}
+              className="bg-purple-600 text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2"
+            >
+              📋 Copy Link
             </button>
           </div>
         </div>
@@ -255,21 +305,26 @@ export default function StudentDashboard() {
                 </p>
               </div>
             ) : (
-              certificates.map((cert) => (
-                <div key={cert.certificate_id} className="bg-white border border-gray-200 rounded-2xl p-6">
+              certificates.map((cert) => {
+                const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+                const serverUrl = baseUrl.replace('/api', '')
+                const logoUrl = cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
+                
+                return (
+                <div key={cert.certificate_id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-xl font-bold text-gray-800 mb-1">
-                        {cert.certificate_title}
+                        {cert.certificate_title || cert.course}
                       </h3>
-                      <p className="text-sm text-gray-500">{cert.institute_name}</p>
-                      <p className="text-xs text-gray-400 mt-1">Course: {cert.course}</p>
+                      <p className="text-sm text-gray-600 font-semibold">{cert.institute_name}</p>
+                      <p className="text-xs text-gray-500 mt-1">Course: {cert.course}</p>
                     </div>
-                    {cert.logo_url && (
+                    {logoUrl && (
                       <img
-                        src={cert.logo_url}
-                        alt="Institute"
-                        className="w-16 h-16 object-cover rounded"
+                        src={logoUrl}
+                        alt={cert.institute_name}
+                        className="w-16 h-16 object-contain rounded-lg border border-gray-200 ml-4"
                       />
                     )}
                   </div>
@@ -280,36 +335,59 @@ export default function StudentDashboard() {
                       <span>📘</span> {cert.course}
                     </span>
                     <span className="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>📅</span> {cert.issued_date}
+                      <span>📅</span> {new Date(cert.issued_date).toLocaleDateString()}
                     </span>
                     <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
                       <span>⭐</span> Grade: {cert.grade}
                     </span>
                     {cert.blockchain_tx_hash && (
                       <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>✅</span> Verified
+                        <span>✅</span> Blockchain Verified
                       </span>
                     )}
                     {cert.expiry_date && (
                       <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>📆</span> Expires {cert.expiry_date}
+                        <span>📆</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
                       </span>
                     )}
                   </div>
 
+                  {/* Blockchain Transaction Hash */}
+                  {cert.blockchain_tx_hash && (
+                    <div className="mb-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                      <p className="text-xs text-gray-600 font-semibold mb-1">Blockchain Transaction:</p>
+                      <a 
+                        href={`https://amoy.polygonscan.com/tx/${cert.blockchain_tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:text-blue-800 font-mono break-all underline flex items-center gap-1"
+                      >
+                        <span>🔗</span> {cert.blockchain_tx_hash}
+                      </a>
+                    </div>
+                  )}
+
                   {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <button className="text-gray-700 text-sm font-medium flex items-center gap-1 hover:text-gray-900">
-                      <span>👁️</span> View Details
+                  <div className="flex flex-wrap gap-3">
+                    <button className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors">
+                      <span>📄</span> View Certificate
+                    </button>
+                    <button className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
+                      <span>📥</span> Download PDF
                     </button>
                     {cert.blockchain_tx_hash && (
-                      <button className="text-gray-700 text-sm font-medium flex items-center gap-1 hover:text-gray-900">
-                        <span>🔍</span> Verify
-                      </button>
+                      <a 
+                        href={`https://amoy.polygonscan.com/tx/${cert.blockchain_tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+                      >
+                        <span>✅</span> Verify on Blockchain
+                      </a>
                     )}
                   </div>
                 </div>
-              ))
+              )})
             )}
           </div>
         )}
@@ -321,19 +399,25 @@ export default function StudentDashboard() {
                 <p className="text-gray-600">No institutions yet</p>
               </div>
             ) : (
-              institutions.map((inst, index) => (
+              institutions.map((inst, index) => {
+                const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+                const serverUrl = baseUrl.replace('/api', '')
+                const logoUrl = inst.logo_url ? `${serverUrl}${inst.logo_url}` : null
+                
+                return (
                 <div
                   key={index}
                   className="bg-purple-50 rounded-2xl p-8 text-center"
                 >
-                  {inst.logo_url && (
+                  {logoUrl ? (
                     <img
-                      src={inst.logo_url}
+                      src={logoUrl}
                       alt={inst.institute_name}
-                      className="w-20 h-20 object-cover rounded-full mx-auto mb-4"
+                      className="w-20 h-20 object-contain rounded-lg mx-auto mb-4 border border-gray-200"
                     />
+                  ) : (
+                    <div className="text-5xl mb-4">🏛️</div>
                   )}
-                  <div className="text-5xl mb-4">🏛️</div>
                   <h3 className="text-xl font-bold text-gray-800 mb-2">
                     {inst.institute_name}
                   </h3>
@@ -344,7 +428,8 @@ export default function StudentDashboard() {
                     View All
                   </button>
                 </div>
-              ))
+                )
+              })
             )}
           </div>
         )}
@@ -486,14 +571,40 @@ export default function StudentDashboard() {
             {/* Portfolio Settings */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Portfolio Settings</h3>
-              <div className="flex items-center gap-3">
-                <input type="checkbox" id="makePublic" className="w-4 h-4" defaultChecked />
-                <label htmlFor="makePublic" className="text-gray-700">
+              <div className="flex items-center gap-3 mb-2">
+                <button
+                  onClick={() => !savingVisibility && handlePortfolioVisibilityChange(!isPortfolioPublic)}
+                  disabled={savingVisibility}
+                  className={`relative inline-flex h-6 w-12 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+                    isPortfolioPublic ? 'bg-green-500' : 'bg-gray-300'
+                  } ${savingVisibility ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                      isPortfolioPublic ? 'translate-x-7' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+                <label className="text-gray-700 font-medium">
                   Make portfolio publicly visible
                 </label>
+                {savingVisibility && (
+                  <span className="text-sm text-gray-500">Saving...</span>
+                )}
               </div>
+              {visibilityMessage && (
+                <div className={`text-sm mt-2 ml-7 px-3 py-2 rounded-lg ${
+                  visibilityMessage.includes('Failed') 
+                    ? 'bg-red-100 text-red-700' 
+                    : 'bg-green-100 text-green-700'
+                }`}>
+                  {visibilityMessage}
+                </div>
+              )}
               <p className="text-sm text-gray-500 mt-2 ml-7">
-                Your portfolio will be visible to anyone with the link, use this visibility control to share with employers
+                {isPortfolioPublic 
+                  ? 'Your portfolio is visible to anyone with the link. Perfect for sharing with employers!' 
+                  : 'Your portfolio is private and only visible to you.'}
               </p>
             </div>
 

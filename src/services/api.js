@@ -96,6 +96,9 @@ export const studentAPI = {
   
   getCareerInsights: (regenerate = false) => 
     api.post('/student/career-insights', { regenerate }),
+  
+  updatePortfolioVisibility: (isPublic) => 
+    api.patch('/student/portfolio/visibility', { isPublic }),
 };
 
 // ==================== UNIVERSITY APIs ====================
