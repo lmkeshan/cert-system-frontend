@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Overview = () => {
   const stats = [
@@ -12,7 +13,7 @@ const Overview = () => {
     <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12 md:pb-20">
       
       {/* 1. Main Dashboard Header Banner */}
-      <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
+      <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-30">
         <div className="bg-[#E9D5FF] p-3 rounded-xl flex items-center justify-center shrink-0">
           <span className="text-3xl" role="img" aria-label="dashboard-icon">📄🔍</span>
         </div>
@@ -35,7 +36,7 @@ const Overview = () => {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="bg-white p-4 md:p-5 rounded-2xl shadow-md text-center border border-gray-50 flex flex-col items-center justify-center min-h-[120px]"
+            className="bg-white p-4 md:p-5 rounded-2xl shadow-md text-center border border-gray-50 flex flex-col items-center justify-center min-h-30"
           >
             <h4 className="text-[#374151] font-bold mb-1 text-xs md:text-sm opacity-70">{stat.label}</h4>
             <p className="text-2xl md:text-3xl font-extrabold text-[#8B5CF6] tracking-tight">{stat.value}</p>
@@ -48,15 +49,24 @@ const Overview = () => {
         <h3 className="text-base font-bold text-gray-800 mb-3 px-1">Quick Actions</h3>
         <hr className="mb-4 border-gray-100" />
         <div className="flex flex-col md:flex-row gap-3">
-          <button className="bg-[#8B5CF6] text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
+          <Link
+            to="/institute/issue"
+            className="bg-[#8B5CF6] text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95 text-center"
+          >
             Issue Single Certificate
-          </button>
-          <button className="border-2 border-[#8B5CF6] text-[#8B5CF6] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-50 transition-all active:scale-95">
+          </Link>
+          <Link
+            to="/institute/bulk-issue"
+            className="border-2 border-[#8B5CF6] text-[#8B5CF6] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-50 transition-all active:scale-95 text-center"
+          >
             Bulk Upload CSV
-          </button>
-          <button className="bg-[#9366E4] text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
+          </Link>
+          <Link
+            to="/institute/history"
+            className="bg-[#9366E4] text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95 text-center"
+          >
             View History
-          </button>
+          </Link>
         </div>
       </div>
 

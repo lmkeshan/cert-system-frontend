@@ -19,9 +19,9 @@ export default function Navbar() {
 
   return (
     <header className="relative md:sticky top-0 z-50 bg-gradient-primary text-white">
-      <div className="max-w-[1248px] mx-auto flex items-center justify-between gap-3 px-3 md:px-4 py-3">
+      <div className="max-w-312 mx-auto flex items-center justify-between gap-3 px-3 md:px-4 py-3">
         <div className="flex items-center">
-          <Link to="/" aria-label="Homepage" className="inline-block w-[140px] h-9 hover:opacity-90" onClick={handleHomeClick}>
+          <Link to="/" aria-label="Homepage" className="inline-block w-35 h-9 hover:opacity-90" onClick={handleHomeClick}>
             <img src={logo} alt="CertiChain logo" className="w-full h-full object-contain" />
           </Link>
         </div>
@@ -30,26 +30,26 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6" aria-label="Primary">
           <ul className="flex items-center gap-5 m-0 p-0 list-none" onClick={closeMenu}>
             <li>
-              <Link to="/" className="text-white no-underline font-medium hover:opacity-90" onClick={handleHomeClick}>Home</Link>
+              <Link to="/" className="text-white no-underline font-medium hover:underline" onClick={handleHomeClick}>Home</Link>
             </li>
             <li>
-              <Link to="/#about" className="text-white no-underline font-medium hover:opacity-90">About us</Link>
+              <Link to="/#about" className="text-white no-underline font-medium hover:underline">About us</Link>
             </li>
             <li>
-              <Link to="/login" className="text-white no-underline font-medium hover:opacity-90">Login</Link>
+              <Link to="/login" className="text-white no-underline font-medium hover:underline">Login</Link>
             </li>
             <li>
-              <Link to="/signup" className="text-white no-underline font-medium hover:opacity-90">Signup</Link>
+              <Link to="/signup" className="text-white no-underline font-medium hover:underline">Signup</Link>
             </li>
             <li>
-              <Link to="/#contact" className="text-white no-underline font-medium hover:opacity-90">Contact us</Link>
+              <Link to="/#contact" className="text-white no-underline font-medium hover:underline">Contact us</Link>
             </li>
           </ul>
         </nav>
 
         {/* Desktop Verify */}
         <div className="hidden md:block">
-          <Link to="/verify" className="bg-white text-[var(--color-primary-violet)] border-none rounded-full px-4 py-2 font-semibold no-underline inline-block hover:opacity-95" onClick={closeMenu}>Verify</Link>
+          <Link to="/verify" className="bg-white text-(--color-primary-violet) border-2 border-white rounded-lg px-4 py-2 font-semibold no-underline inline-block transition-colors hover:bg-(--color-primary-violet) hover:text-white" onClick={closeMenu}>Verify</Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -71,24 +71,24 @@ export default function Navbar() {
           <nav aria-label="Primary" onClick={closeMenu}>
             <ul className="flex flex-col gap-3 m-0 p-0 list-none">
               <li>
-                <Link to="/" className="text-white no-underline font-medium hover:opacity-90" onClick={handleHomeClick}>Home</Link>
+                <Link to="/" className="text-white no-underline font-medium hover:underline" onClick={handleHomeClick}>Home</Link>
               </li>
               <li>
-                <Link to="/#about" className="text-white no-underline font-medium hover:opacity-90">About us</Link>
+                <Link to="/#about" className="text-white no-underline font-medium hover:underline">About us</Link>
               </li>
               <li>
-                <Link to="/login" className="text-white no-underline font-medium hover:opacity-90">Login</Link>
+                <Link to="/login" className="text-white no-underline font-medium hover:underline">Login</Link>
               </li>
               <li>
-                <Link to="/signup" className="text-white no-underline font-medium hover:opacity-90">Signup</Link>
+                <Link to="/signup" className="text-white no-underline font-medium hover:underline">Signup</Link>
               </li>
               <li>
-                <Link to="/#contact" className="text-white no-underline font-medium hover:opacity-90">Contact us</Link>
+                <Link to="/#contact" className="text-white no-underline font-medium hover:underline">Contact us</Link>
               </li>
             </ul>
           </nav>
           <div className="mt-3">
-            <Link to="/verify" className="bg-white text-[var(--color-primary-violet)] border-none rounded-full px-4 py-2 font-semibold no-underline inline-block hover:opacity-95" onClick={closeMenu}>Verify</Link>
+            <Link to="/verify" className="bg-white text-(--color-primary-violet) border-2 border-white rounded-lg px-4 py-2 font-semibold no-underline inline-block transition-colors hover:bg-(--color-primary-violet) hover:text-white" onClick={closeMenu}>Verify</Link>
           </div>
         </div>
       )}

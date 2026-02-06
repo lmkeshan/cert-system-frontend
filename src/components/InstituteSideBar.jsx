@@ -41,9 +41,13 @@ const Sidebar = ({ closeMenu }) => {
       </nav>
 
       {/* Logout Footer */}
-      <button className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg flex justify-center items-center gap-2 font-bold mb-4 border border-white/20 transition-colors">
+      <NavLink
+        to="/signup"
+        onClick={closeMenu}
+        className="w-full bg-white/10 hover:bg-white/20 py-3 rounded-lg flex justify-center items-center gap-2 font-bold mb-4 border border-white/20 transition-colors"
+      >
         Logout
-      </button>
+      </NavLink>
     </div>
   );
 };

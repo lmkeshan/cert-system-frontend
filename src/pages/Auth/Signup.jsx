@@ -1,10 +1,18 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import backgroundImage from '../../assets/images/background.png'
 import studentImage from '../../assets/images/studentSignup.png'
 import instituteImage from '../../assets/images/instituteSignup.png'
+import logo from '../../assets/images/logo.png'
 
 export default function Signup() {
-  const [userType, setUserType] = useState('student')
+  const location = useLocation()
+  const getRoleFromSearch = (search) => {
+    const role = new URLSearchParams(search).get('role')
+    return role === 'student' || role === 'institute' ? role : null
+  }
+
+  const [userType, setUserType] = useState(() => getRoleFromSearch(location.search) ?? 'student')
   const [formData, setFormData] = useState({
     // Student fields
     firstName: '',
@@ -39,7 +47,9 @@ export default function Signup() {
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
-          <h1 className="text-xl md:text-2xl font-bold text-white">CertiChain</h1>
+          <Link to="/" aria-label="Homepage" className="inline-block w-35 h-9">
+            <img src={logo} alt="CertiChain logo" className="w-full h-full object-contain" />
+          </Link>
           <div className="flex items-center gap-4 md:gap-8">
             <a
               href="/login"

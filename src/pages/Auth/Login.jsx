@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import backgroundImage from '../../assets/images/background.png'
 import studentImage from '../../assets/images/studentLogin.png'
 import instituteImage from '../../assets/images/instituteLogin.png'
+import logo from '../../assets/images/logo.png'
 
 export default function Login() {
   const [userType, setUserType] = useState('student')
@@ -21,11 +23,13 @@ export default function Login() {
   }
 
   return (
-    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }} className="min-h-screen bg-gray-50">
+    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }} className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar placeholder */}
-      <nav className="bg-gradient-primary px-3 md:px-4 py-3">
+      <nav className="bg-gradient-primary px-3 md:px-4 py-3 shrink-0">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
-          <h1 className="text-xl md:text-2xl font-bold text-white">CertiChain</h1>
+          <Link to="/" aria-label="Homepage" className="inline-block w-35 h-9">
+            <img src={logo} alt="CertiChain logo" className="w-full h-full object-contain" />
+          </Link>
           <div className="flex items-center gap-4 md:gap-8">
             <a
               href="/signup"
@@ -40,7 +44,7 @@ export default function Login() {
         </div>
       </nav>
 
-      <div className="min-h-screen flex items-start justify-center pt-10 pb-8 px-4">
+      <div className="flex-1 flex items-start justify-center px-4 overflow-auto pt-6">
         <div className="w-full max-w-6xl">
           {/* Role Toggle */}
           <div className="flex justify-center mb-8">
@@ -70,9 +74,9 @@ export default function Login() {
 
           {/* Student Login Form */}
           {userType === 'student' && (
-            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
+            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none max-w-4xl mx-auto min-h-96">
               {/* Right Side - Form */}
-              <div className="flex-1">
+              <div className="flex-0.85">
                 <form onSubmit={handleSubmit} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
@@ -125,7 +129,7 @@ export default function Login() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-6">Welcome to Student Portal</p>
                     <p className="text-gray-600 text-sm mb-8">Login to access your account!</p>
-                    <img src={studentImage} alt="Student" className="w-full h-auto" />
+                    <img src={studentImage} alt="Student" className="w-96 h-auto" />
                   </div>
                 </div>
               </div>
@@ -134,7 +138,7 @@ export default function Login() {
 
           {/* Institute Login Form */}
           {userType === 'institute' && (
-            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
+            <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none max-w-4xl mx-auto min-h-112.5">
               {/* Right Side - Image - Desktop only */}
               <div className="hidden lg:flex flex-1">
                 <div className="bg-purple-100 p-8 w-full flex items-center justify-center h-full">
@@ -144,13 +148,13 @@ export default function Login() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-2">Welcome to Institution Portal</p>
                     <p className="text-gray-600 text-sm mb-8">Login to manage your certificates.</p>
-                    <img src={instituteImage} alt="Institute" className="w-full h-auto" />
+                    <img src={instituteImage} alt="Institute" className="w-96 h-auto" />
                   </div>
                 </div>
               </div>
 
               {/* Left Side - Form */}
-              <div className="flex-1">
+              <div className="flex-0.85">
                 <form onSubmit={handleSubmit} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
