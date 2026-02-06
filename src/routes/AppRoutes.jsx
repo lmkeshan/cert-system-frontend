@@ -33,6 +33,9 @@ export default function AppRoutes() {
       </Route>
 
       <Route path="/studentportfolio" element={<ProtectedStudentRoute><StudentPortfolio /></ProtectedStudentRoute>} />
+      
+      {/* Public Portfolio Route */}
+      <Route path="/portfolio/:userId" element={<StudentPortfolio />} />
 
       <Route path="/institute" element={<ProtectedInstituteRoute><InstituteLayout /></ProtectedInstituteRoute>}>
         <Route index element={<Navigate to="dashboard" replace />} />

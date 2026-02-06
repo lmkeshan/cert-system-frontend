@@ -2,7 +2,7 @@
 
 **Version:** 2.0  
 **Status:** Production Ready  
-**Last Updated:** February 5, 2026  
+**Last Updated:** February 6, 2026  
 **Base URL:** `http://localhost:3001`
 
 ---
@@ -235,7 +235,13 @@ Authorization: Bearer <token>
   "student": {
     "userId": "STU123456789",
     "full_name": "John Doe",
-    "email": "john@example.com"
+    "email": "john@example.com",
+    "gender": "Male",
+    "birthdate": "2000-01-15",
+    "isPortfolioPublic": true,
+    "profile_photo_url": "/uploads/students/photos/profile_photo-123.png",
+    "cv_url": "/uploads/students/cvs/cv-123.pdf",
+    "github_url": "https://github.com/johndoe"
   },
   "certificates": [{...}],
   "statistics": {
@@ -316,6 +322,70 @@ Authorization: Bearer <token>
   "message": "✅ Certificate verified on blockchain!"
 }
 ```
+
+---
+
+### 8. Update Portfolio Visibility
+**PATCH** `/api/student/portfolio/visibility`  
+**Auth:** Required
+
+**Request:**
+```json
+{
+  "isPublic": true
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Portfolio visibility updated",
+  "isPublic": true
+}
+```
+
+**Notes:**
+- Set `isPublic: true` to make portfolio public (visible at `/portfolio/:userId`)
+- Set `isPublic: false` to make portfolio private (returns 403 when accessed)
+- Default: `true` (portfolios are public by default)
+- Affects public endpoints: `/api/verify/user/:userId`
+
+---
+
+### 9. Update Profile (With Files)
+**PATCH** `/api/student/profile`  
+**Auth:** Required  
+**Content-Type:** `multipart/form-data`
+
+**Fields:**
+- `full_name`: String (optional)
+- `email`: String (optional)
+- `gender`: String (optional)
+- `birthdate`: YYYY-MM-DD (optional)
+- `github_url`: String (optional)
+- `profile_photo`: File (image, optional)
+- `cv`: File (PDF/DOC/DOCX, optional)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Profile updated successfully",
+  "student": {
+    "userId": "STU123456789",
+    "full_name": "John Doe",
+    "github_url": "https://github.com/johndoe",
+    "profile_photo_url": "/uploads/students/photos/profile_photo-123.png",
+    "cv_url": "/uploads/students/cvs/cv-123.pdf"
+  }
+}
+```
+
+**Notes:**
+- Files are limited to 5MB each
+- Images only for `profile_photo`
+- PDF/DOC/DOCX for `cv`
 
 ---
 
@@ -913,7 +983,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 2. Get Student Certificates
+### 2. Get Student Certificates & Portfolio
 **GET** `/api/verify/user/:userId`
 
 **Response (200):**
@@ -921,13 +991,39 @@ Authorization: Bearer <token>
 {
   "success": true,
   "student": {
-    "user_id": "STU123456789",
-    "full_name": "John Doe",
-    "email": "john@example.com"
+    "userId": "STU123456789",
+    "fullName": "John Doe",
+    "email": "john@example.com",
+    "profilePhotoUrl": "/uploads/students/photos/profile_photo-123.png",
+    "cvUrl": "/uploads/students/cvs/cv-123.pdf",
+    "githubUrl": "https://github.com/johndoe"
   },
-  "certificates": [...]
+  "certificates": [...],
+  "careerInsights": {
+    "careerMatches": [
+      {
+        "title": "Junior Developer",
+        "matchPercentage": 85
+      }
+    ],
+    "topSkills": ["React", "Node.js", "JavaScript"],
+    "nextSteps": [...],
+    "summary": "Professional career summary based on certificates...",
+    "generatedAt": "2026-02-05T10:30:00Z"
+  }
 }
 ```
+
+**Notes:**
+- `careerInsights` will be `null` if student hasn't generated AI insights yet
+- This endpoint powers public portfolio pages (`/portfolio/:userId`)
+- No authentication required - perfect for sharing with employers
+- Career insights are professional recommendations, safe for public sharing
+
+**Privacy Control:**
+- Returns `403` with error message `"This portfolio is private"` if student has set `isPublic: false`
+- Students can toggle portfolio visibility using `/api/student/portfolio/visibility` endpoint
+- Default: Portfolios are public (`isPublic: true`)
 
 ---
 
@@ -1087,6 +1183,10 @@ Authorization: Bearer <token>
 - ✅ Identifies relevant skills (5-7)
 - ✅ Creates actionable next steps (4-5)
 - ✅ Professional career summary
+- ✅ **Publicly accessible** via `/api/verify/user/:userId` (no auth needed)
+
+**Public Availability:**
+Once generated, career insights are automatically included in public portfolio endpoints, allowing students to share impressive AI-powered professional profiles with employers without requiring authentication.
 
 **Errors:**
 - `400`: Student has no certificates
@@ -1107,6 +1207,10 @@ Authorization: Bearer <token>
   "password_hash": "String (bcrypt)",
   "gender": "Male|Female|Other",
   "birthdate": "YYYY-MM-DD",
+  "is_portfolio_public": "Boolean (default: true)",
+  "profile_photo_url": "String or null",
+  "cv_url": "String or null",
+  "github_url": "String or null",
   "created_at": "Timestamp",
   "updated_at": "Timestamp"
 }
@@ -1702,6 +1806,11 @@ curl -X POST http://localhost:3001/api/payment/issue-with-metamask \
 
 ### Latest Updates (February 2026)
 
+**Student Dashboard Enhancements:**
+- ✅ Added `isPortfolioPublic` field to dashboard response for frontend toggle state
+- ✅ Fixed Student.findById() query to include `is_portfolio_public` column
+- ✅ Enhanced student response to include all profile fields (gender, birthdate)
+
 **Blockchain & Bulk Issuance Improvements:**
 - ✅ Enhanced bulk certificate issuance with better error handling
 - ✅ Added support for both camelCase and snake_case field names in bulk operations
@@ -1714,6 +1823,7 @@ curl -X POST http://localhost:3001/api/payment/issue-with-metamask \
 - ✅ New `blockchain_status` field in certificates table (ENUM: pending, submitted, confirmed)
 - ✅ New `blockchain_timestamp` field to track when certificate was submitted to blockchain
 - ✅ New `summary` field in career_paths table for AI-generated career summaries
+- ✅ Updated Student model to include `is_portfolio_public` in API responses
 
 **AI & Configuration:**
 - ✅ Upgraded Gemini AI from v0.1.3 to v0.24.1
@@ -1732,6 +1842,7 @@ curl -X POST http://localhost:3001/api/payment/issue-with-metamask \
 - ✅ Updated API documentation with latest endpoints
 - ✅ Enhanced troubleshooting guide
 - ✅ Updated dependency versions and descriptions
+- ✅ Added portfolio visibility field to Student data model documentation
 
 ---
 
@@ -1769,4 +1880,4 @@ curl http://localhost:3001/api/admin/blockchain/status \
 
 **Status:** ✅ Production Ready  
 **Version:** 2.0  
-**Last Updated:** February 5, 2026
+**Last Updated:** February 6, 2026
