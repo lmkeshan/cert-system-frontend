@@ -35,6 +35,7 @@ export default function AppRoutes() {
       <Route path="/studentportfolio" element={<ProtectedStudentRoute><StudentPortfolio /></ProtectedStudentRoute>} />
 
       <Route path="/institute" element={<ProtectedInstituteRoute><InstituteLayout /></ProtectedInstituteRoute>}>
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<InstituteDashboard />} />
         <Route path="issue" element={<IssueCertificate />} />
         <Route path="bulk-issue" element={<BulkIssue />} />

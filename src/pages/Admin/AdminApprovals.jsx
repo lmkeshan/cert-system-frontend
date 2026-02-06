@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import AdminHeader from '../../components/AdminHeader'
-import { adminAPI } from '../../services/api'
+import { adminAPI, getAdminToken } from '../../services/api'
 
 function ImagePlaceholder() {
   return (
@@ -86,6 +86,28 @@ export default function Pending() {
     if (!path) return null
     if (path.startsWith('http://') || path.startsWith('https://')) return path
     return `http://localhost:3001${path}`
+  }
+
+  const handleViewDoc = async (fileUrl) => {
+    if (!fileUrl) return
+    try {
+      setError(null)
+      const token = getAdminToken()
+      const response = await fetch(fileUrl, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to load document')
+      }
+
+      const blob = await response.blob()
+      const objectUrl = window.URL.createObjectURL(blob)
+      window.open(objectUrl, '_blank', 'noopener,noreferrer')
+      setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000)
+    } catch (err) {
+      setError(err.message || 'Unable to open document')
+    }
   }
 
   if (loading) {
@@ -180,7 +202,13 @@ export default function Pending() {
                   </td>
                   <td className="py-4">
                     {resolveFileUrl(institute.verification_doc_url || institute.verification_doc) ? (
-                      <a href={resolveFileUrl(institute.verification_doc_url || institute.verification_doc)} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">View Doc</a>
+                      <button
+                        type="button"
+                        onClick={() => handleViewDoc(resolveFileUrl(institute.verification_doc_url || institute.verification_doc))}
+                        className="text-blue-600 underline hover:text-blue-800"
+                      >
+                        View Doc
+                      </button>
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}
@@ -189,7 +217,7 @@ export default function Pending() {
                   <td className="py-4 space-y-2">
                     <button
                       onClick={() => handleApprove(institute.institute_id)}
-                      disabled={actionLoading[institute.institute_id] !== null}
+                      disabled={!!actionLoading[institute.institute_id]}
                       className="w-full bg-green-500 text-white px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-600 transition"
                     >
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -199,7 +227,7 @@ export default function Pending() {
                     </button>
                     <button
                       onClick={() => handleReject(institute.institute_id)}
-                      disabled={actionLoading[institute.institute_id] !== null}
+                      disabled={!!actionLoading[institute.institute_id]}
                       className="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-700 transition"
                     >
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">

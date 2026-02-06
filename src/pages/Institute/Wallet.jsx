@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Copy, CheckCircle2 } from "lucide-react";
+import { universityAPI, paymentAPI } from "../../services/api";
+import { useMetaMaskContext } from "../../context/MetaMaskContext";
+import MetaMaskGuard from "../../components/MetaMaskGuard";
 
 const WalletPage = () => {
   const [walletData, setWalletData] = useState({
@@ -15,25 +18,35 @@ const WalletPage = () => {
   const [copied, setCopied] = useState(false);
   const [depositing, setDepositing] = useState(false);
   
-  // MetaMask integration
+  // MetaMask integration from global context
   const { 
     connected: metamaskConnected, 
     address: metamaskAddress, 
     balance: metamaskBalance,
-    connect: connectMetaMask, 
     deposit: depositToContract,
     loading: metamaskLoading,
     error: metamaskError
-  } = useMetaMask();
+  } = useMetaMaskContext();
 
   useEffect(() => {
-    loadWalletData();
-  }, []);
+    // Only load wallet data if MetaMask is connected
+    if (metamaskConnected) {
+      loadWalletData();
+    } else {
+      setLoading(false);
+    }
+  }, [metamaskConnected]);
 
   const loadWalletData = async () => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Safety check: only proceed if MetaMask is connected
+      if (!metamaskConnected) {
+        setLoading(false);
+        return;
+      }
       
       // Step 1: Get profile to get wallet address
       const profileResponse = await universityAPI.getProfile();
@@ -159,7 +172,8 @@ const WalletPage = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
+    <MetaMaskGuard pageTitle="Wallet & Balance">
+      <div className="max-w-5xl mx-auto space-y-5 animate-in fade-in duration-500 pb-10">
       {/* 1. Header Banner - Increased Height & Padding */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="text-3xl bg-orange-50 p-3 rounded-xl flex items-center justify-center shrink-0">
@@ -177,6 +191,21 @@ const WalletPage = () => {
         </div>
       </div>
 
+      {/* Error Messages */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          <p className="font-semibold">Error</p>
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      {metamaskError && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-orange-700">
+          <p className="font-semibold">MetaMask Error</p>
+          <p className="text-sm">{metamaskError}</p>
+        </div>
+      )}
+
       {/* 2. Current Balance Gradient Card - Slimmer & Smaller Font */}
       <div className="bg-gradient-to-r from-[#9366E4] to-[#7C3AED] rounded-2xl p-5 md:p-6 text-white shadow-lg relative overflow-hidden">
         <div className="relative z-10 flex flex-col items-center md:items-start">
@@ -185,7 +214,7 @@ const WalletPage = () => {
           </p>
           <div className="flex items-baseline gap-2">
             <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-              0.573
+              {walletData.balance}
             </h3>
             <span className="text-[10px] md:text-xs font-bold opacity-70 uppercase">
               POL
@@ -203,11 +232,14 @@ const WalletPage = () => {
               Wallet Address
             </h4>
             <p className="text-xs font-mono text-gray-600 break-all bg-white/40 p-2 rounded">
-              0x0000000000000000000000000000000000000000
+              {walletData.walletAddress}
             </p>
           </div>
-          <button className="bg-[#8B5CF6] text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-[#7C3AED] flex items-center gap-2 w-max h-max">
-            <Copy size={12} /> Copy Address
+          <button
+            onClick={handleCopyAddress}
+            className="bg-[#8B5CF6] text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-[#7C3AED] flex items-center gap-2 w-max h-max"
+          >
+            <Copy size={12} /> {copied ? "Copied" : "Copy Address"}
           </button>
         </div>
       </div>
@@ -222,13 +254,13 @@ const WalletPage = () => {
             <p className="text-[11px] font-bold text-gray-500 mb-1">
               Prepaid Balance
             </p>
-            <p className="text-2xl font-extrabold text-black">0.5730</p>
+            <p className="text-2xl font-extrabold text-black">{walletData.balance}</p>
           </div>
           <div className="bg-white p-4 rounded-xl border-l-4 border-blue-400 shadow-sm border border-gray-50 flex flex-col justify-center min-h-[90px]">
             <p className="text-[11px] font-bold text-gray-500 mb-1">
               Total GAS spent
             </p>
-            <p className="text-2xl font-extrabold text-black">0.0000</p>
+            <p className="text-2xl font-extrabold text-black">{walletData.gasSpent}</p>
           </div>
         </div>
       </div>
@@ -246,13 +278,47 @@ const WalletPage = () => {
           </p>
         </div>
 
-        <div className="bg-[#DCFCE7] border border-[#BBF7D0] p-2.5 rounded-lg flex items-center gap-2">
-          <CheckCircle2 size={14} className="text-green-600" />
-          <p className="text-[#15803D] font-bold text-[11px]">
-            MetaMask Status :{" "}
-            <span className="font-medium text-gray-600 ml-1">Connected</span>
-          </p>
+        <div className={`${metamaskConnected ? 'bg-[#DCFCE7] border-[#BBF7D0]' : 'bg-orange-50 border-orange-200'} border p-2.5 rounded-lg flex items-center justify-between gap-2`}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={14} className={metamaskConnected ? "text-green-600" : "text-orange-600"} />
+            <p className={`${metamaskConnected ? 'text-[#15803D]' : 'text-orange-700'} font-bold text-[11px]`}>
+              MetaMask Status :{" "}
+              <span className="font-medium text-gray-600 ml-1">
+                {metamaskConnected ? "Connected" : "Not Connected"}
+              </span>
+            </p>
+          </div>
+          {!metamaskConnected && (
+            <button
+              onClick={connectMetaMask}
+              disabled={metamaskLoading}
+              className="bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all disabled:opacity-60"
+            >
+              {metamaskLoading ? "Connecting..." : "Connect"}
+            </button>
+          )}
         </div>
+
+        {metamaskConnected && (
+          <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-purple-700 font-bold text-[10px] uppercase tracking-wide mb-1">
+                  MetaMask Wallet Balance
+                </p>
+                <p className="text-2xl font-extrabold text-purple-900">
+                  {metamaskBalance || '0.00'} <span className="text-sm font-bold text-purple-600">POL</span>
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] text-purple-600 font-medium">Connected Address</p>
+                <p className="text-[10px] font-mono text-purple-800">
+                  {metamaskAddress ? `${metamaskAddress.slice(0, 6)}...${metamaskAddress.slice(-4)}` : '-'}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <label className="block text-xs font-bold text-gray-700">
@@ -261,12 +327,29 @@ const WalletPage = () => {
           <input
             type="text"
             placeholder="0.00"
+            value={depositAmount}
+            onChange={(e) => setDepositAmount(e.target.value)}
             className="w-full p-2.5 rounded-lg border-2 border-gray-100 focus:border-[#9366E4] outline-none text-sm font-medium"
           />
+        </div>
 
-        <button className="w-full bg-[#A78BFA] hover:bg-[#8B5CF6] text-white font-bold py-3 rounded-lg text-sm shadow-md active:scale-95 transition-all">
-          Deposit POL
+        <button
+          onClick={handleDeposit}
+          disabled={depositing}
+          className="w-full bg-[#A78BFA] hover:bg-[#8B5CF6] text-white font-bold py-3 rounded-lg text-sm shadow-md active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {depositing ? "Depositing..." : "Deposit POL"}
         </button>
+
+        {message.text && (
+          <div
+            className={`text-xs font-semibold ${
+              message.type === "success" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
       </div>
 
       {/* 6. Cost Estimation - Original Blue Style with Reduced Height */}
@@ -286,7 +369,7 @@ const WalletPage = () => {
           </div>
 
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-black">0.009000</span>
+            <span className="text-2xl font-extrabold text-black">{walletData.estimatedGasCost}</span>
             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
               POL per certificate
             </span>
@@ -294,6 +377,7 @@ const WalletPage = () => {
         </div>
       </div>
     </div>
+    </MetaMaskGuard>
   );
 };
 

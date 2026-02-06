@@ -2,10 +2,20 @@ import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/InstituteSideBar';
 import Footer from '../components/Footer';
+import MetaMaskBadge from '../components/MetaMaskBadge';
+import { useMetaMaskContext } from '../context/MetaMaskContext';
 import { Menu, X } from 'lucide-react';
 
 const InstituteDashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const {
+    connected,
+    address,
+    balance,
+    loading,
+    error,
+    connect
+  } = useMetaMaskContext();
 
   return (
     <div className="flex min-h-screen bg-[#F3E8FF] font-sans">
@@ -19,9 +29,19 @@ const InstituteDashboard = () => {
         <div className="text-white font-bold text-xl flex items-center gap-1">
           certi<span className="font-extrabold italic">chain</span>
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X className="text-white" /> : <Menu className="text-white" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <MetaMaskBadge
+            connected={connected}
+            address={address}
+            balance={balance}
+            loading={loading}
+            error={error}
+            connect={connect}
+          />
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X className="text-white" /> : <Menu className="text-white" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -33,6 +53,18 @@ const InstituteDashboard = () => {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:ml-64 min-h-screen">
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center justify-end px-8 py-4 bg-white shadow-sm">
+          <MetaMaskBadge
+            connected={connected}
+            address={address}
+            balance={balance}
+            loading={loading}
+            error={error}
+            connect={connect}
+          />
+        </div>
+
         <main className="flex-1 p-4 md:p-8 mt-14 md:mt-0">
           {/* This component will render Overview.jsx or IssueCertificate.jsx based on URL */}
           <Outlet /> 

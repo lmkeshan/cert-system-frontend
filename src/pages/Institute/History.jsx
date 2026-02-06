@@ -1,24 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { universityAPI } from "../../services/api";
 
 const HistoryPage = () => {
-  const historyData = [
-    {
-      certId: "CERT123456780",
-      studentId: "STU1234567890SLYMS",
-      course: "Web Development",
-      grade: "A+",
-      date: "1/16/2026",
-      tx: "0x0000000000000000000000000",
-    },
-    {
-      certId: "CERT123456547",
-      studentId: "STU1234222890SLYMS",
-      course: "UI/UX Design",
-      grade: "B",
-      date: "1/10/2026",
-      tx: "0x0aasj00000000000000000000",
-    },
-  ];
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [historyData, setHistoryData] = useState([]);
+
+  useEffect(() => {
+    loadCertificates();
+  }, []);
+
+  const loadCertificates = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await universityAPI.getCertificates();
+      const certificates = response.data.certificates || [];
+      
+      // Transform API data to component format
+      const formattedData = certificates.map(cert => ({
+        certId: cert.certificate_id,
+        studentId: cert.student_id || cert.user_id,
+        course: cert.course || cert.course_name,
+        grade: cert.grade,
+        date: new Date(cert.issued_date).toLocaleDateString(),
+        tx: cert.blockchain_tx_hash || 'Pending',
+      }));
+      
+      setHistoryData(formattedData);
+    } catch (err) {
+      setError(err.message || 'Failed to load certificates');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-in fade-in duration-500">
@@ -46,7 +62,21 @@ const HistoryPage = () => {
         </div>
       )}
 
+      {loading && (
+        <div className="bg-white rounded-lg p-8 text-center text-gray-500">
+          <p>Loading certificates...</p>
+        </div>
+      )}
+
+      {!loading && historyData.length === 0 && !error && (
+        <div className="bg-white rounded-lg p-8 text-center text-gray-500">
+          <p className="text-lg font-semibold">No certificates issued yet</p>
+          <p className="text-sm mt-2">Start by issuing your first certificate!</p>
+        </div>
+      )}
+
       {/* Main Container */}
+      {!loading && historyData.length > 0 && (
       <div className="bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden">
         {/* DESKTOP VIEW */}
         <div className="hidden md:block overflow-x-auto p-10">
@@ -146,6 +176,7 @@ const HistoryPage = () => {
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 };

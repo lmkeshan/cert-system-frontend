@@ -1,11 +1,70 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { universityAPI, paymentAPI } from "../../services/api";
 
-const Overview = () => {
-  const stats = [
+const InstituteDashboard = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [institute, setInstitute] = useState({
+    name: '',
+    logo: ''
+  });
+  const [stats, setStats] = useState([
     { label: "Total Certificates", value: "0" },
-    { label: "Verification Status", value: "Approved" },
-    { label: "Wallet Balance", value: "0.5730" },
-  ];
+    { label: "Verification Status", value: "Loading..." },
+    { label: "Wallet Balance", value: "0.00" },
+  ]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch profile for verification status and wallet address
+      const profileResponse = await universityAPI.getProfile();
+      const profile = profileResponse.data.institute;
+      
+      // Construct full logo URL (backend returns relative path like /uploads/...)
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+      const serverUrl = baseUrl.replace('/api', ''); // Remove /api to get base server URL
+      const logoUrl = profile?.logo_url ? `${serverUrl}${profile.logo_url}` : '';
+      
+      // Fetch dashboard stats
+      const dashboardResponse = await universityAPI.getDashboard();
+      const totalCerts = dashboardResponse.data.totalCertificatesIssued || 0;
+      
+      // Fetch wallet balance
+      let walletBalance = "0.00";
+      if (profile?.wallet_address) {
+        try {
+          const balanceResponse = await paymentAPI.getBalance(profile.wallet_address);
+          walletBalance = parseFloat(balanceResponse.data?.data?.balancePol || '0').toFixed(4);
+        } catch (err) {
+          console.error('Failed to load balance:', err);
+        }
+      }
+
+      setInstitute({
+        name: profile?.institute_name || 'University',
+        logo: logoUrl
+      });
+
+      setStats([
+        { label: "Total Certificates", value: totalCerts.toString() },
+        { label: "Verification Status", value: (profile?.verification_status || "Unknown").toUpperCase() },
+        { label: "Wallet Balance", value: walletBalance },
+      ]);
+    } catch (err) {
+      setError(err.message || 'Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     /* Added pb-12 (mobile) and md:pb-20 (desktop) to push the layout footer down */
@@ -33,8 +92,30 @@ const Overview = () => {
 
       {/* 2. Welcome Message Banner */}
       <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-800">Welcome to Certificate Verification Portal</h3>
-        <p className="text-sm text-gray-400 font-medium">Issue and manage blockchain-verified certificates for your students</p>
+        {loading ? (
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gray-200 rounded-full animate-pulse"></div>
+            <div className="flex-1">
+              <div className="h-6 bg-gray-200 rounded animate-pulse mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            {institute.logo && (
+              <img 
+                src={institute.logo} 
+                alt={`${institute.name} logo`}
+                className="w-16 h-16 object-contain rounded-lg"
+              />
+            )}
+            <div>
+              <h3 className="text-lg font-bold text-gray-800">{institute.name}</h3>
+              <p className="text-sm text-gray-400 font-medium">Welcome to Certificate Verification Portal</p>
+              <p className="text-sm text-gray-400 font-medium">Issue and manage blockchain-verified certificates for your students</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 3. Metric Stats Grid */}
@@ -55,13 +136,19 @@ const Overview = () => {
         <h3 className="text-base font-bold text-gray-800 mb-3 px-1">Quick Actions</h3>
         <hr className="mb-4 border-gray-100" />
         <div className="flex flex-col md:flex-row gap-3">
-          <button className="bg-[#8B5CF6] text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
+          <button 
+            onClick={() => navigate('/institute/issue')}
+            className="bg-[#8B5CF6] text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
             Issue Single Certificate
           </button>
-          <button className="border-2 border-[#8B5CF6] text-[#8B5CF6] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-50 transition-all active:scale-95">
+          <button 
+            onClick={() => navigate('/institute/bulk-issue')}
+            className="border-2 border-[#8B5CF6] text-[#8B5CF6] px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-purple-50 transition-all active:scale-95">
             Bulk Upload CSV
           </button>
-          <button className="bg-[#9366E4] text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
+          <button 
+            onClick={() => navigate('/institute/history')}
+            className="bg-[#9366E4] text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-[#7C3AED] transition-all shadow-sm active:scale-95">
             View History
           </button>
         </div>

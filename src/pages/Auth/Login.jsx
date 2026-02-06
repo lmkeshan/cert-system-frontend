@@ -97,7 +97,10 @@ export default function Login() {
           <div className="flex justify-center mb-8">
             <div className="flex gap-4 bg-gray-200 rounded-lg p-1.5">
               <button
-                onClick={() => setUserType('student')}
+                onClick={() => {
+                  setUserType('student')
+                  setError('')
+                }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'student'
                     ? 'bg-gradient-primary text-white shadow-md'
@@ -107,7 +110,10 @@ export default function Login() {
                 Student
               </button>
               <button
-                onClick={() => setUserType('institute')}
+                onClick={() => {
+                  setUserType('institute')
+                  setError('')
+                }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'institute'
                     ? 'bg-gradient-primary text-white shadow-md'
@@ -124,7 +130,7 @@ export default function Login() {
             <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
               {/* Right Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleSubmit} className="p-8">
+                <form onSubmit={handleStudentLogin} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
                     <img src={studentImage} alt="Student" className="w-full h-auto max-w-xs" />
@@ -132,6 +138,12 @@ export default function Login() {
 
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
                   <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
+
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                      {error}
+                    </div>
+                  )}
 
                   <input
                     type="email"
@@ -205,7 +217,7 @@ export default function Login() {
 
               {/* Left Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleSubmit} className="p-8">
+                <form onSubmit={handleInstituteLogin} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
                     <img src={instituteImage} alt="Institute" className="w-full h-auto max-w-xs" />
@@ -213,6 +225,12 @@ export default function Login() {
 
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
                   <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
+
+                  {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
+                      {error}
+                    </div>
+                  )}
 
                   <input
                     type="email"

@@ -16,15 +16,15 @@ export default function Signup() {
   const [studentForm, setStudentForm] = useState({
     firstName: '',
     lastName: '',
-    userName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    gender: '',
+    birthdate: '',
   })
 
   const [instituteForm, setInstituteForm] = useState({
     institutionName: '',
-    userName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -87,7 +87,7 @@ export default function Signup() {
     setSuccessMessage('')
 
     // Validation
-    if (!studentForm.firstName || !studentForm.lastName || !studentForm.userName || !studentForm.email || !studentForm.password) {
+    if (!studentForm.firstName || !studentForm.lastName || !studentForm.email || !studentForm.password || !studentForm.gender || !studentForm.birthdate) {
       setError('All fields are required')
       return
     }
@@ -106,9 +106,10 @@ export default function Signup() {
       setLoading(true)
       const response = await authAPI.registerStudent({
         full_name: `${studentForm.firstName} ${studentForm.lastName}`,
-        userName: studentForm.userName,
         email: studentForm.email,
         password: studentForm.password,
+        gender: studentForm.gender,
+        birthdate: studentForm.birthdate,
       })
 
       setSuccessMessage('Registration successful! Redirecting...')
@@ -130,7 +131,7 @@ export default function Signup() {
     setSuccessMessage('')
 
     // Validation
-    if (!instituteForm.institutionName || !instituteForm.userName || !instituteForm.email || !instituteForm.password || !instituteForm.walletAddress) {
+    if (!instituteForm.institutionName || !instituteForm.email || !instituteForm.password || !instituteForm.walletAddress) {
       setError('All fields are required')
       return
     }
@@ -159,7 +160,6 @@ export default function Signup() {
       setLoading(true)
       const formData = new FormData()
       formData.append('institute_name', instituteForm.institutionName)
-      formData.append('userName', instituteForm.userName)
       formData.append('email', instituteForm.email)
       formData.append('password', instituteForm.password)
       formData.append('wallet_address', instituteForm.walletAddress)
@@ -286,6 +286,7 @@ export default function Signup() {
                     />
                   </div>
 
+
                   <input
                     type="email"
                     name="email"
@@ -295,6 +296,30 @@ export default function Signup() {
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <select
+                      name="gender"
+                      value={studentForm.gender}
+                      onChange={handleStudentChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+
+                    <input
+                      type="date"
+                      name="birthdate"
+                      value={studentForm.birthdate}
+                      onChange={handleStudentChange}
+                      required
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
 
                   <input
                     type="password"
@@ -374,16 +399,6 @@ export default function Signup() {
                     name="institutionName"
                     placeholder="Institution Name"
                     value={instituteForm.institutionName}
-                    onChange={handleInstituteChange}
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
-                  />
-
-                  <input
-                    type="text"
-                    name="userName"
-                    placeholder="User Name"
-                    value={instituteForm.userName}
                     onChange={handleInstituteChange}
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
