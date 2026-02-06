@@ -176,7 +176,7 @@ export default function Homepage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white rounded-3xl p-4 md:p-8">
-              <pa className="align-justify leading-relaxed text-xs md:text-base">
+              <p className="align-justify leading-relaxed text-xs md:text-base">
                 Certificates are generated using trusted platform templates and issued only by authorized institutions. Each certificate is assigned a unique ID and securely recorded on the Polygon blockchain, making it tamper-proof and instantly verifiable.
                 Institutions can issue certificates individually or in bulk by uploading CSV data, enabling fast and scalable certification. Students can manage and publish all their verified certificates in one place, while receiving career guidance insights based on their academic records.
               </p>

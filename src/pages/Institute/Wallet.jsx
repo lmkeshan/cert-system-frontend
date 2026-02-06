@@ -24,6 +24,7 @@ const WalletPage = () => {
     address: metamaskAddress, 
     balance: metamaskBalance,
     deposit: depositToContract,
+    connect: connectMetaMask,
     loading: metamaskLoading,
     error: metamaskError
   } = useMetaMaskContext();
