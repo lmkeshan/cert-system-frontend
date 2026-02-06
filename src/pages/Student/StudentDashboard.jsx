@@ -608,17 +608,6 @@ export default function StudentDashboard() {
               </p>
             </div>
 
-            {/* Share Token */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Share Token</h3>
-              <p className="text-sm text-gray-600 mb-4">Use share token below to share or generate new portfolio link. Keep it safe.</p>
-              <div className="flex gap-3">
-                <button className="bg-gray-100 text-gray-700 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-200">
-                  Generate New Token
-                </button>
-              </div>
-            </div>
-
             {/* Account Information */}
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-4">Account Information</h3>
