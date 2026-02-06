@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../../components/Footer';
+import CertificatePdfRenderer from '../../components/CertificatePdfRenderer';
 import { studentAPI } from '../../services/api';
+import { generateCertificatePdfBlob } from '../../utils/certificatePdf';
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
@@ -22,6 +24,9 @@ export default function StudentDashboard() {
   const [githubLink, setGithubLink] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState('');
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfCertificate, setPdfCertificate] = useState(null);
+  const templateRef = useRef(null);
 
   // Fetch dashboard data on mount
   useEffect(() => {
@@ -157,6 +162,56 @@ export default function StudentDashboard() {
       setTimeout(() => setProfileMessage(''), 4000);
     } finally {
       setSavingProfile(false);
+    }
+  };
+
+  const buildCertificateData = (cert) => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+    const serverUrl = baseUrl.replace('/api', '');
+
+    return {
+      certificateId: cert.certificate_id,
+      studentName: student?.full_name || cert.student_name || cert.full_name,
+      courseName: cert.certificate_title || cert.course || cert.course_name,
+      instituteName: cert.institute_name,
+      issueDate: cert.issued_date,
+      grade: cert.grade,
+      instituteLogoUrl: cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
+    };
+  };
+
+  const openCertificatePdf = async (cert) => {
+    setPdfCertificate(buildCertificateData(cert));
+
+    const waitForTemplate = async () => {
+      for (let i = 0; i < 10; i += 1) {
+        if (templateRef.current) {
+          return true;
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+      }
+      return false;
+    };
+
+    setIsGeneratingPdf(true);
+    try {
+      const ready = await waitForTemplate();
+      if (!ready) {
+        return;
+      }
+
+      const blob = await generateCertificatePdfBlob(templateRef.current);
+      if (!blob) {
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_self');
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+    } catch (error) {
+      console.error('Failed to generate certificate PDF:', error);
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -441,11 +496,12 @@ export default function StudentDashboard() {
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-3">
-                    <button className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors">
+                    <button
+                      onClick={() => openCertificatePdf(cert)}
+                      disabled={isGeneratingPdf}
+                      className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
+                    >
                       <span>📄</span> View Certificate
-                    </button>
-                    <button className="bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors">
-                      <span>📥</span> Download PDF
                     </button>
                     {cert.blockchain_tx_hash && (
                       <a 
@@ -930,6 +986,7 @@ export default function StudentDashboard() {
           </div>
         )}
       </div>
+      <CertificatePdfRenderer certificate={pdfCertificate} templateRef={templateRef} />
       <Footer />
     </div>
   );
