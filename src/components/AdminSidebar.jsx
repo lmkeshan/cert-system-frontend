@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import logo from '../assets/images/logo.png'
 
 const items = [
@@ -64,6 +64,12 @@ function BankIcon() {
 
 export default function AdminSidebar({ open, onToggle, onNavigate }) {
   const location = useLocation()
+  const navigateHook = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    navigateHook('/admin/login')
+  }
 
   return (
     <>
@@ -104,7 +110,7 @@ export default function AdminSidebar({ open, onToggle, onNavigate }) {
       </nav>
 
       <div className={`${open ? 'block' : 'hidden'} mt-auto pb-2`}>
-        <button className="w-full bg-white/20 hover:bg-white/25 transition-colors px-4 py-3 rounded-xl font-semibold">
+        <button onClick={handleLogout} className="w-full bg-white/20 hover:bg-white/25 transition-colors px-4 py-3 rounded-xl font-semibold">
           Log Out
         </button>
       </div>

@@ -51,7 +51,7 @@ export default function Homepage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 id="verifyCertificate"
-                className="bg-white text-(--color-primary-violet) border-2 border-(--color-primary-violet) rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-(--color-primary-violet) hover:text-white"
+                className="bg-white text-purple-600 border-2 border-purple-600 rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-purple-600 hover:text-white"
               >
                 Verify Certificate
               </button>
@@ -179,7 +179,7 @@ export default function Homepage() {
               <pa className="align-justify leading-relaxed text-xs md:text-base">
                 Certificates are generated using trusted platform templates and issued only by authorized institutions. Each certificate is assigned a unique ID and securely recorded on the Polygon blockchain, making it tamper-proof and instantly verifiable.
                 Institutions can issue certificates individually or in bulk by uploading CSV data, enabling fast and scalable certification. Students can manage and publish all their verified certificates in one place, while receiving career guidance insights based on their academic records.
-              </pa>
+              </p>
             </div>
             <div className="flex items-center justify-center">
               <div className="w-full max-w-80 h-48 md:max-w-130 md:h-85 rounded-3xl flex items-center justify-center text-gray-600">

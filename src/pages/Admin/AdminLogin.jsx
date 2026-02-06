@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authAPI, setAdminToken } from '../../services/api';
 
 const AdminLogin = ({ onLoginSuccess }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -29,33 +32,28 @@ const AdminLogin = ({ onLoginSuccess }) => {
     setError('');
 
     try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+      const response = await authAPI.loginAdmin({
+        username: formData.username,
+        password: formData.password,
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Login failed');
+      if (response.data?.token) {
+        setAdminToken(response.data.token);
+        if (onLoginSuccess) {
+          onLoginSuccess();
       }
-
-      const data = await response.json();
-      console.log('Login successful:', data);
-      if (onLoginSuccess) {
-        onLoginSuccess();
+        
+        // Navigate to admin dashboard
+        navigate('/admin/dashboard');
+      } else {
+        throw new Error(response.data?.message || 'Login failed');
       }
     } catch (err) {
-      setError(err.message || 'An error occurred. Please try again.');
+      setError(err.response?.data?.error || err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
-  }, [formData, error]);
+  }, [formData, error, navigate]);
 
   const handleBackToHome = useCallback(() => {
     window.location.href = '/';
