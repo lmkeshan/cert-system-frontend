@@ -10,6 +10,7 @@ export default function Login() {
   const [userType, setUserType] = useState('student')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -164,7 +165,7 @@ export default function Login() {
                   />
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="Password"
                     value={formData.password}
@@ -172,6 +173,16 @@ export default function Login() {
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
+
+                  <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    Show password
+                  </label>
 
                   <button
                     type="submit"
@@ -269,7 +280,7 @@ export default function Login() {
                   />
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="Password"
                     value={formData.password}
@@ -277,6 +288,16 @@ export default function Login() {
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
                   />
+
+                  <label className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    Show password
+                  </label>
 
                   <button
                     type="submit"

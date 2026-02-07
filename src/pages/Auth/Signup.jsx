@@ -13,6 +13,7 @@ export default function Signup() {
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [connectingWallet, setConnectingWallet] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   
   const [studentForm, setStudentForm] = useState({
     firstName: '',
@@ -340,7 +341,7 @@ export default function Signup() {
                   </div>
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="Password (min 6 characters)"
                     value={studentForm.password}
@@ -350,7 +351,7 @@ export default function Signup() {
                   />
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     placeholder="Confirm Password"
                     value={studentForm.confirmPassword}
@@ -358,6 +359,16 @@ export default function Signup() {
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
                   />
+
+                  <label className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    Show password
+                  </label>
 
                   <button
                     type="submit"
@@ -439,7 +450,7 @@ export default function Signup() {
                   />
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="password"
                     placeholder="Password (min 6 characters)"
                     value={instituteForm.password}
@@ -449,7 +460,7 @@ export default function Signup() {
                   />
 
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     placeholder="Confirm Password"
                     value={instituteForm.confirmPassword}
@@ -457,6 +468,16 @@ export default function Signup() {
                     required
                     className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
+
+                  <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    Show password
+                  </label>
 
                   <div className="mb-4">
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Wallet Address (0x...) *</label>
