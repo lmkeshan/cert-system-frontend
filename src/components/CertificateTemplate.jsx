@@ -48,7 +48,7 @@ export default function CertificateTemplate({ certificate }) {
               onError={() => setLogoError(true)}
             />
           ) : (
-            <span className="text-xs text-gray-500 text-center">Institute Logo</span>
+            <span className="certificate-placeholder">Institute Logo</span>
           )}
         </div>
         <div className="certificate-box">
