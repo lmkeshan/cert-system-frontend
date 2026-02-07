@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import studentImage from '../../assets/images/studentSignup.webp'
 import instituteImage from '../../assets/images/instituteSignup.webp'
+import logoImage from '../../assets/images/logo.webp'
 import { authAPI, setStudentToken, setUniversityToken } from '../../services/api'
 
 export default function Signup() {
@@ -187,7 +188,9 @@ export default function Signup() {
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
-          <h1 className="text-xl md:text-2xl font-bold text-white">CertiChain</h1>
+          <a href="/" className="inline-flex items-center">
+            <img src={logoImage} alt="CertiChain" className="h-7 md:h-8 w-auto" />
+          </a>
           <div className="flex items-center gap-4 md:gap-8">
             <a
               href="/login"
