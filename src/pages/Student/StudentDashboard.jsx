@@ -28,6 +28,16 @@ export default function StudentDashboard() {
   const [pdfCertificate, setPdfCertificate] = useState(null);
   const templateRef = useRef(null);
 
+  const formatDateOnly = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') {
+      return value.split('T')[0];
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return '';
+    return parsed.toISOString().split('T')[0];
+  };
+
   // Fetch dashboard data on mount
   useEffect(() => {
     fetchDashboardData();
@@ -168,6 +178,15 @@ export default function StudentDashboard() {
   const buildCertificateData = (cert) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
     const serverUrl = baseUrl.replace('/api', '');
+    const rawLogoUrl = cert.logo_url ? `${serverUrl}${cert.logo_url}` : null;
+    const isSameOriginLogo = (() => {
+      if (!rawLogoUrl) return false;
+      try {
+        return new URL(rawLogoUrl, window.location.href).origin === window.location.origin;
+      } catch {
+        return false;
+      }
+    })();
 
     return {
       certificateId: cert.certificate_id,
@@ -176,7 +195,7 @@ export default function StudentDashboard() {
       instituteName: cert.institute_name,
       issueDate: cert.issued_date,
       grade: cert.grade,
-      instituteLogoUrl: cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
+      instituteLogoUrl: isSameOriginLogo ? rawLogoUrl : null
     };
   };
 
@@ -972,7 +991,11 @@ export default function StudentDashboard() {
                     </label>
                     <input
                       type={isEditingProfile ? "date" : "text"}
-                      value={isEditingProfile ? editedProfile.birthdate : student?.birthdate || ''}
+                      value={
+                        isEditingProfile
+                          ? formatDateOnly(editedProfile.birthdate)
+                          : formatDateOnly(student?.birthdate)
+                      }
                       onChange={(e) => setEditedProfile({...editedProfile, birthdate: e.target.value})}
                       disabled={!isEditingProfile}
                       className={`w-full border border-gray-300 rounded-lg px-4 py-2 ${

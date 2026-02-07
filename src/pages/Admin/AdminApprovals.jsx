@@ -85,7 +85,9 @@ export default function Pending() {
   const resolveFileUrl = (path) => {
     if (!path) return null
     if (path.startsWith('http://') || path.startsWith('https://')) return path
-    return `http://localhost:3001${path}`
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+    const fileBaseUrl = apiBaseUrl.replace(/\/api\/?$/, '')
+    return `${fileBaseUrl}${path}`
   }
 
   const handleViewDoc = async (fileUrl) => {
@@ -93,8 +95,13 @@ export default function Pending() {
     try {
       setError(null)
       const token = getAdminToken()
+      const isSameOrigin = new URL(fileUrl, window.location.href).origin === window.location.origin
+      if (!token || !isSameOrigin) {
+        window.open(fileUrl, '_blank', 'noopener,noreferrer')
+        return
+      }
       const response = await fetch(fileUrl, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: { Authorization: `Bearer ${token}` },
       })
 
       if (!response.ok) {
@@ -106,7 +113,7 @@ export default function Pending() {
       window.open(objectUrl, '_blank', 'noopener,noreferrer')
       setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000)
     } catch (err) {
-      setError(err.message || 'Unable to open document')
+      window.open(fileUrl, '_blank', 'noopener,noreferrer')
     }
   }
 

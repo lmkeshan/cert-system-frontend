@@ -36,7 +36,14 @@ const InstituteDashboard = () => {
       
       // Fetch dashboard stats
       const dashboardResponse = await universityAPI.getDashboard();
-      const totalCerts = dashboardResponse.data.totalCertificatesIssued || 0;
+      const dashboardData = dashboardResponse.data || {};
+      const totalCerts =
+        dashboardData.totalCertificatesIssued ??
+        dashboardData.totalCertificates ??
+        dashboardData.total_certificates ??
+        dashboardData.data?.totalCertificatesIssued ??
+        dashboardData.data?.totalCertificates ??
+        0;
       
       // Fetch wallet balance
       let walletBalance = "0.00";

@@ -122,7 +122,9 @@ export default function Universities() {
   const resolveFileUrl = (path) => {
     if (!path) return null
     if (path.startsWith('http://') || path.startsWith('https://')) return path
-    return `http://localhost:3001${path}`
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+    const fileBaseUrl = apiBaseUrl.replace(/\/api\/?$/, '')
+    return `${fileBaseUrl}${path}`
   }
 
   if (loading) {

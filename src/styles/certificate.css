@@ -6,6 +6,7 @@
   padding: 64px;
   background: #ffffff url('/certificate/background.webp') center/cover no-repeat;
   font-family: "Poppins", Arial, sans-serif;
+  color: #111827;
   box-sizing: border-box;
 }
 
@@ -129,4 +130,10 @@
   width: auto;
   height: auto;
   object-fit: contain;
+}
+
+.certificate-placeholder {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
 }
