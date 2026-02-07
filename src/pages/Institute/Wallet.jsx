@@ -78,8 +78,30 @@ const WalletPage = () => {
 
       try {
         const balanceResponse = await paymentAPI.getBalance(walletAddr);
-        const balancePol = parseFloat(balanceResponse.data?.data?.balancePol || '0.00').toFixed(4);
-        const gasSpentPol = parseFloat(balanceResponse.data?.data?.gasSpentPol || '0.00').toFixed(4);
+        const balancePayload = balanceResponse.data?.data || balanceResponse.data || {};
+        const balancePolRaw =
+          balancePayload.balancePol ??
+          balancePayload.balance_pol ??
+          balancePayload.balance ??
+          '0.00';
+        const gasSpentPolRaw =
+          balancePayload.gasSpentPol ??
+          balancePayload.gas_spent_pol ??
+          balancePayload.gasSpent ??
+          balancePayload.gas_spent ??
+          null;
+        const gasSpentWeiRaw =
+          balancePayload.gasSpentWei ??
+          balancePayload.gas_spent_wei ??
+          null;
+
+        const balancePol = parseFloat(balancePolRaw || '0.00').toFixed(4);
+        let gasSpentPol = '0.0000';
+        if (gasSpentPolRaw !== null && gasSpentPolRaw !== undefined) {
+          gasSpentPol = parseFloat(gasSpentPolRaw || '0').toFixed(4);
+        } else if (gasSpentWeiRaw !== null && gasSpentWeiRaw !== undefined) {
+          gasSpentPol = (parseFloat(gasSpentWeiRaw || '0') / 1e18).toFixed(4);
+        }
 
         setWalletData({
           balance: balancePol,
