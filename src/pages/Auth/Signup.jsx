@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import backgroundImage from '../../assets/images/background.png'
-import studentImage from '../../assets/images/studentSignup.png'
-import instituteImage from '../../assets/images/instituteSignup.png'
+import studentImage from '../../assets/images/studentSignup.webp'
+import instituteImage from '../../assets/images/instituteSignup.webp'
 import { authAPI, setStudentToken, setUniversityToken } from '../../services/api'
 
 export default function Signup() {
@@ -184,7 +183,7 @@ export default function Signup() {
   }
 
   return (
-    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }} className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 bg-certi-repeat">
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
@@ -243,7 +242,13 @@ export default function Signup() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-6">New Here?</p>
                     <p className="text-gray-600 text-sm mb-8">Join now and unlock your student dashboard.</p>
-                    <img src={studentImage} alt="Student" className="w-full h-auto" />
+                    <img
+                      src={studentImage}
+                      alt="Student"
+                      className="w-full h-auto"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>
@@ -372,7 +377,13 @@ export default function Signup() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-2">Register Your Institution</p>
                     <p className="text-gray-600 text-sm mb-8">Issue, manage, and verify certificates securely.</p>
-                    <img src={instituteImage} alt="Institute" className="w-full h-auto" />
+                    <img
+                      src={instituteImage}
+                      alt="Institute"
+                      className="w-full h-auto"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>

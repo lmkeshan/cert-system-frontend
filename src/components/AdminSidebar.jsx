@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import logo from '../assets/images/logo.png'
+import logo from '../assets/images/logo.webp'
 
 const items = [
   { path: '/admin/dashboard', label: 'Dashboard', color: 'text-sky-200', icon: DashboardIcon },

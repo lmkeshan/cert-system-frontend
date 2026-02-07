@@ -2,13 +2,12 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import heroImage from "../../assets/images/hero-image.png";
-import howItWorksImage from "../../assets/images/how-it-works.png";
-import backgroundImage from "../../assets/images/background.png";
-import certificateImage from "../../assets/images/certificate.png";
-import num_1 from "../../assets/icons/num-1.png";
-import num_2 from "../../assets/icons/num-2.png";
-import num_3 from "../../assets/icons/num-3.png";
+import heroImage from "../../assets/images/hero-image.webp";
+import howItWorksImage from "../../assets/images/how-it-works.webp";
+import certificateImage from "../../assets/images/certificate.webp";
+import num_1 from "../../assets/icons/num-1.webp";
+import num_2 from "../../assets/icons/num-2.webp";
+import num_3 from "../../assets/icons/num-3.webp";
 
 
 export default function Homepage() {
@@ -23,7 +22,7 @@ export default function Homepage() {
   }, [location.hash]);
 
   return (
-    <div id="top" style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }}>
+    <div id="top" className="bg-certi-repeat">
       <Navbar />
 
       <header className="py-6 px-8 md:px-4 md:py-10 lg:py-20">
@@ -147,6 +146,8 @@ export default function Homepage() {
                 className="w-8 h-8 max-w-8 object-contain"
                 src={num_1}
                 alt="Unique ID for each Certificate"
+                loading="lazy"
+                decoding="async"
               />
               <h4 className="text-sm md:text-base lg:text-lg mb-0 text-center leading-tight">
                 Unique ID for each Certificate
@@ -157,6 +158,8 @@ export default function Homepage() {
                 className="w-8 h-8 max-w-8 object-contain"
                 src={num_2}
                 alt="Certificate Data is stored in the Block chain"
+                loading="lazy"
+                decoding="async"
               />
               <h4 className="text-sm md:text-base lg:text-lg mb-0 text-center leading-tight">
                 Certificate Data is stored in the Block chain
@@ -167,6 +170,8 @@ export default function Homepage() {
                 className="w-8 h-8 max-w-8 object-contain"
                 src={num_3}
                 alt="Verify with certificate ID"
+                loading="lazy"
+                decoding="async"
               />
               <h4 className="text-sm md:text-base lg:text-lg mb-0 text-center leading-tight">
                 Verify with certificate ID
@@ -183,9 +188,12 @@ export default function Homepage() {
             </div>
             <div className="flex items-center justify-center">
               <div className="w-full max-w-80 h-48 md:max-w-130 md:h-85 rounded-3xl flex items-center justify-center text-gray-600">
-                <img 
-                src={howItWorksImage} 
-                alt="How it works" />
+                <img
+                  src={howItWorksImage}
+                  alt="How it works"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             </div>
           </div>
@@ -227,7 +235,7 @@ export default function Homepage() {
       </section>
 
       {/* Automated Certificate Generation Section */}
-      <section id="auto-generation" className="py-8 px-8 md:px-4 md:py-16 lg:py-20" style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }}>
+      <section id="auto-generation" className="py-8 px-8 md:px-4 md:py-16 lg:py-20 bg-certi-repeat">
         <div className="max-w-312 mx-auto bg-white rounded-3xl border border-(--color-primary-violet) p-4 md:p-10 lg:p-12">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-(--color-primary-violet) mb-8">Automated Certificate Generation</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -237,6 +245,8 @@ export default function Homepage() {
                   src={certificateImage}
                   alt="Certificate preview"
                   className="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>

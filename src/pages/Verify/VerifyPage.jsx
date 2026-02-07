@@ -1,38 +1,48 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
-import verifyImage from '../../assets/images/verifyImage.png'
+import verifyImage from '../../assets/images/verifyImage.webp'
 import { verifyAPI } from '../../services/api'
+import CertificatePdfRenderer from '../../components/CertificatePdfRenderer'
+import { generateCertificatePdfBlob } from '../../utils/certificatePdf'
 
 export default function VerifyPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [certificateId, setCertificateId] = useState('')
   const [verificationResult, setVerificationResult] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+  const [pdfCertificate, setPdfCertificate] = useState(null)
+  const templateRef = useRef(null)
 
-  const handleVerify = async () => {
-    if (!certificateId.trim()) {
+  const verifyCertificateId = async (id) => {
+    if (!id || !id.trim()) {
       alert('Please enter a certificate ID')
       return
     }
 
     setIsLoading(true)
-    
+
     try {
-      const response = await verifyAPI.verifyCertificate(certificateId.trim())
-      
+      const response = await verifyAPI.verifyCertificate(id.trim())
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+      const serverUrl = baseUrl.replace('/api', '')
+      const logoUrl = response.data?.certificate?.logo_url ? `${serverUrl}${response.data.certificate.logo_url}` : null
+
       if (response.data?.certificate) {
         setVerificationResult({
           valid: true,
           certificateId: response.data.certificate.certificate_id,
           userId: response.data.certificate.user_id,
           studentName: response.data.certificate.student_name || response.data.certificate.fullName,
-          courseName: response.data.certificate.course || response.data.certificate.courseName,
+          courseName: response.data.certificate.course || response.data.certificate.courseName || response.data.certificate.course_name || response.data.certificate.certificate_title,
           instituteName: response.data.certificate.institute_name || response.data.certificate.instituteName,
           issueDate: response.data.certificate.issued_date || response.data.certificate.issueDate,
           grade: response.data.certificate.grade,
           blockchainTxHash: response.data.certificate.blockchain_tx_hash,
-          blockchainVerified: response.data.onchain?.verified || false
+          blockchainVerified: response.data.onchain?.verified || false,
+          instituteLogoUrl: logoUrl
         })
       } else {
         setVerificationResult({
@@ -49,19 +59,78 @@ export default function VerifyPage() {
     }
   }
 
+  const handleVerify = async () => {
+    await verifyCertificateId(certificateId)
+  }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleVerify()
     }
   }
 
+  useEffect(() => {
+    const paramId = searchParams.get('certificateId')
+    if (paramId) {
+      setCertificateId(paramId)
+      verifyCertificateId(paramId)
+    }
+  }, [searchParams])
+
+  const openCertificatePdf = async () => {
+    if (!verificationResult?.valid) {
+      return
+    }
+
+    setPdfCertificate({
+      certificateId: verificationResult.certificateId,
+      studentName: verificationResult.studentName,
+      courseName: verificationResult.courseName,
+      instituteName: verificationResult.instituteName,
+      issueDate: verificationResult.issueDate,
+      grade: verificationResult.grade,
+      instituteLogoUrl: verificationResult.instituteLogoUrl
+    })
+    const waitForTemplate = async () => {
+      for (let i = 0; i < 10; i += 1) {
+        if (templateRef.current) {
+          return true
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve))
+      }
+      return false
+    }
+
+    setIsGeneratingPdf(true)
+    try {
+      const ready = await waitForTemplate()
+      if (!ready) {
+        return
+      }
+
+      const blob = await generateCertificatePdfBlob(templateRef.current)
+      if (!blob) {
+        return
+      }
+
+      const url = URL.createObjectURL(blob)
+      window.open(url, '_self')
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000)
+    } catch (error) {
+      console.error('Failed to generate certificate PDF:', error)
+    } finally {
+      setIsGeneratingPdf(false)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-100 via-blue-50 to-purple-50">
-      <Navbar />
-      
-      <main className="max-w-300 mx-auto px-4 py-8 md:py-12">
-        {/* Main Container */}
-        <div className="bg-purple-200/60 rounded-3xl p-6 md:p-12 shadow-lg backdrop-blur-sm">
+    <>
+      <div className="min-h-screen bg-linear-to-br from-purple-100 via-blue-50 to-purple-50">
+        <Navbar />
+        
+        <main className="max-w-300 mx-auto px-4 py-8 md:py-12">
+          {/* Main Container */}
+          <div className="bg-purple-200/60 rounded-3xl p-6 md:p-12 shadow-lg backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">
@@ -97,10 +166,12 @@ export default function VerifyPage() {
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-3xl">
                 {/* Illustration */}
                 <div className="flex-shrink-0">
-                  <img 
-                    src={verifyImage} 
-                    alt="Certificate verification illustration" 
+                  <img
+                    src={verifyImage}
+                    alt="Certificate verification illustration"
                     className="w-48 h-48 md:w-64 md:h-64 object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <p className="text-gray-500 text-base md:text-lg text-center md:text-left">
@@ -167,7 +238,9 @@ export default function VerifyPage() {
                     {/* Action Buttons */}
                     <div className="flex flex-wrap justify-center gap-4 mt-6">
                       <button
-                        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full transition-colors flex items-center gap-2"
+                        onClick={openCertificatePdf}
+                        disabled={isGeneratingPdf}
+                        className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full transition-colors flex items-center gap-2 disabled:opacity-60"
                       >
                         <span>📄</span> View Certificate
                       </button>
@@ -214,7 +287,9 @@ export default function VerifyPage() {
             )}
           </div>
         </div>
-      </main>
-    </div>
+        </main>
+      </div>
+      <CertificatePdfRenderer certificate={pdfCertificate} templateRef={templateRef} />
+    </>
   )
 }
