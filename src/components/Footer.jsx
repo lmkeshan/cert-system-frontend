@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Footer() {
   return (
     <footer id="contact" className="bg-(--color-primary-violet) text-white py-6 px-4 text-center">
@@ -15,7 +17,7 @@ export default function Footer() {
         <p className="text-xs md:text-sm">© 2025 CertiChain. All rights reserved.</p>
 
         <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs md:text-sm">
-          <a href="#" className="hover:underline">Privacy Policy</a>
+          <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
           <span>|</span>
           <a href="#" className="hover:underline">Terms of Service</a>
         </div>

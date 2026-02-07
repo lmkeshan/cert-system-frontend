@@ -3,6 +3,7 @@ import Homepage from '../pages/Home/Homepage'
 import Login from '../pages/Auth/Login'
 import Signup from '../pages/Auth/Signup'
 import VerifyPage from '../pages/Verify/VerifyPage'
+import PrivacyPolicy from '../pages/Legal/PrivacyPolicy'
 import StudentLayout from '../layouts/StudentLayout'
 import InstituteLayout from '../layouts/InstituteLayout'
 import AdminLayout from '../layouts/AdminLayout'
@@ -26,6 +27,7 @@ export default function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify" element={<VerifyPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/admin/login" element={<AdminLogin />} />
 
       <Route path="/studentdashboard" element={<ProtectedStudentRoute><StudentLayout /></ProtectedStudentRoute>}>
