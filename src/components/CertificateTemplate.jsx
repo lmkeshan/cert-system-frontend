@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import '../styles/certificate.css'
 
@@ -15,6 +16,8 @@ const formatDate = (value) => {
 }
 
 export default function CertificateTemplate({ certificate }) {
+  const [logoError, setLogoError] = useState(false)
+
   if (!certificate) {
     return null
   }
@@ -36,8 +39,14 @@ export default function CertificateTemplate({ certificate }) {
     <div className="certificate-root">
       <div className="certificate-top">
         <div className="certificate-box">
-          {instituteLogoUrl ? (
-            <img src={instituteLogoUrl} alt={instituteName || 'Institute logo'} className="w-24 h-24 object-contain" />
+          {instituteLogoUrl && !logoError ? (
+            <img
+              src={instituteLogoUrl}
+              alt={instituteName || 'Institute logo'}
+              className="w-24 h-24 object-contain"
+              crossOrigin="anonymous"
+              onError={() => setLogoError(true)}
+            />
           ) : (
             <span className="text-xs text-gray-500 text-center">Institute Logo</span>
           )}
@@ -63,13 +72,13 @@ export default function CertificateTemplate({ certificate }) {
       </div>
 
       <div className="certificate-footer">
-        <img src="/certificate/stamp.webp" alt="Stamp" className="w-36 h-36 object-contain" loading="lazy" decoding="async" />
+        <img src="/certificate/stamp.webp" alt="Stamp" className="w-36 h-36 object-contain" />
         <div className="certificate-footer-center">
           CERTIFICATE ID : {safeCertificateId}
           <small>ISSUED : {formatDate(issueDate) || 'N/A'}</small>
         </div>
         <div className="certificate-logo-box">
-          <img src="/certificate/certificateLogo.webp" alt="Company logo" className="w-40 h-40 object-contain" loading="lazy" decoding="async" />
+          <img src="/certificate/certificateLogo.webp" alt="Company logo" className="w-40 h-40 object-contain" />
         </div>
       </div>
     </div>

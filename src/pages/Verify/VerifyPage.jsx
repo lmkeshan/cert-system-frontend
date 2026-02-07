@@ -27,8 +27,13 @@ export default function VerifyPage() {
     try {
       const response = await verifyAPI.verifyCertificate(id.trim())
       const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
-      const serverUrl = baseUrl.replace('/api', '')
-      const logoUrl = response.data?.certificate?.logo_url ? `${serverUrl}${response.data.certificate.logo_url}` : null
+      const serverUrl = baseUrl.replace(/\/api\/?$/, '')
+      const rawLogoUrl = response.data?.certificate?.logo_url
+      const logoUrl = rawLogoUrl
+        ? rawLogoUrl.startsWith('http')
+          ? rawLogoUrl
+          : `${serverUrl}${rawLogoUrl}`
+        : null
 
       if (response.data?.certificate) {
         setVerificationResult({
@@ -77,7 +82,7 @@ export default function VerifyPage() {
     }
   }, [searchParams])
 
-  const openCertificatePdf = async () => {
+  const openCertificatePdf = () => {
     if (!verificationResult?.valid) {
       return
     }
@@ -91,8 +96,18 @@ export default function VerifyPage() {
       grade: verificationResult.grade,
       instituteLogoUrl: verificationResult.instituteLogoUrl
     })
+    setIsGeneratingPdf(true)
+  }
+
+  useEffect(() => {
+    if (!pdfCertificate || !isGeneratingPdf) {
+      return
+    }
+
+    let isCancelled = false
+
     const waitForTemplate = async () => {
-      for (let i = 0; i < 10; i += 1) {
+      for (let i = 0; i < 60; i += 1) {
         if (templateRef.current) {
           return true
         }
@@ -101,27 +116,37 @@ export default function VerifyPage() {
       return false
     }
 
-    setIsGeneratingPdf(true)
-    try {
-      const ready = await waitForTemplate()
-      if (!ready) {
-        return
-      }
+    const generatePdf = async () => {
+      try {
+        const ready = await waitForTemplate()
+        if (!ready || isCancelled) {
+          return
+        }
 
-      const blob = await generateCertificatePdfBlob(templateRef.current)
-      if (!blob) {
-        return
-      }
+        const blob = await generateCertificatePdfBlob(templateRef.current)
+        if (!blob || isCancelled) {
+          return
+        }
 
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_self')
-      window.setTimeout(() => URL.revokeObjectURL(url), 30000)
-    } catch (error) {
-      console.error('Failed to generate certificate PDF:', error)
-    } finally {
-      setIsGeneratingPdf(false)
+        const url = URL.createObjectURL(blob)
+        window.location.href = url
+        window.setTimeout(() => URL.revokeObjectURL(url), 30000)
+      } catch (error) {
+        console.error('Failed to generate certificate PDF:', error)
+        alert('Failed to generate certificate PDF. Please try again.')
+      } finally {
+        if (!isCancelled) {
+          setIsGeneratingPdf(false)
+        }
+      }
     }
-  }
+
+    generatePdf()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [pdfCertificate, isGeneratingPdf])
 
   return (
     <>
