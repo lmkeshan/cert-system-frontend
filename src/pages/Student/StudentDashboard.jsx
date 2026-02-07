@@ -28,6 +28,16 @@ export default function StudentDashboard() {
   const [pdfCertificate, setPdfCertificate] = useState(null);
   const templateRef = useRef(null);
 
+  const formatDateOnly = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') {
+      return value.split('T')[0];
+    }
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return '';
+    return parsed.toISOString().split('T')[0];
+  };
+
   // Fetch dashboard data on mount
   useEffect(() => {
     fetchDashboardData();
@@ -972,7 +982,11 @@ export default function StudentDashboard() {
                     </label>
                     <input
                       type={isEditingProfile ? "date" : "text"}
-                      value={isEditingProfile ? editedProfile.birthdate : student?.birthdate || ''}
+                      value={
+                        isEditingProfile
+                          ? formatDateOnly(editedProfile.birthdate)
+                          : formatDateOnly(student?.birthdate)
+                      }
                       onChange={(e) => setEditedProfile({...editedProfile, birthdate: e.target.value})}
                       disabled={!isEditingProfile}
                       className={`w-full border border-gray-300 rounded-lg px-4 py-2 ${
