@@ -260,6 +260,21 @@ export default function VerifyPage() {
                       </div>
                     )}
 
+                    {/* Network hint card */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                      <p className="text-sm font-semibold text-blue-900 mb-2">Network hint</p>
+                      <div className="text-xs text-blue-900/80 space-y-1">
+                        <p><span className="font-semibold">Network:</span> Polygon Amoy (Testnet)</p>
+                        <p><span className="font-semibold">Chain ID:</span> 80002</p>
+                        <p><span className="font-semibold">Explorer:</span> amoy.polygonscan.com</p>
+                        {verificationResult.blockchainTxHash ? (
+                          <p className="text-blue-800/80">Use the TX hash above to inspect the on-chain record.</p>
+                        ) : (
+                          <p className="text-blue-800/80">No on-chain hash available for this certificate.</p>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Action Buttons */}
                     <div className="flex flex-wrap justify-center gap-4 mt-6">
                       <button

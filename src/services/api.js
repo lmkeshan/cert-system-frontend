@@ -135,6 +135,9 @@ export const universityAPI = {
   
   getCertificates: () => 
     api.get('/university/certificates'),
+
+  searchStudents: (query, limit = 10) =>
+    api.get(`/university/students/search?query=${encodeURIComponent(query)}&limit=${limit}`),
 };
 
 // ==================== ADMIN APIs ====================
