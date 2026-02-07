@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
-import verifyImage from '../../assets/images/verifyImage.png'
+import verifyImage from '../../assets/images/verifyImage.webp'
 import { verifyAPI } from '../../services/api'
 import CertificatePdfRenderer from '../../components/CertificatePdfRenderer'
 import { generateCertificatePdfBlob } from '../../utils/certificatePdf'
@@ -166,10 +166,12 @@ export default function VerifyPage() {
               <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 max-w-3xl">
                 {/* Illustration */}
                 <div className="flex-shrink-0">
-                  <img 
-                    src={verifyImage} 
-                    alt="Certificate verification illustration" 
+                  <img
+                    src={verifyImage}
+                    alt="Certificate verification illustration"
                     className="w-48 h-48 md:w-64 md:h-64 object-contain"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <p className="text-gray-500 text-base md:text-lg text-center md:text-left">

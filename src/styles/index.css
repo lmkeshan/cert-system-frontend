@@ -12,3 +12,8 @@
 .bg-gradient-primary {
 	background: linear-gradient(to bottom, var(--color-primary-purple), var(--color-primary-violet));
 }
+
+.bg-certi-repeat {
+	background-image: url("../assets/images/background.webp");
+	background-repeat: repeat;
+}

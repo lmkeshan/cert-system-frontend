@@ -63,13 +63,13 @@ export default function CertificateTemplate({ certificate }) {
       </div>
 
       <div className="certificate-footer">
-        <img src="/certificate/stamp.png" alt="Stamp" className="w-36 h-36 object-contain" />
+        <img src="/certificate/stamp.webp" alt="Stamp" className="w-36 h-36 object-contain" loading="lazy" decoding="async" />
         <div className="certificate-footer-center">
           CERTIFICATE ID : {safeCertificateId}
           <small>ISSUED : {formatDate(issueDate) || 'N/A'}</small>
         </div>
         <div className="certificate-logo-box">
-          <img src="/certificate/certificateLogo.png" alt="Company logo" className="w-40 h-40 object-contain" />
+          <img src="/certificate/certificateLogo.webp" alt="Company logo" className="w-40 h-40 object-contain" loading="lazy" decoding="async" />
         </div>
       </div>
     </div>

@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import backgroundImage from '../../assets/images/background.png'
-import studentImage from '../../assets/images/studentLogin.png'
-import instituteImage from '../../assets/images/instituteLogin.png'
+import studentImage from '../../assets/images/studentLogin.webp'
+import instituteImage from '../../assets/images/instituteLogin.webp'
 import { authAPI, setStudentToken, setUniversityToken } from '../../services/api'
 
 export default function Login() {
@@ -72,7 +71,7 @@ export default function Login() {
   }
 
   return (
-    <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'repeat' }} className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 bg-certi-repeat">
       {/* Navbar placeholder */}
       <nav className="bg-gradient-primary px-3 md:px-4 py-3">
         <div className="max-w-312 mx-auto flex justify-between items-center gap-3">
@@ -133,7 +132,13 @@ export default function Login() {
                 <form onSubmit={handleStudentLogin} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
-                    <img src={studentImage} alt="Student" className="w-full h-auto max-w-xs" />
+                    <img
+                      src={studentImage}
+                      alt="Student"
+                      className="w-full h-auto max-w-xs"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
 
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
@@ -191,7 +196,13 @@ export default function Login() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-6">Welcome Back!</p>
                     <p className="text-gray-600 text-sm mb-8">Login to access your portfolio and certificates</p>
-                    <img src={studentImage} alt="Student" className="w-full h-auto" />
+                    <img
+                      src={studentImage}
+                      alt="Student"
+                      className="w-full h-auto"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>
@@ -210,7 +221,13 @@ export default function Login() {
                     </h2>
                     <p className="text-2xl text-gray-700 font-semibold mb-2">Welcome to Institution Portal</p>
                     <p className="text-gray-600 text-sm mb-8">Login to manage your certificates and students</p>
-                    <img src={instituteImage} alt="Institute" className="w-full h-auto" />
+                    <img
+                      src={instituteImage}
+                      alt="Institute"
+                      className="w-full h-auto"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
                 </div>
               </div>
@@ -220,7 +237,13 @@ export default function Login() {
                 <form onSubmit={handleInstituteLogin} className="p-8">
                   {/* Image inside form - Mobile only */}
                   <div className="lg:hidden flex items-center justify-center mb-6">
-                    <img src={instituteImage} alt="Institute" className="w-full h-auto max-w-xs" />
+                    <img
+                      src={instituteImage}
+                      alt="Institute"
+                      className="w-full h-auto max-w-xs"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </div>
 
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>

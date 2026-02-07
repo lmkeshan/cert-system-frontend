@@ -4,7 +4,7 @@
   border: 1px solid #d1d5db;
   position: relative;
   padding: 64px;
-  background: #ffffff url('/certificate/background.png') center/cover no-repeat;
+  background: #ffffff url('/certificate/background.webp') center/cover no-repeat;
   font-family: "Poppins", Arial, sans-serif;
   box-sizing: border-box;
 }

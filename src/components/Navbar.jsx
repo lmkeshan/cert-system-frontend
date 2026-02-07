@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../assets/images/logo.png'
+import logo from '../assets/images/logo.webp'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
