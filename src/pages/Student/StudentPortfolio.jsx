@@ -155,7 +155,13 @@ export default function StudentPortfolio() {
 
   const buildCertificateData = (cert) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
-    const serverUrl = baseUrl.replace('/api', '')
+    const serverUrl = baseUrl.replace(/\/api\/?$/, '')
+    const rawLogoUrl = cert.logo_url || null
+    const logoUrl = rawLogoUrl
+      ? rawLogoUrl.startsWith('http')
+        ? rawLogoUrl
+        : `${serverUrl}${rawLogoUrl}`
+      : null
 
     return {
       certificateId: cert.certificate_id,
@@ -164,7 +170,7 @@ export default function StudentPortfolio() {
       instituteName: cert.institute_name,
       issueDate: cert.issued_date,
       grade: cert.grade,
-      instituteLogoUrl: cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
+      instituteLogoUrl: logoUrl
     }
   }
 
