@@ -26,7 +26,7 @@ export default function StudentHeader() {
             to="/studentportfolio" 
             className="text-white no-underline font-medium hover:opacity-90 transition-opacity"
           >
-            My_Portfolio
+            My Portfolio
           </Link>
           <button
             onClick={handleLogout}

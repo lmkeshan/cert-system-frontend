@@ -132,9 +132,9 @@ export default function Login() {
             <div className="flex flex-col lg:flex-row-reverse items-stretch gap-0 bg-white lg:rounded-3xl lg:shadow-lg overflow-hidden border lg:border-0 border-gray-300 lg:border-none">
               {/* Right Side - Form */}
               <div className="flex-1">
-                <form onSubmit={handleStudentLogin} className="p-8">
+                <form onSubmit={handleStudentLogin} className="p-7">
                   {/* Image inside form - Mobile only */}
-                  <div className="lg:hidden flex items-center justify-center mb-6">
+                  <div className="lg:hidden flex items-center justify-center mb-4">
                     <img
                       src={studentImage}
                       alt="Student"
@@ -145,7 +145,7 @@ export default function Login() {
                   </div>
 
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Login</h2>
-                  <p className="text-gray-600 text-sm mb-6">Enter Your account details</p>
+                  <p className="text-gray-600 text-sm mb-5">Enter Your account details</p>
 
                   {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
@@ -160,7 +160,7 @@ export default function Login() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-3 focus:outline-none focus:border-purple-500"
                   />
 
                   <input
@@ -170,18 +170,18 @@ export default function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-6 focus:outline-none focus:border-purple-500"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 focus:outline-none focus:border-purple-500"
                   />
 
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-primary text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Logging in...' : 'Log In'}
                   </button>
 
-                  <div className="text-center text-sm mb-6">
+                  <div className="text-center text-sm mb-4">
                     <span className="text-gray-600">Don't have an account? </span>
                     <a href="/signup" className="text-purple-600 hover:underline font-semibold">
                       Sign Up
@@ -192,17 +192,17 @@ export default function Login() {
 
               {/* Left Side - Image - Desktop only */}
               <div className="hidden lg:flex flex-1">
-                <div className="bg-purple-100 p-8 w-full flex items-center justify-center h-full">
+                <div className="bg-purple-100 p-7 w-full flex items-center justify-center h-full">
                   <div className="text-left ml-8">
                     <h2 className="text-5xl font-bold text-black mb-2">
                       certi<span className="text-purple-600">chain</span>
                     </h2>
-                    <p className="text-2xl text-gray-700 font-semibold mb-6">Welcome Back!</p>
-                    <p className="text-gray-600 text-sm mb-8">Login to access your portfolio and certificates</p>
+                    <p className="text-2xl text-gray-700 font-semibold mb-4">Welcome Back!</p>
+                    <p className="text-gray-600 text-sm mb-6">Login to access your portfolio and certificates</p>
                     <img
                       src={studentImage}
                       alt="Student"
-                      className="w-full h-auto"
+                      className="w-full h-auto max-h-72"
                       loading="lazy"
                       decoding="async"
                     />
