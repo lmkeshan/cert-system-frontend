@@ -95,12 +95,13 @@ export default function Pending() {
     try {
       setError(null)
       const token = getAdminToken()
-      if (!token) {
+      const isSameOrigin = new URL(fileUrl, window.location.href).origin === window.location.origin
+      if (!token || !isSameOrigin) {
         window.open(fileUrl, '_blank', 'noopener,noreferrer')
         return
       }
       const response = await fetch(fileUrl, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: { Authorization: `Bearer ${token}` },
       })
 
       if (!response.ok) {
@@ -113,7 +114,6 @@ export default function Pending() {
       setTimeout(() => window.URL.revokeObjectURL(objectUrl), 1000)
     } catch (err) {
       window.open(fileUrl, '_blank', 'noopener,noreferrer')
-      setError('Unable to fetch the document with auth. If it does not open, check backend CORS and file access settings.')
     }
   }
 
