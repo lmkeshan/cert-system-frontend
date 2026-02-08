@@ -30,26 +30,26 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-6" aria-label="Primary">
           <ul className="flex items-center gap-5 m-0 p-0 list-none" onClick={closeMenu}>
             <li>
-              <Link to="/" className="text-white no-underline font-medium hover:underline" onClick={handleHomeClick}>Home</Link>
+              <Link to="/" className="text-white no-underline font-medium hover:underline" onClick={handleHomeClick}>HOME</Link>
             </li>
             <li>
-              <Link to="/#about" className="text-white no-underline font-medium hover:underline">About us</Link>
+              <Link to="/#about" className="text-white no-underline font-medium hover:underline">ABOUT US</Link>
             </li>
             <li>
-              <Link to="/login" className="text-white no-underline font-medium hover:underline">Login</Link>
+              <Link to="/login" className="text-white no-underline font-medium hover:underline">LOGIN</Link>
             </li>
             <li>
-              <Link to="/signup" className="text-white no-underline font-medium hover:underline">Signup</Link>
+              <Link to="/signup" className="text-white no-underline font-medium hover:underline">SIGNUP</Link>
             </li>
             <li>
-              <Link to="/#contact" className="text-white no-underline font-medium hover:underline">Contact us</Link>
+              <Link to="/#contact" className="text-white no-underline font-medium hover:underline">CONTACT US</Link>
             </li>
           </ul>
         </nav>
 
         {/* Desktop Verify */}
         <div className="hidden md:block">
-          <Link to="/verify" className="bg-white text-(--color-primary-violet) border-2 border-white rounded-lg px-4 py-2 font-semibold no-underline inline-block transition-colors hover:bg-(--color-primary-violet) hover:text-white" onClick={closeMenu}>Verify</Link>
+          <Link to="/verify" className="bg-white text-(--color-primary-violet) border-2 border-white rounded-lg px-4 py-2 font-semibold no-underline inline-block transition-colors hover:bg-(--color-primary-violet) hover:text-white" onClick={closeMenu}>VERIFY</Link>
         </div>
 
         {/* Mobile Hamburger */}
