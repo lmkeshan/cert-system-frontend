@@ -26,13 +26,13 @@ export default function StudentHeader() {
             to="/studentportfolio" 
             className="text-white no-underline font-medium hover:opacity-90 transition-opacity"
           >
-            My Portfolio
+            MY PORTFOLIO
           </Link>
           <button
             onClick={handleLogout}
-            className="bg-white text-purple-600 font-semibold px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="bg-white text-purple-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            Log Out
+            LOG OUT
           </button>
         </nav>
       </div>

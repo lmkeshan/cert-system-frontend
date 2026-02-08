@@ -85,14 +85,14 @@ export default function Login() {
               href="/signup"
               className="inline-flex items-center justify-center text-white border border-white/70 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold hover:bg-white hover:text-gray-900 transition-colors"
             >
-              Sign Up
+              SIGNUP
             </a>
             <button
               type="button"
               onClick={() => navigate('/verify')}
               className="inline-flex items-center justify-center bg-white text-gray-900 rounded-lg px-2 md:px-3 py-1 md:py-1.5 text-sm md:text-base font-semibold border border-white/70 hover:bg-transparent hover:text-white transition-colors"
             >
-              Verify
+              VERIFY
             </button>
           </div>
         </div>
