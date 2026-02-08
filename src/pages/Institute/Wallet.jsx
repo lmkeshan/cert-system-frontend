@@ -9,7 +9,9 @@ const WalletPage = () => {
     balance: '0.00',
     gasSpent: '0.00',
     walletAddress: '-',
-    estimatedGasCost: '0.009000'
+    estimatedGasCost: '0.009000',
+    totalCertificates: 0,
+    totalGasSpentEstimate: '0.0000'
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -63,7 +65,23 @@ const WalletPage = () => {
         return;
       }
 
-      // Step 2: Get balance from payment/balance endpoint using wallet address
+      // Step 2: Get dashboard stats for total certificates
+      let totalCertificates = 0;
+      try {
+        const dashboardResponse = await universityAPI.getDashboard();
+        const dashboardData = dashboardResponse.data || {};
+        totalCertificates =
+          dashboardData.totalCertificatesIssued ??
+          dashboardData.totalCertificates ??
+          dashboardData.total_certificates ??
+          dashboardData.data?.totalCertificatesIssued ??
+          dashboardData.data?.totalCertificates ??
+          0;
+      } catch {
+        totalCertificates = 0;
+      }
+
+      // Step 3: Get balance from payment/balance endpoint using wallet address
       let estimatedGasCost = '0.009000'
 
       try {
@@ -75,6 +93,10 @@ const WalletPage = () => {
       } catch {
         estimatedGasCost = '0.009000'
       }
+
+      const totalGasSpentEstimate = (
+        parseFloat(estimatedGasCost || '0') * Number(totalCertificates || 0)
+      ).toFixed(4);
 
       try {
         const balanceResponse = await paymentAPI.getBalance(walletAddr);
@@ -107,7 +129,9 @@ const WalletPage = () => {
           balance: balancePol,
           gasSpent: gasSpentPol,
           walletAddress: walletAddr,
-          estimatedGasCost
+          estimatedGasCost,
+          totalCertificates: Number(totalCertificates || 0),
+          totalGasSpentEstimate
         });
       } catch (balanceErr) {
         // Fallback: show wallet address but unable to load balance
@@ -116,7 +140,9 @@ const WalletPage = () => {
           walletAddress: walletAddr,
           balance: '0.00',
           gasSpent: '0.00',
-          estimatedGasCost
+          estimatedGasCost,
+          totalCertificates: Number(totalCertificates || 0),
+          totalGasSpentEstimate
         }));
         setError('Unable to load balance information. Please try again later.');
       }
@@ -281,9 +307,12 @@ const WalletPage = () => {
           </div>
           <div className="bg-white p-4 rounded-xl border-l-4 border-blue-400 shadow-sm border border-gray-50 flex flex-col justify-center min-h-[90px]">
             <p className="text-[11px] font-bold text-gray-500 mb-1">
-              Total GAS spent
+              Total GAS spent (estimate)
             </p>
-            <p className="text-2xl font-extrabold text-black">{walletData.gasSpent}</p>
+            <p className="text-2xl font-extrabold text-black">{walletData.totalGasSpentEstimate}</p>
+            <p className="text-[10px] text-gray-500 font-semibold mt-1">
+              {walletData.totalCertificates} certs × {walletData.estimatedGasCost} POL
+            </p>
           </div>
         </div>
       </div>

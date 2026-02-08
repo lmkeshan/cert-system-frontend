@@ -76,6 +76,7 @@ export default function CertificateTemplate({ certificate }) {
         <div className="certificate-footer-center">
           CERTIFICATE ID : {safeCertificateId}
           <small>ISSUED : {formatDate(issueDate) || 'N/A'}</small>
+          <small className="certificate-footer-link">{verifyUrl}</small>
         </div>
         <div className="certificate-logo-box">
           <img src="/certificate/certificateLogo.webp" alt="Company logo" className="w-40 h-40 object-contain" />

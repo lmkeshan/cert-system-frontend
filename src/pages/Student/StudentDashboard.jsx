@@ -186,16 +186,13 @@ export default function StudentDashboard() {
 
   const buildCertificateData = (cert) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-    const serverUrl = baseUrl.replace('/api', '');
-    const rawLogoUrl = cert.logo_url ? `${serverUrl}${cert.logo_url}` : null;
-    const isSameOriginLogo = (() => {
-      if (!rawLogoUrl) return false;
-      try {
-        return new URL(rawLogoUrl, window.location.href).origin === window.location.origin;
-      } catch {
-        return false;
-      }
-    })();
+    const serverUrl = baseUrl.replace(/\/api\/?$/, '');
+    const rawLogoUrl = cert.logo_url || null;
+    const logoUrl = rawLogoUrl
+      ? rawLogoUrl.startsWith('http')
+        ? rawLogoUrl
+        : `${serverUrl}${rawLogoUrl}`
+      : null;
 
     return {
       certificateId: cert.certificate_id,
@@ -204,7 +201,7 @@ export default function StudentDashboard() {
       instituteName: cert.institute_name,
       issueDate: cert.issued_date,
       grade: cert.grade,
-      instituteLogoUrl: isSameOriginLogo ? rawLogoUrl : null
+      instituteLogoUrl: logoUrl
     };
   };
 
