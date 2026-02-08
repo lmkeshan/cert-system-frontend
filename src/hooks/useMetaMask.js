@@ -37,10 +37,18 @@ export const useMetaMask = () => {
         const instance = new window.MetaMask();
         setMetamask(instance);
 
-        if (instance.isConnected && typeof instance.isConnected === 'function') {
-          const isAlreadyConnected = instance.isConnected();
-          if (isAlreadyConnected) {
-            await autoConnect(instance);
+        // Restore session without prompting MetaMask
+        if (window.ethereum && typeof window.ethereum.request === 'function') {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts && accounts.length > 0) {
+            instance.userAddress = accounts[0];
+            instance.provider = new ethers.BrowserProvider(window.ethereum);
+            instance.signer = await instance.provider.getSigner();
+            await instance.switchToPolygonAmoy();
+            instance.setupEventListeners();
+            setAddress(accounts[0]);
+            setConnected(true);
+            await refreshBalance(instance, accounts[0]);
           }
         }
 
@@ -54,17 +62,6 @@ export const useMetaMask = () => {
     };
 
     initMetaMask();
-  }, []);
-
-  // Auto-connect if previously connected
-  const autoConnect = useCallback(async (instance) => {
-    try {
-      const addr = await instance.connect();
-      setAddress(addr);
-      setConnected(true);
-      await refreshBalance(instance, addr);
-    } catch {
-    }
   }, []);
 
   // Refresh balance

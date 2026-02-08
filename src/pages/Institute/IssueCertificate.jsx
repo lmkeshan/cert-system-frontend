@@ -222,6 +222,11 @@ const IssueCertificate = () => {
       return;
     }
 
+    if (!window.ethereum || !metamaskAddress) {
+      setMessage({ type: 'error', text: '❌ MetaMask not available. Please reconnect your wallet.' });
+      return;
+    }
+
     setLoading(true);
     setMessage({ type: '', text: '' });
     setCurrentStep('Validating details...');
@@ -233,17 +238,52 @@ const IssueCertificate = () => {
     setShowSuggestions(false);
 
     try {
-      setCurrentStep('Submitting to blockchain...');
+      setCurrentStep('Preparing signature payload...');
       setActiveStep(2);
-      
-      const response = await universityAPI.issueCertificate({
+
+      const payloadResponse = await universityAPI.getSignPayload({
         student_id: previousFormRef.current.studentId,
         course_name: previousFormRef.current.courseName,
         grade: previousFormRef.current.grade,
       });
 
-      const certificateId = response.data?.certificate?.certificate_id || response.data?.certificate_id || response.data?.certificateId || '-';
-      const txHash = response.data?.certificate?.blockchain_tx_hash || response.data?.blockchain_tx_hash || '-';
+      const messageHash = payloadResponse.data?.message_hash || payloadResponse.data?.messageHash;
+      const certificateId =
+        payloadResponse.data?.certificate_id ||
+        payloadResponse.data?.cert_id ||
+        payloadResponse.data?.certId ||
+        payloadResponse.data?.certData?.certId ||
+        '-';
+      const issuedDate =
+        payloadResponse.data?.issued_date ||
+        payloadResponse.data?.issueDate ||
+        payloadResponse.data?.certData?.issueDate ||
+        null;
+
+      if (!messageHash || certificateId === '-') {
+        throw new Error('Failed to prepare certificate signature payload');
+      }
+
+      setCurrentStep('Waiting for MetaMask signature...');
+      const signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [messageHash, metamaskAddress]
+      });
+
+      setCurrentStep('Submitting signed certificate...');
+
+      const response = await universityAPI.issueSignedCertificate({
+        certificate_id: certificateId,
+        student_id: previousFormRef.current.studentId,
+        course_name: previousFormRef.current.courseName,
+        grade: previousFormRef.current.grade,
+        issued_date: issuedDate,
+        signature,
+        signer_address: metamaskAddress,
+        message_hash: messageHash
+      });
+
+      const txHash = response.data?.certificate?.blockchain_tx_hash || response.data?.blockchain_tx_hash || response.data?.certificate?.blockchain?.transactionHash || '-';
 
       setCurrentStep('Finalizing...');
       setActiveStep(3);
