@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { universityAPI } from "../../services/api";
+import React, { useState, useEffect, useRef } from "react";
+import { universityAPI, verifyAPI } from "../../services/api";
+import CertificatePdfRenderer from "../../components/CertificatePdfRenderer";
+import { generateCertificatePdfBlob } from "../../utils/certificatePdf";
 
 const HistoryPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfCertificate, setPdfCertificate] = useState(null);
+  const templateRef = useRef(null);
 
   useEffect(() => {
     loadCertificates();
@@ -19,20 +24,92 @@ const HistoryPage = () => {
       const certificates = response.data.certificates || [];
       
       // Transform API data to component format
-      const formattedData = certificates.map(cert => ({
-        certId: cert.certificate_id,
-        studentId: cert.student_id || cert.user_id,
-        course: cert.course || cert.course_name,
-        grade: cert.grade,
-        date: new Date(cert.issued_date).toLocaleDateString(),
-        tx: cert.blockchain_tx_hash || 'Pending',
-      }));
+      const baseUrl = window.location.origin;
+      const formattedData = certificates.map(cert => {
+        const studentId = cert.student_id || cert.user_id;
+        const studentName = cert.student_name || cert.full_name || cert.issuer_name || 'Student';
+        const txHash = cert.blockchain_tx_hash || '';
+        const hasTx = txHash && txHash !== 'Pending';
+        return {
+          certId: cert.certificate_id,
+          studentId,
+          studentName,
+          course: cert.course || cert.course_name,
+          grade: cert.grade,
+          date: new Date(cert.issued_date).toLocaleDateString(),
+          tx: txHash || 'Pending',
+          txUrl: hasTx && txHash.startsWith('0x') ? `https://amoy.polygonscan.com/tx/${txHash}` : '',
+          portfolioUrl: studentId ? `${baseUrl}/portfolio/${studentId}` : '',
+          verifyUrl: cert.certificate_id ? `${baseUrl}/verify?certificateId=${cert.certificate_id}` : ''
+        };
+      });
       
       setHistoryData(formattedData);
     } catch (err) {
       setError(err.message || 'Failed to load certificates');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const buildCertificateData = (certificate, onchain) => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+    const serverUrl = baseUrl.replace(/\/api\/?$/, '');
+    const rawLogoUrl = certificate?.logo_url;
+    const logoUrl = rawLogoUrl
+      ? rawLogoUrl.startsWith('http')
+        ? rawLogoUrl
+        : `${serverUrl}${rawLogoUrl}`
+      : null;
+
+    return {
+      certificateId: certificate?.certificate_id,
+      studentName: certificate?.student_name || certificate?.fullName || certificate?.full_name,
+      courseName: certificate?.course || certificate?.courseName || certificate?.course_name || certificate?.certificate_title,
+      instituteName: certificate?.institute_name || certificate?.instituteName,
+      issueDate: certificate?.issued_date || certificate?.issueDate,
+      grade: certificate?.grade,
+      instituteLogoUrl: logoUrl
+    };
+  };
+
+  const viewCertificatePdf = async (certId) => {
+    if (!certId || isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+
+    try {
+      const response = await verifyAPI.verifyCertificate(certId);
+      if (!response.data?.certificate) {
+        throw new Error('Certificate not found');
+      }
+
+      const data = buildCertificateData(response.data.certificate, response.data.onchain);
+      setPdfCertificate(data);
+
+      const waitForTemplate = async () => {
+        for (let i = 0; i < 10; i += 1) {
+          if (templateRef.current) {
+            return true;
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        return false;
+      };
+
+      const ready = await waitForTemplate();
+      if (!ready) return;
+
+      const blob = await generateCertificatePdfBlob(templateRef.current);
+      if (!blob) return;
+
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_self');
+      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+    } catch (err) {
+      console.error('Failed to generate certificate PDF:', err);
+      alert('Failed to generate certificate. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -84,7 +161,7 @@ const HistoryPage = () => {
             <thead>
               <tr className="text-gray-800 font-bold text-sm border-b border-purple-100">
                 <th className="pb-4 px-2">Certificate ID</th>
-                <th className="pb-4 px-2">Student ID</th>
+                <th className="pb-4 px-2">Student</th>
                 <th className="pb-4 px-2">Course</th>
                 <th className="pb-4 px-2">Grade</th>
                 <th className="pb-4 px-2">Issued Date</th>
@@ -100,12 +177,29 @@ const HistoryPage = () => {
                   <td className="py-6 px-2 font-bold text-black">
                     {item.certId}
                   </td>
-                  <td className="py-6 px-2 font-medium">{item.studentId}</td>
+                  <td className="py-6 px-2">
+                    <div className="font-semibold text-gray-900">{item.studentName}</div>
+                    <div className="text-xs text-gray-500">
+                      {item.portfolioUrl ? (
+                        <a href={item.portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
+                          {item.studentId}
+                        </a>
+                      ) : (
+                        item.studentId
+                      )}
+                    </div>
+                  </td>
                   <td className="py-6 px-2">{item.course}</td>
                   <td className="py-6 px-2 font-bold">{item.grade}</td>
                   <td className="py-6 px-2">{item.date}</td>
                   <td className="py-6 px-2 font-mono text-xs text-gray-400 truncate max-w-30">
-                    {item.tx}
+                    {item.txUrl ? (
+                      <a href={item.txUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
+                        {item.tx}
+                      </a>
+                    ) : (
+                      item.tx
+                    )}
                   </td>
                 </tr>
               ))}
@@ -137,13 +231,20 @@ const HistoryPage = () => {
                 </div>
               </div>
 
-              {/* Middle Row: Student ID */}
+              {/* Middle Row: Student */}
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                  Student ID
+                  Student
                 </span>
-                <p className="text-sm font-medium text-gray-800 break-all">
-                  {item.studentId}
+                <p className="text-sm font-semibold text-gray-800">{item.studentName}</p>
+                <p className="text-xs text-gray-500 break-all">
+                  {item.portfolioUrl ? (
+                    <a href={item.portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
+                      {item.studentId}
+                    </a>
+                  ) : (
+                    item.studentId
+                  )}
                 </p>
               </div>
 
@@ -163,20 +264,29 @@ const HistoryPage = () => {
                 </div>
               </div>
 
-              {/* Bottom Row: Blockchain TX */}
-              <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+              {/* Bottom Row: Blockchain TX + Links */}
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter block mb-1">
                   Blockchain Transaction
                 </span>
                 <p className="text-[10px] font-mono text-gray-500 break-all leading-tight">
-                  {item.tx}
+                  {item.txUrl ? (
+                    <a href={item.txUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
+                      {item.tx}
+                    </a>
+                  ) : (
+                    item.tx
+                  )}
                 </p>
+                <div className="flex gap-3">
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
       )}
+      <CertificatePdfRenderer certificate={pdfCertificate} templateRef={templateRef} />
     </div>
   );
 };
