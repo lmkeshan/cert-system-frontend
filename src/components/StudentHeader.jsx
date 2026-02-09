@@ -22,8 +22,10 @@ export default function StudentHeader() {
 
         {/* Navigation */}
         <nav className="flex items-center gap-6">
-          <Link 
-            to="/studentportfolio" 
+          <Link
+            to="/studentportfolio"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-white no-underline font-medium hover:opacity-90 transition-opacity"
           >
             MY PORTFOLIO

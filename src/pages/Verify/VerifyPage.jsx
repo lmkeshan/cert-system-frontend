@@ -14,6 +14,7 @@ export default function VerifyPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
   const [pdfCertificate, setPdfCertificate] = useState(null)
+  const [downloadRequested, setDownloadRequested] = useState(false)
   const templateRef = useRef(null)
 
   const verifyCertificateId = async (id) => {
@@ -76,11 +77,20 @@ export default function VerifyPage() {
 
   useEffect(() => {
     const paramId = searchParams.get('certificateId')
+    const wantsDownload = searchParams.get('download') === '1'
     if (paramId) {
       setCertificateId(paramId)
+      setDownloadRequested(wantsDownload)
       verifyCertificateId(paramId)
     }
   }, [searchParams])
+
+  useEffect(() => {
+    if (downloadRequested && verificationResult?.valid) {
+      openCertificatePdf()
+      setDownloadRequested(false)
+    }
+  }, [downloadRequested, verificationResult])
 
   const openCertificatePdf = () => {
     if (!verificationResult?.valid) {

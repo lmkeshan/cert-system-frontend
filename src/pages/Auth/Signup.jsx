@@ -14,6 +14,8 @@ export default function Signup() {
   const [successMessage, setSuccessMessage] = useState('')
   const [connectingWallet, setConnectingWallet] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [pendingVerification, setPendingVerification] = useState(null)
+  const [resendLoading, setResendLoading] = useState(false)
   
   const [studentForm, setStudentForm] = useState({
     firstName: '',
@@ -48,12 +50,14 @@ export default function Signup() {
     const { name, value } = e.target
     setStudentForm(prev => ({ ...prev, [name]: value }))
     setError('')
+    setPendingVerification(null)
   }
 
   const handleInstituteChange = (e) => {
     const { name, value } = e.target
     setInstituteForm(prev => ({ ...prev, [name]: value }))
     setError('')
+    setPendingVerification(null)
   }
 
   const handleFileChange = (e, fieldName, formType) => {
@@ -92,6 +96,32 @@ export default function Signup() {
     return address.startsWith('0x') && address.length === 42
   }
 
+  const handleResendVerification = async (role) => {
+    setError('')
+    setSuccessMessage('')
+    setResendLoading(true)
+
+    try {
+      const email = role === 'student' ? studentForm.email : instituteForm.email
+      if (!email) {
+        setError('Please enter your email above')
+        return
+      }
+
+      if (role === 'student') {
+        await authAPI.resendStudentVerification(email)
+      } else {
+        await authAPI.resendInstituteVerification(email)
+      }
+
+      setSuccessMessage('Verification email sent. Please check your inbox.')
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to resend verification email')
+    } finally {
+      setResendLoading(false)
+    }
+  }
+
   const handleStudentSubmit = async (e) => {
     e.preventDefault()
     setError('')
@@ -108,8 +138,8 @@ export default function Signup() {
       return
     }
 
-    if (studentForm.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (studentForm.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return
     }
 
@@ -122,6 +152,12 @@ export default function Signup() {
         gender: studentForm.gender,
         birthdate: studentForm.birthdate,
       })
+
+      if (response.data?.verification_required) {
+        setPendingVerification('student')
+        setSuccessMessage('Registration successful! Please verify your email to continue.')
+        return
+      }
 
       setSuccessMessage('Registration successful! Redirecting...')
       setStudentToken(response.data.token)
@@ -152,8 +188,8 @@ export default function Signup() {
       return
     }
 
-    if (instituteForm.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (instituteForm.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return
     }
 
@@ -180,6 +216,12 @@ export default function Signup() {
       formData.append('verification_doc', instituteForm.verificationDoc)
 
       const response = await authAPI.registerUniversity(formData)
+
+      if (response.data?.verification_required) {
+        setPendingVerification('institute')
+        setSuccessMessage('Registration successful! Please verify your email. After verification, await admin approval.')
+        return
+      }
 
       setSuccessMessage('Registration successful! Awaiting admin approval... Redirecting...')
       setUniversityToken(response.data.token)
@@ -226,7 +268,10 @@ export default function Signup() {
           <div className="flex justify-center mb-8">
             <div className="flex gap-4 bg-gray-200 rounded-lg p-1.5">
               <button
-                onClick={() => setUserType('student')}
+                onClick={() => {
+                  setUserType('student')
+                  setPendingVerification(null)
+                }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'student'
                     ? 'bg-gradient-primary text-white shadow-md'
@@ -236,7 +281,10 @@ export default function Signup() {
                 Student
               </button>
               <button
-                onClick={() => setUserType('institute')}
+                onClick={() => {
+                  setUserType('institute')
+                  setPendingVerification(null)
+                }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'institute'
                     ? 'bg-gradient-primary text-white shadow-md'
@@ -347,7 +395,7 @@ export default function Signup() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
-                    placeholder="Password (min 6 characters)"
+                    placeholder="Password (min 8 characters)"
                     value={studentForm.password}
                     onChange={handleStudentChange}
                     required
@@ -381,6 +429,20 @@ export default function Signup() {
                   >
                     {loading ? 'Registering...' : 'Register'}
                   </button>
+
+                  {pendingVerification === 'student' && (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-4 text-sm">
+                      <p className="font-semibold mb-2">Verify your email to continue.</p>
+                      <button
+                        type="button"
+                        onClick={() => handleResendVerification('student')}
+                        disabled={resendLoading}
+                        className="inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {resendLoading ? 'Sending...' : 'Resend verification email'}
+                      </button>
+                    </div>
+                  )}
 
                   <div className="text-center text-sm">
                     <span className="text-gray-600">Already a member? </span>
@@ -456,7 +518,7 @@ export default function Signup() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     name="password"
-                    placeholder="Password (min 6 characters)"
+                    placeholder="Password (min 8 characters)"
                     value={instituteForm.password}
                     onChange={handleInstituteChange}
                     required
@@ -552,6 +614,20 @@ export default function Signup() {
                   >
                     {loading ? 'Registering...' : 'Register'}
                   </button>
+
+                  {pendingVerification === 'institute' && (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-4 text-sm">
+                      <p className="font-semibold mb-2">Verify your email to continue.</p>
+                      <button
+                        type="button"
+                        onClick={() => handleResendVerification('institute')}
+                        disabled={resendLoading}
+                        className="inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {resendLoading ? 'Sending...' : 'Resend verification email'}
+                      </button>
+                    </div>
+                  )}
 
                   <div className="text-center text-sm">
                     <span className="text-gray-600">Already a member? </span>

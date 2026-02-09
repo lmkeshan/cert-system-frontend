@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { QRCodeCanvas } from 'qrcode.react';
+import html2canvas from 'html2canvas';
 import Footer from '../../components/Footer';
 import CertificatePdfRenderer from '../../components/CertificatePdfRenderer';
 import { studentAPI } from '../../services/api';
@@ -26,7 +28,11 @@ export default function StudentDashboard() {
   const [profileMessage, setProfileMessage] = useState('');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [pdfCertificate, setPdfCertificate] = useState(null);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [profileImageFailed, setProfileImageFailed] = useState(false);
   const templateRef = useRef(null);
+  const cardRef = useRef(null);
+  const exportCardRef = useRef(null);
 
   const formatDateOnly = (value) => {
     if (!value) return '';
@@ -49,6 +55,7 @@ export default function StudentDashboard() {
       setError('');
       const response = await studentAPI.getDashboard();
       setDashboardData(response.data);
+      setProfileImageFailed(false);
       // Set portfolio visibility from student data
       const visibility = response.data.student?.isPortfolioPublic ?? response.data.student?.is_portfolio_public;
       if (visibility !== undefined && visibility !== null) {
@@ -273,13 +280,64 @@ export default function StudentDashboard() {
   }
 
   const { student, certificates = [], statistics = {}, institutions = [] } = dashboardData;
+  const portfolioLink = `${window.location.origin}/portfolio/${student?.userId}`;
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+  const serverBase = apiBase.replace(/\/api\/?$/, '');
+  const rawProfilePhoto = student?.profile_photo_url || student?.profilePhotoUrl || '';
+  const profileImageUrl = rawProfilePhoto
+    ? (rawProfilePhoto.startsWith('http') ? rawProfilePhoto : `${serverBase}${rawProfilePhoto}`)
+    : '';
+  const showProfileImage = profileImageUrl && !profileImageFailed;
+
+  const downloadPortfolioCard = async () => {
+    const target = exportCardRef.current || cardRef.current;
+    if (!target) {
+      return;
+    }
+
+    try {
+      const canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+      const url = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      const safeId = student?.userId || student?.user_id || 'student';
+      link.href = url;
+      link.download = `portfolio-card-${safeId}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Failed to download card image:', error);
+    }
+  };
+
+  const handleSharePortfolio = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${student?.full_name || 'Student'} Portfolio`,
+          text: 'View my portfolio on CertiChain',
+          url: portfolioLink
+        });
+        return;
+      }
+
+      await navigator.clipboard.writeText(portfolioLink);
+      alert('Portfolio link copied!');
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
       <div className="max-w-6xl mx-auto px-4 pt-8">
         <div className="bg-gradient-primary rounded-3xl px-5 py-8 md:px-10 md:py-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">My Portfolio</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">My Dashboard</h1>
           <p className="text-white text-base md:text-lg mb-6">
             {student?.full_name}'s verified digital certificates
           </p>
@@ -302,12 +360,187 @@ export default function StudentDashboard() {
             >
               <span>📤</span> Share Portfolio
             </button>
-            <button className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors">
+            <button
+              onClick={() => setShowQrModal(true)}
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
+            >
               <span>📥</span> Export
             </button>
           </div>
         </div>
       </div>
+
+      {showQrModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
+            <div className="flex items-start justify-between border-b border-gray-100 px-6 py-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Portfolio Card</h3>
+                <p className="text-sm text-gray-500">Share your public portfolio link</p>
+              </div>
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="px-6 py-5">
+              <div
+                ref={cardRef}
+                data-export-card="true"
+                className="relative overflow-hidden rounded-2xl border border-purple-100 bg-gradient-to-br from-[#f8f4ff] via-[#f2f6ff] to-[#eef7ff] p-5"
+              >
+                <div className="absolute right-5 top-5 rounded-xl bg-white/95 p-2 shadow-lg ring-1 ring-purple-100">
+                  <QRCodeCanvas value={portfolioLink} size={96} />
+                </div>
+                <div className="flex items-center gap-4 pr-32 sm:pr-36">
+                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-500 via-fuchsia-500 to-blue-500 p-[2px] shadow-md shrink-0">
+                    <div className="h-full w-full rounded-full bg-white overflow-hidden flex items-center justify-center text-purple-700 font-semibold">
+                      {showProfileImage ? (
+                        <img
+                          src={profileImageUrl}
+                          alt={student?.full_name || 'Student'}
+                          className="h-full w-full object-cover"
+                          onError={() => setProfileImageFailed(true)}
+                        />
+                      ) : (
+                        (student?.full_name || 'S').charAt(0)
+                      )}
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-widest text-purple-500 font-semibold">Student</p>
+                    <p className="text-xl font-bold text-gray-900">{student?.full_name}</p>
+                    <p className="text-sm text-gray-600">ID: {student?.userId}</p>
+                    <p className="text-sm text-gray-600 break-all">{student?.email}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  <div className="rounded-xl bg-white/90 px-3 py-2 ring-1 ring-purple-100">
+                    <p className="text-xs text-gray-500">Institutes</p>
+                    <p className="font-semibold text-gray-900">{statistics.institutionsCount || 0}</p>
+                  </div>
+                  <div className="rounded-xl bg-white/90 px-3 py-2 ring-1 ring-purple-100">
+                    <p className="text-xs text-gray-500">Certificates</p>
+                    <p className="font-semibold text-gray-900">{statistics.totalCertificates || 0}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <p className="text-xs text-gray-500 mb-2">Public link</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={portfolioLink}
+                    className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(portfolioLink)
+                      alert('Portfolio link copied!')
+                    }}
+                    className="rounded-lg bg-purple-600 px-3 py-2 text-xs font-semibold text-white hover:bg-purple-700"
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-end gap-2 border-t border-gray-100 px-6 py-4">
+              <button
+                type="button"
+                onClick={downloadPortfolioCard}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+              >
+                Download Image
+              </button>
+              <button
+                type="button"
+                onClick={handleSharePortfolio}
+                className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+              >
+                Share
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showQrModal && (
+        <div style={{ position: 'absolute', left: -9999, top: 0 }}>
+          <div
+            ref={exportCardRef}
+            style={{
+              width: 520,
+              padding: 20,
+              borderRadius: 18,
+              border: '1px solid #e9d5ff',
+              background: 'linear-gradient(135deg,#f8f4ff 0%,#f2f6ff 55%,#eef7ff 100%)',
+              fontFamily: 'Segoe UI, Arial, sans-serif',
+              color: '#111827'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+              <div style={{ display: 'flex', gap: 14, alignItems: 'center', flex: 1 }}>
+                <div
+                  style={{
+                    height: 64,
+                    width: 64,
+                    borderRadius: '50%',
+                    border: '2px solid #8b5cf6',
+                    overflow: 'hidden',
+                    background: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    color: '#7c3aed'
+                  }}
+                >
+                  {showProfileImage ? (
+                    <img
+                      src={profileImageUrl}
+                      alt={student?.full_name || 'Student'}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    (student?.full_name || 'S').charAt(0)
+                  )}
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#8b5cf6', fontWeight: 600 }}>
+                    Student
+                  </div>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>{student?.full_name}</div>
+                  <div style={{ fontSize: 12, color: '#4b5563' }}>ID: {student?.userId}</div>
+                  <div style={{ fontSize: 12, color: '#4b5563', wordBreak: 'break-all' }}>{student?.email}</div>
+                </div>
+              </div>
+              <div style={{ background: '#fff', padding: 8, borderRadius: 12, boxShadow: '0 10px 25px rgba(17,24,39,0.1)' }}>
+                <QRCodeCanvas value={portfolioLink} size={96} />
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
+              <div style={{ background: 'rgba(255,255,255,0.9)', padding: '10px 12px', borderRadius: 12, border: '1px solid #ede9fe' }}>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>Institutes</div>
+                <div style={{ fontWeight: 700 }}>{statistics.institutionsCount || 0}</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.9)', padding: '10px 12px', borderRadius: 12, border: '1px solid #ede9fe' }}>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>Certificates</div>
+                <div style={{ fontWeight: 700 }}>{statistics.totalCertificates || 0}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Share Section */}
       <div className="max-w-6xl mx-auto px-4 mt-6">
