@@ -42,7 +42,7 @@ export default function Navbar() {
               <Link to="/signup" className="text-white no-underline font-medium hover:underline">SIGNUP</Link>
             </li>
             <li>
-              <Link to="/#contact" className="text-white no-underline font-medium hover:underline">CONTACT US</Link>
+              <Link to="/contact" className="text-white no-underline font-medium hover:underline">CONTACT US</Link>
             </li>
           </ul>
         </nav>
@@ -83,7 +83,7 @@ export default function Navbar() {
                 <Link to="/signup" className="text-white no-underline font-medium hover:underline">Signup</Link>
               </li>
               <li>
-                <Link to="/#contact" className="text-white no-underline font-medium hover:underline">Contact us</Link>
+                <Link to="/contact" className="text-white no-underline font-medium hover:underline">Contact us</Link>
               </li>
             </ul>
           </nav>
