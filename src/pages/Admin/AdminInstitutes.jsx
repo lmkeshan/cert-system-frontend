@@ -17,6 +17,7 @@ function ImagePlaceholder() {
 export default function Universities() {
   const [institutes, setInstitutes] = useState([])
   const [issuerStatus, setIssuerStatus] = useState({})
+  const [balances, setBalances] = useState({})
   const [actionLoading, setActionLoading] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -43,6 +44,7 @@ export default function Universities() {
           checkIssuerStatus(institute.institute_id)
         }
       })
+      fetchBalances(data)
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Failed to load institutes')
     } finally {
@@ -127,6 +129,29 @@ export default function Universities() {
     return `${fileBaseUrl}${path}`
   }
 
+  const fetchBalances = async (data) => {
+    const withWallets = data.filter(item => item.wallet_address)
+    if (withWallets.length === 0) return
+
+    const requests = await Promise.all(withWallets.map(async (institute) => {
+      try {
+        const response = await adminAPI.getBalance(institute.wallet_address)
+        const balancePol = response.data?.data?.balancePol ?? response.data?.balancePol ?? null
+        return [institute.institute_id, balancePol]
+      } catch (err) {
+        return [institute.institute_id, 'Error']
+      }
+    }))
+
+    setBalances(prev => {
+      const next = { ...prev }
+      requests.forEach(([id, value]) => {
+        next[id] = value
+      })
+      return next
+    })
+  }
+
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto">
@@ -170,13 +195,14 @@ export default function Universities() {
             <p>No universities found</p>
           </div>
         ) : (
-          <table className="min-w-[900px] w-full text-left text-sm">
+          <table className="min-w-[980px] w-full text-left text-sm">
             <thead className="text-gray-600">
               <tr className="border-b border-gray-300">
                 <th className="py-3 font-semibold">University Name</th>
                 <th className="py-3 font-semibold">Email</th>
                 <th className="py-3 font-semibold">Logo</th>
                 <th className="py-3 font-semibold">Wallet Address</th>
+                <th className="py-3 font-semibold">Balance (POL)</th>
                 <th className="py-3 font-semibold">On-chain Issuer</th>
                 <th className="py-3 font-semibold">Status</th>
                 <th className="py-3 font-semibold">Registered</th>
@@ -201,6 +227,13 @@ export default function Universities() {
                   </td>
                   <td className="py-4 font-mono text-xs text-gray-600" title={institute.wallet_address}>
                     {truncateAddress(institute.wallet_address)}
+                  </td>
+                  <td className="py-4 text-gray-600">
+                    {balances[institute.institute_id] === undefined
+                      ? 'Loading...'
+                      : balances[institute.institute_id] === 'Error'
+                        ? 'Error'
+                        : String(balances[institute.institute_id])}
                   </td>
                   <td className="py-4 text-gray-600">
                     {issuerStatus[institute.institute_id] || 'Loading...'}

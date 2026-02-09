@@ -178,6 +178,9 @@ export const adminAPI = {
 
   getBlockchainStatus: () =>
     api.get('/admin/blockchain/status'),
+
+  getBalance: (address) =>
+    api.get(`/payment/balance?address=${address}`),
 };
 
 // ==================== VERIFY APIs (Public) ====================
