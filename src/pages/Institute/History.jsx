@@ -166,7 +166,6 @@ const HistoryPage = () => {
                 <th className="pb-4 px-2">Grade</th>
                 <th className="pb-4 px-2">Issued Date</th>
                 <th className="pb-4 px-2">Blockchain TX</th>
-                <th className="pb-4 px-2">Certificate</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -200,19 +199,6 @@ const HistoryPage = () => {
                       </a>
                     ) : (
                       item.tx
-                    )}
-                  </td>
-                  <td className="py-6 px-2">
-                    {item.certId ? (
-                      <button
-                        type="button"
-                        onClick={() => viewCertificatePdf(item.certId)}
-                        className="text-sm text-blue-600 hover:underline font-semibold"
-                      >
-                        View Certificate
-                      </button>
-                    ) : (
-                      <span className="text-gray-400 text-sm">-</span>
                     )}
                   </td>
                 </tr>
@@ -293,15 +279,6 @@ const HistoryPage = () => {
                   )}
                 </p>
                 <div className="flex gap-3">
-                  {item.certId && (
-                    <button
-                      type="button"
-                      onClick={() => viewCertificatePdf(item.certId)}
-                      className="text-xs text-blue-600 font-semibold hover:underline"
-                    >
-                      Certificate
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
