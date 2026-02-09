@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import studentImage from '../../assets/images/studentLogin.webp'
 import instituteImage from '../../assets/images/instituteLogin.webp'
 import logoImage from '../../assets/images/logo.webp'
@@ -7,6 +7,7 @@ import { authAPI, setStudentToken, setUniversityToken } from '../../services/api
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [userType, setUserType] = useState('student')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -17,6 +18,15 @@ export default function Login() {
     email: '',
     password: '',
   })
+
+  useEffect(() => {
+    const role = new URLSearchParams(location.search).get('role')
+    if (role === 'institute') {
+      setUserType('institute')
+      setError('')
+      setVerificationRole(null)
+    }
+  }, [location.search])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -380,7 +390,7 @@ export default function Login() {
 
                   <div className="text-center text-sm mb-6">
                     <span className="text-gray-600">Don't have an account? </span>
-                    <a href="/signup" className="text-purple-600 hover:underline font-semibold">
+                    <a href="/signup?role=institute" className="text-purple-600 hover:underline font-semibold">
                       Sign Up
                     </a>
                   </div>

@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import heroImage from "../../assets/images/hero-image.webp";
 import howItWorksImage from "../../assets/images/how-it-works.webp";
 import certificateImage from "../../assets/images/certificate.webp";
@@ -12,6 +12,7 @@ import num_3 from "../../assets/icons/num-3.webp";
 
 export default function Homepage() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const hash = location.hash?.replace("#", "");
@@ -50,6 +51,7 @@ export default function Homepage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 id="verifyCertificate"
+                onClick={() => navigate('/verify')}
                 className="bg-white text-purple-600 border-2 border-purple-600 rounded-lg px-6 py-3 text-[16px] font-bold transition-shadow hover:shadow-lg hover:bg-purple-600 hover:text-white"
               >
                 Verify Certificate

@@ -631,7 +631,7 @@ export default function Signup() {
 
                   <div className="text-center text-sm">
                     <span className="text-gray-600">Already a member? </span>
-                    <a href="/login" className="text-purple-600 hover:underline font-semibold">
+                    <a href="/login?role=institute" className="text-purple-600 hover:underline font-semibold">
                       Login
                     </a>
                   </div>
