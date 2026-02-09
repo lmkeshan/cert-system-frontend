@@ -11,6 +11,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [verificationRole, setVerificationRole] = useState(null)
+  const [resendLoading, setResendLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -20,6 +22,31 @@ export default function Login() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
     setError('')
+    setVerificationRole(null)
+  }
+
+  const handleResendVerification = async (role) => {
+    setError('')
+    setResendLoading(true)
+
+    try {
+      if (!formData.email) {
+        setError('Please enter your email first')
+        return
+      }
+
+      if (role === 'student') {
+        await authAPI.resendStudentVerification(formData.email)
+      } else {
+        await authAPI.resendInstituteVerification(formData.email)
+      }
+
+      setError('Verification email sent. Please check your inbox.')
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to resend verification email')
+    } finally {
+      setResendLoading(false)
+    }
   }
 
   const handleStudentLogin = async (e) => {
@@ -41,6 +68,11 @@ export default function Login() {
       setStudentToken(response.data.token)
       navigate('/studentdashboard')
     } catch (err) {
+      if (err.response?.data?.verification_required) {
+        setVerificationRole('student')
+        setError('Email not verified. Please check your inbox.')
+        return
+      }
       setError(err.response?.data?.error || err.response?.data?.message || 'Login failed')
     } finally {
       setLoading(false)
@@ -66,6 +98,11 @@ export default function Login() {
       setUniversityToken(response.data.token)
       navigate('/institute/dashboard')
     } catch (err) {
+      if (err.response?.data?.verification_required) {
+        setVerificationRole('student')
+        setError('Email not verified. Please check your inbox.')
+        return
+      }
       setError(err.response?.data?.error || err.response?.data?.message || 'Login failed')
     } finally {
       setLoading(false)
@@ -107,6 +144,7 @@ export default function Login() {
                 onClick={() => {
                   setUserType('student')
                   setError('')
+                  setVerificationRole(null)
                 }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'student'
@@ -120,6 +158,7 @@ export default function Login() {
                 onClick={() => {
                   setUserType('institute')
                   setError('')
+                  setVerificationRole(null)
                 }}
                 className={`px-6 py-2.5 rounded font-semibold transition-all ${
                   userType === 'institute'
@@ -155,6 +194,20 @@ export default function Login() {
                   {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
                       {error}
+                    </div>
+                  )}
+
+                  {verificationRole === 'student' && (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-4 text-sm">
+                      <p className="font-semibold mb-2">Didn't get the email?</p>
+                      <button
+                        type="button"
+                        onClick={() => handleResendVerification('student')}
+                        disabled={resendLoading}
+                        className="inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {resendLoading ? 'Sending...' : 'Resend verification email'}
+                      </button>
                     </div>
                   )}
 
@@ -270,6 +323,20 @@ export default function Login() {
                   {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
                       {error}
+                    </div>
+                  )}
+
+                  {verificationRole === 'institute' && (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg mb-4 text-sm">
+                      <p className="font-semibold mb-2">Didn't get the email?</p>
+                      <button
+                        type="button"
+                        onClick={() => handleResendVerification('institute')}
+                        disabled={resendLoading}
+                        className="inline-flex items-center justify-center bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {resendLoading ? 'Sending...' : 'Resend verification email'}
+                      </button>
                     </div>
                   )}
 

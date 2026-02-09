@@ -59,6 +59,12 @@ export const authAPI = {
   getStudentProfile: () => 
     api.get('/auth/student/profile'),
 
+  resendStudentVerification: (email) =>
+    api.post('/auth/student/resend-verification', { email }),
+
+  resendInstituteVerification: (email) =>
+    api.post('/university/resend-verification', { email }),
+
   // University Auth
   registerUniversity: (formData) => 
     api.post('/university/register', formData, {
