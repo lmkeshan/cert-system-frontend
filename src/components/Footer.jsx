@@ -19,6 +19,8 @@ export default function Footer() {
         <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs md:text-sm">
           <Link to="/privacy-policy" className="hover:underline">Privacy Policy</Link>
           <span>|</span>
+          <Link to="/contact" className="hover:underline">Contact Us</Link>
+          <span>|</span>
           <a href="#" className="hover:underline">Terms of Service</a>
         </div>
       </div>

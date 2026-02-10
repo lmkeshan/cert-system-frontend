@@ -193,6 +193,13 @@ export const verifyAPI = {
     api.get(`/verify/user/${userId}`),
 };
 
+// ==================== CONTACT APIs ====================
+
+export const contactAPI = {
+  sendContactMessage: (data) =>
+    api.post('/contact/send-message', data),
+};
+
 // ==================== PAYMENT APIs ====================
 
 export const paymentAPI = {
