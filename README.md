@@ -17,9 +17,17 @@ Web3 certificate issuance and verification UI built with React, Vite, and Tailwi
 - Axios
 - Ethers
 
-## Quick Start
+## Setup
+### Prerequisites
+- Node.js 18+ and npm
+
+### Install
 ```bash
 npm install
+```
+
+### Run (Development)
+```bash
 npm run dev
 ```
 
@@ -107,6 +115,12 @@ Blockchain-related pages require a connected wallet. The UI will block access un
 
 ## Build Output
 `npm run build` outputs to `dist/`.
+
+## Team Members
+- Teshan Pamodya
+- Kavindu Lakshan
+- Chamath Theekshana
+- Thamindu Keshan
 
 ## Troubleshooting
 | Issue | Fix |
