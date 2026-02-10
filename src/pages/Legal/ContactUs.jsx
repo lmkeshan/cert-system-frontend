@@ -107,6 +107,7 @@ export default function ContactUs() {
                   <input
                     type="text"
                     name="name"
+                    autoComplete="name"
                     placeholder="Your name"
                     value={formData.name}
                     onChange={handleChange}
@@ -122,6 +123,7 @@ export default function ContactUs() {
                   <input
                     type="email"
                     name="email"
+                    autoComplete="email"
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={handleChange}
@@ -137,6 +139,7 @@ export default function ContactUs() {
                   <input
                     type="text"
                     name="subject"
+                    autoComplete="off"
                     placeholder="What is this about?"
                     value={formData.subject}
                     onChange={handleChange}
@@ -151,6 +154,7 @@ export default function ContactUs() {
                   </label>
                   <textarea
                     name="message"
+                    autoComplete="off"
                     placeholder="Please tell us what's on your mind..."
                     value={formData.message}
                     onChange={handleChange}
@@ -184,3 +188,5 @@ export default function ContactUs() {
     </div>
   )
 }
+
+
