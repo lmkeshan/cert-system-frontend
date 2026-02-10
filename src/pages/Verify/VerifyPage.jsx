@@ -76,14 +76,24 @@ export default function VerifyPage() {
   }
 
   useEffect(() => {
-    const paramId = searchParams.get('certificateId')
+    const canonicalParamId = searchParams.get('certificateId')
+    const legacyParamId = searchParams.get('certificateld')
     const wantsDownload = searchParams.get('download') === '1'
-    if (paramId) {
-      setCertificateId(paramId)
-      setDownloadRequested(wantsDownload)
-      verifyCertificateId(paramId)
+
+    if (!canonicalParamId && legacyParamId) {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.delete('certificateld')
+      nextParams.set('certificateId', legacyParamId)
+      navigate({ pathname: '/verify', search: `?${nextParams.toString()}` }, { replace: true })
+      return
     }
-  }, [searchParams])
+
+    if (canonicalParamId) {
+      setCertificateId(canonicalParamId)
+      setDownloadRequested(wantsDownload)
+      verifyCertificateId(canonicalParamId)
+    }
+  }, [navigate, searchParams])
 
   useEffect(() => {
     if (downloadRequested && verificationResult?.valid) {
