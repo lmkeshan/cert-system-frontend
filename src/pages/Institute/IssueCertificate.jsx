@@ -218,12 +218,12 @@ const IssueCertificate = () => {
 
     // Check MetaMask connection
     if (!metamaskConnected) {
-      setMessage({ type: 'error', text: '⚠️ Please connect MetaMask from the header first' });
+      setMessage({ type: 'error', text: 'Please connect MetaMask from the header first' });
       return;
     }
 
     if (!window.ethereum || !metamaskAddress) {
-      setMessage({ type: 'error', text: '❌ MetaMask not available. Please reconnect your wallet.' });
+      setMessage({ type: 'error', text: 'MetaMask not available. Please reconnect your wallet.' });
       return;
     }
 
@@ -331,7 +331,7 @@ const IssueCertificate = () => {
       {/* 1. Header Banner - Increased Height and Padding */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="text-3xl bg-[#E9D5FF] p-3 rounded-xl flex items-center justify-center shrink-0">
-          🎟️
+          <span className="material-icons text-purple-600" style={{fontSize: '2rem'}}>confirmation_number</span>
         </div>
         <div className="flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800 leading-tight">
@@ -567,7 +567,7 @@ const IssueCertificate = () => {
               disabled={loading}
               className="w-full bg-[#A78BFA] hover:bg-[#8B5CF6] text-white font-extrabold py-3 rounded-xl transition-all shadow-md text-base active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? "Issuing Certificate..." : "🚀 Issue Certificate"}
+              {loading ? "Issuing Certificate..." : <><span className="material-icons text-base" style={{verticalAlign: 'middle'}}>rocket_launch</span> Issue Certificate</>}
             </button>
           </div>
           {lastIssued && (

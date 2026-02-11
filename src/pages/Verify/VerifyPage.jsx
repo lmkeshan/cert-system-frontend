@@ -267,7 +267,7 @@ export default function VerifyPage() {
                     {/* Blockchain Verification Info */}
                     {verificationResult.blockchainTxHash && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
-                        <p className="text-sm text-gray-600 mb-2">✅ Blockchain Verified</p>
+                        <p className="text-sm text-gray-600 mb-2 flex items-center gap-1"><span className="material-icons text-green-600" style={{fontSize: '16px'}}>check_circle</span> Blockchain Verified</p>
                         <p className="text-xs text-gray-700 font-mono break-all">{verificationResult.blockchainTxHash}</p>
                         <a
                           href={`https://amoy.polygonscan.com/tx/${verificationResult.blockchainTxHash}`}
@@ -302,13 +302,13 @@ export default function VerifyPage() {
                         disabled={isGeneratingPdf}
                         className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded-full transition-colors flex items-center gap-2 disabled:opacity-60"
                       >
-                        <span>📄</span> View Certificate
+                        <span className="material-icons text-base">description</span> View Certificate
                       </button>
                       <button
                         onClick={() => navigate(`/portfolio/${verificationResult.userId}`)}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-full transition-colors flex items-center gap-2"
                       >
-                        <span>👤</span> View Portfolio
+                        <span className="material-icons text-base">person</span> View Portfolio
                       </button>
                       <button
                         onClick={() => {

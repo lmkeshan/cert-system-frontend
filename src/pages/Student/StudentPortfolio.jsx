@@ -270,7 +270,7 @@ export default function StudentPortfolio() {
                 onClick={copyPortfolioLink}
                 className="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-purple-50 transition-all shadow-md inline-flex items-center gap-2"
               >
-                <span>🔗</span> Share My Portfolio
+                <span className="material-icons text-base">link</span> Share My Portfolio
               </button>
             )}
             
@@ -281,7 +281,7 @@ export default function StudentPortfolio() {
                 rel="noopener noreferrer"
                 className="bg-gray-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-900 transition-all shadow-md inline-flex items-center gap-2"
               >
-                <span>💻</span> GitHub Profile
+                <span className="material-icons text-base">computer</span> GitHub Profile
               </a>
             )}
             
@@ -292,7 +292,7 @@ export default function StudentPortfolio() {
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md inline-flex items-center gap-2"
               >
-                <span>📄</span> Download CV
+                <span className="material-icons text-base">description</span> Download CV
               </a>
             )}
           </div>
@@ -301,25 +301,25 @@ export default function StudentPortfolio() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 text-center border-2 border-purple-300">
-            <div className="text-3xl mb-2">🖼️</div>
+            <div className="mb-2"><span className="material-icons text-purple-600" style={{fontSize: '2rem'}}>image</span></div>
             <div className="text-3xl font-bold text-purple-800 mb-1">{studentData.totalCertificates}</div>
             <div className="text-sm font-semibold text-purple-700">Total Certificates</div>
           </Card>
 
           <Card className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 text-center border-2 border-green-300">
-            <div className="text-3xl mb-2">✅</div>
+            <div className="mb-2"><span className="material-icons text-green-600" style={{fontSize: '2rem'}}>check_circle</span></div>
             <div className="text-3xl font-bold text-green-800 mb-1">{studentData.blockchainVerified}</div>
             <div className="text-sm font-semibold text-green-700">Blockchain Verified</div>
           </Card>
 
           <Card className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 text-center border-2 border-blue-300">
-            <div className="text-3xl mb-2">🏛️</div>
+            <div className="mb-2"><span className="material-icons text-blue-600" style={{fontSize: '2rem'}}>account_balance</span></div>
             <div className="text-3xl font-bold text-blue-800 mb-1">{studentData.institutions}</div>
             <div className="text-sm font-semibold text-blue-700">Institutions</div>
           </Card>
 
           <Card className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl p-6 text-center border-2 border-orange-300">
-            <div className="text-3xl mb-2">⚡</div>
+            <div className="mb-2"><span className="material-icons text-orange-600" style={{fontSize: '2rem'}}>bolt</span></div>
             <div className="text-3xl font-bold text-orange-800 mb-1">{studentData.activeCertificates}</div>
             <div className="text-sm font-semibold text-orange-700">Active Certificates</div>
           </Card>
@@ -328,7 +328,7 @@ export default function StudentPortfolio() {
         {/* Courses Section */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-            <span>📚</span> Certificates
+            <span className="material-icons">menu_book</span> Certificates
           </h2>
           {certificates.length === 0 ? (
             <Card className="bg-gray-100 rounded-2xl p-12 text-center">
@@ -360,21 +360,21 @@ export default function StudentPortfolio() {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>📅</span> {new Date(cert.issued_date).toLocaleDateString()}
+                      <span className="material-icons" style={{fontSize: '14px'}}>event</span> {new Date(cert.issued_date).toLocaleDateString()}
                     </span>
                     {cert.grade && (
                       <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>⭐</span> Grade {cert.grade}
+                        <span className="material-icons" style={{fontSize: '14px'}}>star</span> Grade {cert.grade}
                       </span>
                     )}
                     {cert.blockchain_tx_hash && (
                       <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>✅</span> Blockchain Verified
+                        <span className="material-icons" style={{fontSize: '14px'}}>check_circle</span> Blockchain Verified
                       </span>
                     )}
                     {cert.expiry_date && (
                       <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>📆</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
+                        <span className="material-icons" style={{fontSize: '14px'}}>calendar_today</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
                       </span>
                     )}
                   </div>
@@ -389,7 +389,7 @@ export default function StudentPortfolio() {
                         rel="noopener noreferrer"
                         className="text-xs text-blue-600 hover:text-blue-800 font-mono break-all underline flex items-center gap-1"
                       >
-                        <span>🔗</span> {cert.blockchain_tx_hash}
+                        <span className="material-icons" style={{fontSize: '14px'}}>link</span> {cert.blockchain_tx_hash}
                       </a>
                     </div>
                   )}
@@ -401,7 +401,7 @@ export default function StudentPortfolio() {
                       disabled={isGeneratingPdf}
                       className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
                     >
-                      <span>📄</span> View Certificate
+                      <span className="material-icons text-sm">description</span> View Certificate
                     </button>
                   </div>
                 </Card>
@@ -414,7 +414,7 @@ export default function StudentPortfolio() {
         {institutions.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-              <span>🏛️</span> Institutions
+              <span className="material-icons">account_balance</span> Institutions
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {institutions.map((inst, index) => {
@@ -509,7 +509,7 @@ export default function StudentPortfolio() {
                   {careerInsights.nextSteps.map((step, index) => (
                     <Card key={index} className="border-l-4 border-green-500 bg-green-50 p-6 rounded-lg">
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">{step.completed ? '✅' : '📌'}</span>
+                        <span className="material-icons text-2xl">{step.completed ? 'check_circle' : 'push_pin'}</span>
                         <div className="flex-1">
                           <p className="text-xs text-gray-500 font-semibold mb-1">{step.step}</p>
                           <h5 className="font-bold text-gray-800 mb-2">{step.title}</h5>

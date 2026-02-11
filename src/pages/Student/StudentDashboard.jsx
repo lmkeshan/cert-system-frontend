@@ -348,7 +348,7 @@ export default function StudentDashboard() {
               onClick={() => navigate('/studentportfolio')}
               className="bg-white text-purple-600 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-purple-50 transition-colors shadow-md"
             >
-              <span>👁️</span> View My Portfolio
+              <span className="material-icons text-base">visibility</span> View My Portfolio
             </button>
             <button 
               onClick={() => {
@@ -358,13 +358,13 @@ export default function StudentDashboard() {
               }}
               className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
             >
-              <span>📤</span> Share Portfolio
+              <span className="material-icons text-base">share</span> Share Portfolio
             </button>
             <button
               onClick={() => setShowQrModal(true)}
               className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
             >
-              <span>📥</span> Export
+              <span className="material-icons text-base">download</span> Export
             </button>
           </div>
         </div>
@@ -383,7 +383,7 @@ export default function StudentDashboard() {
                 className="text-gray-400 hover:text-gray-600"
                 type="button"
               >
-                ✕
+                <span className="material-icons">close</span>
               </button>
             </div>
 
@@ -546,7 +546,7 @@ export default function StudentDashboard() {
       <div className="max-w-6xl mx-auto px-4 mt-6">
         <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-8 border-2 border-purple-300">
           <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
-            <span>🔗</span> Share Your Portfolio
+            <span className="material-icons">link</span> Share Your Portfolio
           </h3>
           <p className="text-gray-600 text-sm mb-4">
             Anyone with this link can view your certificates and career insights:
@@ -566,7 +566,7 @@ export default function StudentDashboard() {
               }}
               className="bg-purple-600 text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2"
             >
-              📋 Copy Link
+              <span className="material-icons text-base">content_paste</span> Copy Link
             </button>
           </div>
         </div>
@@ -577,7 +577,7 @@ export default function StudentDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Certificates */}
           <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="text-4xl mb-2">🖼️</div>
+            <div className="mb-2"><span className="material-icons text-purple-600" style={{fontSize: '2.5rem'}}>image</span></div>
             <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.totalCertificates || 0}
             </div>
@@ -586,7 +586,7 @@ export default function StudentDashboard() {
 
           {/* Blockchain Verified */}
           <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="text-4xl mb-2">✅</div>
+            <div className="mb-2"><span className="material-icons text-green-600" style={{fontSize: '2.5rem'}}>check_circle</span></div>
             <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.blockchainVerifiedCount || 0}
             </div>
@@ -595,7 +595,7 @@ export default function StudentDashboard() {
 
           {/* Institutions */}
           <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="text-4xl mb-2">🏛️</div>
+            <div className="mb-2"><span className="material-icons text-purple-600" style={{fontSize: '2.5rem'}}>account_balance</span></div>
             <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.institutionsCount || 0}
             </div>
@@ -604,7 +604,7 @@ export default function StudentDashboard() {
 
           {/* Active Certificates */}
           <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="text-4xl mb-2">⚡</div>
+            <div className="mb-2"><span className="material-icons text-yellow-600" style={{fontSize: '2.5rem'}}>bolt</span></div>
             <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.activeCertificatesCount || 0}
             </div>
@@ -717,22 +717,22 @@ export default function StudentDashboard() {
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>📘</span> {cert.course}
+                      <span className="material-icons" style={{fontSize: '14px'}}>menu_book</span> {cert.course}
                     </span>
                     <span className="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>📅</span> {new Date(cert.issued_date).toLocaleDateString()}
+                      <span className="material-icons" style={{fontSize: '14px'}}>event</span> {new Date(cert.issued_date).toLocaleDateString()}
                     </span>
                     <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>⭐</span> Grade: {cert.grade}
+                      <span className="material-icons" style={{fontSize: '14px'}}>star</span> Grade: {cert.grade}
                     </span>
                     {cert.blockchain_tx_hash && (
                       <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>✅</span> Blockchain Verified
+                        <span className="material-icons" style={{fontSize: '14px'}}>check_circle</span> Blockchain Verified
                       </span>
                     )}
                     {cert.expiry_date && (
                       <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>📆</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
+                        <span className="material-icons" style={{fontSize: '14px'}}>calendar_today</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
                       </span>
                     )}
                   </div>
@@ -747,7 +747,7 @@ export default function StudentDashboard() {
                         rel="noopener noreferrer"
                         className="text-xs text-blue-600 hover:text-blue-800 font-mono break-all underline flex items-center gap-1"
                       >
-                        <span>🔗</span> {cert.blockchain_tx_hash}
+                        <span className="material-icons" style={{fontSize: '14px'}}>link</span> {cert.blockchain_tx_hash}
                       </a>
                     </div>
                   )}
@@ -759,7 +759,7 @@ export default function StudentDashboard() {
                       disabled={isGeneratingPdf}
                       className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
                     >
-                      <span>📄</span> View Certificate
+                      <span className="material-icons text-base">description</span> View Certificate
                     </button>
                     {cert.blockchain_tx_hash && (
                       <a 
@@ -768,7 +768,7 @@ export default function StudentDashboard() {
                         rel="noopener noreferrer"
                         className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
                       >
-                        <span>✅</span> Verify on Blockchain
+                        <span className="material-icons text-base">check_circle</span> Verify on Blockchain
                       </a>
                     )}
                   </div>
@@ -838,14 +838,14 @@ export default function StudentDashboard() {
                     disabled={loadingInsights}
                     className="bg-white text-purple-600 rounded-lg px-8 py-3 text-sm font-bold hover:shadow-lg transition-shadow disabled:opacity-50"
                   >
-                    🔄 REGENERATE
+                    <span className="material-icons text-base">refresh</span> REGENERATE
                   </button>
                 </div>
 
                 {/* Career Matches */}
                 <div className="bg-white border border-gray-200 rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span>🎯</span> Career Matches
+                    <span className="material-icons text-purple-600">track_changes</span> Career Matches
                   </h3>
                   <div className="space-y-3">
                     {careerInsights.careerMatches?.map((career, index) => (
@@ -868,7 +868,7 @@ export default function StudentDashboard() {
                       >
                         <div className="flex items-start gap-2">
                           <span className={step.completed ? 'text-green-600' : 'text-orange-600'}>
-                            {step.completed ? '✓' : '✗'}
+                            <span className="material-icons text-sm">{step.completed ? 'check' : 'close'}</span>
                           </span>
                           <div>
                             <h4 className="font-bold text-gray-800">{step.title}</h4>
@@ -887,7 +887,7 @@ export default function StudentDashboard() {
                   onClick={fetchCareerInsights}
                   className="bg-(--color-primary-violet) text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
                 >
-                  🤖 Generate Career Roadmap
+                  <span className="material-icons text-base">smart_toy</span> Generate Career Roadmap
                 </button>
               </div>
             )}
@@ -945,7 +945,7 @@ export default function StudentDashboard() {
                   onClick={fetchCareerInsights}
                   className="bg-(--color-primary-violet) text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
                 >
-                  🤖 Generate Summary
+                  <span className="material-icons text-base">smart_toy</span> Generate Summary
                 </button>
               </div>
             )}
@@ -1003,7 +1003,7 @@ export default function StudentDashboard() {
                     onClick={handleEditProfile}
                     className="bg-purple-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2"
                   >
-                    <span>✏️</span> Edit Profile
+                    <span className="material-icons text-sm">edit</span> Edit Profile
                   </button>
                 ) : (
                   <div className="flex gap-2">
@@ -1019,7 +1019,7 @@ export default function StudentDashboard() {
                       disabled={savingProfile}
                       className="bg-green-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
-                      {savingProfile ? '⏳ Saving...' : '💾 Save Changes'}
+                      {savingProfile ? <><span className="material-icons text-sm">hourglass_empty</span> Saving...</> : <><span className="material-icons text-sm">save</span> Save Changes</>}
                     </button>
                   </div>
                 )}
@@ -1056,7 +1056,7 @@ export default function StudentDashboard() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-3xl">👤</span>
+                        <span className="material-icons text-3xl text-gray-400">person</span>
                       )}
                     </div>
                     {isEditingProfile && (
@@ -1084,7 +1084,7 @@ export default function StudentDashboard() {
                           className="text-sm"
                         />
                         {profilePhoto && (
-                          <p className="text-xs text-green-600 mt-1">✓ {profilePhoto.name}</p>
+                          <p className="text-xs text-green-600 mt-1"><span className="material-icons" style={{fontSize: '12px', verticalAlign: 'middle'}}>check</span> {profilePhoto.name}</p>
                         )}
                       </div>
                     )}
@@ -1181,7 +1181,7 @@ export default function StudentDashboard() {
                           className="text-sm"
                         />
                         {cvFile && (
-                          <p className="text-xs text-green-600 mt-1">✓ {cvFile.name}</p>
+                          <p className="text-xs text-green-600 mt-1"><span className="material-icons" style={{fontSize: '12px', verticalAlign: 'middle'}}>check</span> {cvFile.name}</p>
                         )}
                         {student?.cv_url && (
                           <p className="text-xs text-gray-500 mt-1">Current: {student.cv_url.split('/').pop()}</p>
