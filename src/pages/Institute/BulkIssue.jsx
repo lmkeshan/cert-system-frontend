@@ -61,7 +61,7 @@ const BulkUpload = () => {
     if (!file) return;
 
     if (!file.name.endsWith('.csv')) {
-      setMessage({ type: 'error', text: '❌ Please upload a CSV file' });
+      setMessage({ type: 'error', text: 'Please upload a CSV file' });
       return;
     }
 
@@ -73,7 +73,7 @@ const BulkUpload = () => {
       if (data.length === 0) {
         setMessage({ 
           type: 'error', 
-          text: '❌ Invalid CSV format. Required columns: student_id, course_name, grade' 
+          text: 'Invalid CSV format. Required columns: student_id, course_name, grade' 
         });
         return;
       }
@@ -81,7 +81,7 @@ const BulkUpload = () => {
       if (data.length > 500) {
         setMessage({ 
           type: 'error', 
-          text: '❌ Maximum 500 certificates per upload. Please split your file.' 
+          text: 'Maximum 500 certificates per upload. Please split your file.' 
         });
         return;
       }
@@ -89,7 +89,7 @@ const BulkUpload = () => {
       setCsvData(data);
       setFileName(file.name);
       setPreview(data.slice(0, 5));
-      setMessage({ type: 'success', text: `✅ ${file.name} ready! (${data.length} certificates)` });
+      setMessage({ type: 'success', text: `${file.name} ready! (${data.length} certificates)` });
     };
     reader.readAsText(file);
   };
@@ -110,13 +110,13 @@ const BulkUpload = () => {
 
   const handleUpload = async () => {
     if (csvData.length === 0) {
-      setMessage({ type: 'error', text: '❌ No CSV file selected' });
+      setMessage({ type: 'error', text: 'No CSV file selected' });
       return;
     }
 
     // Check MetaMask connection
     if (!metamaskConnected) {
-      setMessage({ type: 'error', text: '❌ Please connect MetaMask from the header first to sign certificates for blockchain' });
+      setMessage({ type: 'error', text: 'Please connect MetaMask from the header first to sign certificates for blockchain' });
       return;
     }
 
@@ -222,7 +222,7 @@ const BulkUpload = () => {
 
       // Step 5: Request MetaMask signature
       setCurrentStep('Waiting for MetaMask signature...');
-      setMessage({ type: 'info', text: '🔐 Please sign the message in MetaMask to authorize bulk issuance' });
+      setMessage({ type: 'info', text: 'Please sign the message in MetaMask to authorize bulk issuance' });
       
       const signature = await window.ethereum.request({
         method: 'personal_sign',
@@ -281,7 +281,7 @@ const BulkUpload = () => {
       
       setMessage({ 
         type: 'success', 
-        text: `✅ Successfully issued ${successCount} certificates on blockchain!` + 
+        text: `Successfully issued ${successCount} certificates on blockchain!` + 
               (failureCount > 0 ? ` (${failureCount} failed)` : '')
       });
 
@@ -312,7 +312,7 @@ const BulkUpload = () => {
         errorMsg = err.message;
       }
       
-      setMessage({ type: 'error', text: '❌ ' + errorMsg });
+      setMessage({ type: 'error', text: errorMsg });
       setUploadProgress(0);
       setCurrentStep('');
     } finally {
@@ -378,7 +378,7 @@ const BulkUpload = () => {
             />
             <div className="border-2 border-dashed border-[#3B82F6] rounded-2xl p-10 md:p-14 flex flex-col items-center justify-center gap-3 bg-white hover:bg-blue-50 transition-colors pointer-events-none">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">📂</span>
+                <span className="material-icons text-blue-600" style={{fontSize: '2rem'}}>folder_open</span>
                 <span className="text-[#3B82F6] font-bold text-lg md:text-xl underline">
                   Click to upload CSV or drag & drop
                 </span>
@@ -460,7 +460,7 @@ const BulkUpload = () => {
                     disabled={loading || !metamaskConnected}
                     className="px-6 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg text-sm font-bold hover:from-purple-600 hover:to-purple-700 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {!metamaskConnected ? '🔒 Connect MetaMask First' : `🚀 Issue ${csvData.length} Certificates on Blockchain`}
+                    {!metamaskConnected ? <><span className="material-icons text-sm" style={{verticalAlign: 'middle'}}>lock</span> Connect MetaMask First</> : <><span className="material-icons text-sm" style={{verticalAlign: 'middle'}}>rocket_launch</span> Issue {csvData.length} Certificates on Blockchain</>}
                   </button>
                 </div>
               </div>
@@ -489,19 +489,19 @@ const BulkUpload = () => {
               
               <div className="mt-4 space-y-2 text-xs text-gray-600">
                 <div className="flex items-center gap-2">
-                  <span className={uploadProgress >= 20 ? 'text-green-600' : 'text-gray-400'}>✓</span>
+                  <span className={`material-icons text-sm ${uploadProgress >= 20 ? 'text-green-600' : 'text-gray-400'}`}>check</span>
                   <span>Create certificate records in database</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={uploadProgress >= 50 ? 'text-green-600' : 'text-gray-400'}>✓</span>
+                  <span className={`material-icons text-sm ${uploadProgress >= 50 ? 'text-green-600' : 'text-gray-400'}`}>check</span>
                   <span>Get authorization message</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={uploadProgress >= 60 ? 'text-green-600' : 'text-gray-400'}>✓</span>
+                  <span className={`material-icons text-sm ${uploadProgress >= 60 ? 'text-green-600' : 'text-gray-400'}`}>check</span>
                   <span>Sign with MetaMask</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={uploadProgress >= 100 ? 'text-green-600' : 'text-gray-400'}>✓</span>
+                  <span className={`material-icons text-sm ${uploadProgress >= 100 ? 'text-green-600' : 'text-gray-400'}`}>check</span>
                   <span>Issue certificates on blockchain</span>
                 </div>
               </div>
@@ -511,7 +511,7 @@ const BulkUpload = () => {
           {/* Success State */}
           {uploadProgress === 100 && !loading && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-300 p-8 text-center">
-              <div className="text-6xl mb-4">✅</div>
+              <div className="mb-4"><span className="material-icons text-green-600" style={{fontSize: '4.5rem'}}>check_circle</span></div>
               <h3 className="text-2xl font-bold text-green-700 mb-2">Upload Complete!</h3>
               <p className="text-green-600 text-lg mb-6">
                 All certificates have been successfully issued on the blockchain

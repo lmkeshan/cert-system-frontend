@@ -12,6 +12,9 @@ export default function StudentPortfolio() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isOwnPortfolio, setIsOwnPortfolio] = useState(false)
+  const [showAllCertificates, setShowAllCertificates] = useState(false)
+  const [careerInsightsExpanded, setCareerInsightsExpanded] = useState(false)
+  const [institutionsExpanded, setInstitutionsExpanded] = useState(false)
   
   const [studentData, setStudentData] = useState({
     name: '',
@@ -153,6 +156,14 @@ export default function StudentPortfolio() {
     alert('Portfolio link copied to clipboard!')
   }
 
+  // Get displayed certificates based on mobile view
+  const getDisplayedCertificates = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && !showAllCertificates) {
+      return certificates.slice(0, 2)
+    }
+    return certificates
+  }
+
   const buildCertificateData = (cert) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
     const serverUrl = baseUrl.replace(/\/api\/?$/, '')
@@ -245,9 +256,9 @@ export default function StudentPortfolio() {
 
         <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl p-12 text-center mb-8 shadow-xl">
-          <div className="flex justify-center mb-6">
-            <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center text-6xl shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl p-6 md:p-12 text-center mb-8 shadow-xl">
+          <div className="flex justify-center mb-4 md:mb-6">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-full flex items-center justify-center text-4xl md:text-6xl shadow-lg overflow-hidden">
               {studentData.profilePhotoUrl ? (
                 <img 
                   src={`${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:3001'}${studentData.profilePhotoUrl}`}
@@ -259,19 +270,29 @@ export default function StudentPortfolio() {
               )}
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">{studentData.name}</h1>
-          <p className="text-xl text-purple-100 mb-4">Professional Portfolio</p>
-          <p className="text-sm text-purple-200">Student ID: {studentData.userId}</p>
+          <h1 className="text-2xl md:text-4xl font-bold text-white mb-2">{studentData.name}</h1>
+          <p className="text-base md:text-xl text-purple-100 mb-2 md:mb-4">Professional Portfolio</p>
+          <p className="text-xs md:text-sm text-purple-200">Student ID: {studentData.userId}</p>
           
           {/* Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-3 mt-6">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-6">
             {isOwnPortfolio && (
-              <button 
-                onClick={copyPortfolioLink}
-                className="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-purple-50 transition-all shadow-md inline-flex items-center gap-2"
-              >
-                <span>🔗</span> Share My Portfolio
-              </button>
+              <>
+                <button 
+                  onClick={() => navigate('/studentdashboard')}
+                  className="bg-white text-purple-600 px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold hover:bg-purple-50 transition-all shadow-md inline-flex items-center gap-2"
+                >
+                  <span className="material-icons text-sm md:text-base">dashboard</span>
+                  <span className="hidden md:inline">Dashboard</span>
+                </button>
+                <button 
+                  onClick={copyPortfolioLink}
+                  className="bg-white text-purple-600 px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold hover:bg-purple-50 transition-all shadow-md inline-flex items-center gap-2"
+                >
+                  <span className="material-icons text-sm md:text-base">link</span>
+                  <span className="hidden md:inline">Share My Portfolio</span>
+                </button>
+              </>
             )}
             
             {studentData.githubUrl && (
@@ -279,9 +300,10 @@ export default function StudentPortfolio() {
                 href={studentData.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-800 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-900 transition-all shadow-md inline-flex items-center gap-2"
+                className="bg-gray-800 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold hover:bg-gray-900 transition-all shadow-md inline-flex items-center gap-2"
               >
-                <span>💻</span> GitHub Profile
+                <span className="material-icons text-sm md:text-base">computer</span>
+                <span className="hidden md:inline">GitHub Profile</span>
               </a>
             )}
             
@@ -290,98 +312,100 @@ export default function StudentPortfolio() {
                 href={`${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:3001'}${studentData.cvUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition-all shadow-md inline-flex items-center gap-2"
+                className="bg-blue-600 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold hover:bg-blue-700 transition-all shadow-md inline-flex items-center gap-2"
               >
-                <span>📄</span> Download CV
+                <span className="material-icons text-sm md:text-base">description</span>
+                <span className="hidden md:inline">Download CV</span>
               </a>
             )}
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 text-center border-2 border-purple-300">
-            <div className="text-3xl mb-2">🖼️</div>
-            <div className="text-3xl font-bold text-purple-800 mb-1">{studentData.totalCertificates}</div>
-            <div className="text-sm font-semibold text-purple-700">Total Certificates</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
+          <Card className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-center border-2 border-purple-300">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-purple-600" style={{fontSize: '1.5rem'}}>image</span></div>
+            <div className="text-xl md:text-3xl font-bold text-purple-800 mb-1">{studentData.totalCertificates}</div>
+            <div className="text-xs md:text-sm font-semibold text-purple-700">Total Certificates</div>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 text-center border-2 border-green-300">
-            <div className="text-3xl mb-2">✅</div>
-            <div className="text-3xl font-bold text-green-800 mb-1">{studentData.blockchainVerified}</div>
-            <div className="text-sm font-semibold text-green-700">Blockchain Verified</div>
+          <Card className="bg-gradient-to-br from-green-100 to-green-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-center border-2 border-green-300">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-green-600" style={{fontSize: '1.5rem'}}>check_circle</span></div>
+            <div className="text-xl md:text-3xl font-bold text-green-800 mb-1">{studentData.blockchainVerified}</div>
+            <div className="text-xs md:text-sm font-semibold text-green-700">Verified</div>
           </Card>
 
-          <Card className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 text-center border-2 border-blue-300">
-            <div className="text-3xl mb-2">🏛️</div>
-            <div className="text-3xl font-bold text-blue-800 mb-1">{studentData.institutions}</div>
-            <div className="text-sm font-semibold text-blue-700">Institutions</div>
+          <Card className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-center border-2 border-blue-300">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-blue-600" style={{fontSize: '1.5rem'}}>account_balance</span></div>
+            <div className="text-xl md:text-3xl font-bold text-blue-800 mb-1">{studentData.institutions}</div>
+            <div className="text-xs md:text-sm font-semibold text-blue-700">Institutions</div>
           </Card>
 
-          <Card className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl p-6 text-center border-2 border-orange-300">
-            <div className="text-3xl mb-2">⚡</div>
-            <div className="text-3xl font-bold text-orange-800 mb-1">{studentData.activeCertificates}</div>
-            <div className="text-sm font-semibold text-orange-700">Active Certificates</div>
+          <Card className="bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl md:rounded-2xl p-4 md:p-6 text-center border-2 border-orange-300">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-orange-600" style={{fontSize: '1.5rem'}}>bolt</span></div>
+            <div className="text-xl md:text-3xl font-bold text-orange-800 mb-1">{studentData.activeCertificates}</div>
+            <div className="text-xs md:text-sm font-semibold text-orange-700">Active</div>
           </Card>
         </div>
 
         {/* Courses Section */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-            <span>📚</span> Certificates
+          <h2 className="text-xl md:text-2xl font-bold text-purple-600 mb-4 md:mb-6 flex items-center gap-2">
+            <span className="material-icons">menu_book</span> Certificates
           </h2>
           {certificates.length === 0 ? (
-            <Card className="bg-gray-100 rounded-2xl p-12 text-center">
-              <p className="text-gray-500 text-lg">No certificates yet</p>
+            <Card className="bg-gray-100 rounded-2xl p-8 md:p-12 text-center">
+              <p className="text-gray-500 text-base md:text-lg">No certificates yet</p>
             </Card>
           ) : (
-            <div className="space-y-4">
-              {certificates.map((cert) => {
+            <>
+            <div className="space-y-3 md:space-y-4">
+              {getDisplayedCertificates().map((cert) => {
                 const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
                 const serverUrl = baseUrl.replace('/api', '')
                 const logoUrl = cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
                 
                 return (
-                <Card key={cert.certificate_id} className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
-                  <div className="flex justify-between items-start mb-4">
+                <Card key={cert.certificate_id} className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200">
+                  <div className="flex justify-between items-start mb-3 md:mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-800">{cert.course_name || cert.course}</h3>
-                      <p className="text-sm text-gray-600">{cert.institute_name}</p>
+                      <h3 className="text-base md:text-lg font-bold text-gray-800">{cert.course_name || cert.course}</h3>
+                      <p className="text-xs md:text-sm text-gray-600">{cert.institute_name}</p>
                     </div>
                     {logoUrl && (
                       <img
                         src={logoUrl}
                         alt={cert.institute_name}
-                        className="w-16 h-16 object-contain rounded-lg border border-gray-200 ml-4"
+                        className="w-12 h-12 md:w-16 md:h-16 object-contain rounded-lg border border-gray-200 ml-2 md:ml-4"
                       />
                     )}
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
                     <span className="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                      <span>📅</span> {new Date(cert.issued_date).toLocaleDateString()}
+                      <span className="material-icons" style={{fontSize: '14px'}}>event</span> {new Date(cert.issued_date).toLocaleDateString()}
                     </span>
                     {cert.grade && (
                       <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>⭐</span> Grade {cert.grade}
+                        <span className="material-icons" style={{fontSize: '14px'}}>star</span> Grade {cert.grade}
                       </span>
                     )}
                     {cert.blockchain_tx_hash && (
                       <span className="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>✅</span> Blockchain Verified
+                        <span className="material-icons" style={{fontSize: '14px'}}>check_circle</span> Blockchain Verified
                       </span>
                     )}
                     {cert.expiry_date && (
                       <span className="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
-                        <span>📆</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
+                        <span className="material-icons" style={{fontSize: '14px'}}>calendar_today</span> Expires {new Date(cert.expiry_date).toLocaleDateString()}
                       </span>
                     )}
                   </div>
 
                   {/* Blockchain Transaction Hash */}
                   {cert.blockchain_tx_hash && (
-                    <div className="mb-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div className="mb-3 md:mb-4 bg-gray-50 rounded-lg p-2 md:p-3 border border-gray-200">
                       <p className="text-xs text-gray-600 font-semibold mb-1">Blockchain Transaction:</p>
                       <a 
                         href={`https://amoy.polygonscan.com/tx/${cert.blockchain_tx_hash}`}
@@ -389,7 +413,7 @@ export default function StudentPortfolio() {
                         rel="noopener noreferrer"
                         className="text-xs text-blue-600 hover:text-blue-800 font-mono break-all underline flex items-center gap-1"
                       >
-                        <span>🔗</span> {cert.blockchain_tx_hash}
+                        <span className="material-icons" style={{fontSize: '14px'}}>link</span> {cert.blockchain_tx_hash}
                       </a>
                     </div>
                   )}
@@ -399,24 +423,41 @@ export default function StudentPortfolio() {
                     <button
                       onClick={() => openCertificatePdf(cert)}
                       disabled={isGeneratingPdf}
-                      className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
+                      className="bg-purple-600 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg flex items-center gap-1 md:gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
                     >
-                      <span>📄</span> View Certificate
+                      <span className="material-icons text-sm">description</span>
+                      <span className="hidden sm:inline">View Certificate</span>
+                      <span className="sm:hidden">View</span>
                     </button>
                   </div>
                 </Card>
               )})}
             </div>
+            {/* Show More Button - Mobile Only */}
+            {certificates.length > 2 && (
+              <div className="md:hidden mt-4 text-center">
+                <button
+                  onClick={() => setShowAllCertificates(!showAllCertificates)}
+                  className="bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition-colors inline-flex items-center gap-2"
+                >
+                  <span className="material-icons text-sm">{showAllCertificates ? 'expand_less' : 'expand_more'}</span>
+                  {showAllCertificates ? 'Show Less' : `Show All (${certificates.length})`}
+                </button>
+              </div>
+            )}
+            </>
           )}
         </div>
 
         {/* Institutions Grid */}
         {institutions.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-purple-600 mb-6 flex items-center gap-2">
-              <span>🏛️</span> Institutions
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Desktop View */}
+            <div className="hidden md:block">
+              <h2 className="text-2xl font-bold text-purple-600 mb-6 flex items-center gap-2">
+                <span className="material-icons">account_balance</span> Institutions
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {institutions.map((inst, index) => {
                 const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
                 const serverUrl = baseUrl.replace('/api', '')
@@ -431,7 +472,7 @@ export default function StudentPortfolio() {
                       className="w-20 h-20 object-contain rounded-lg mx-auto mb-4 bg-white p-2"
                     />
                   ) : (
-                    <div className="text-4xl mb-4">🎓</div>
+                    <div className="mb-4"><span className="material-icons text-purple-600" style={{fontSize: '3rem'}}>school</span></div>
                   )}
                   <h3 className="text-xl font-bold mb-2">{inst.name || inst.institute_name}</h3>
                   <p className="text-white/90">{inst.certificateCount} Certificates</p>
@@ -439,21 +480,65 @@ export default function StudentPortfolio() {
               )})}
             </div>
           </div>
+
+            {/* Mobile Accordion View */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setInstitutionsExpanded(!institutionsExpanded)}
+                className="w-full bg-white border-2 border-purple-300 rounded-xl p-4 mb-3 flex items-center justify-between hover:bg-purple-50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="material-icons text-purple-600">account_balance</span>
+                  <h2 className="text-lg font-bold text-purple-600">Institutions ({institutions.length})</h2>
+                </div>
+                <span className="material-icons text-purple-600">{institutionsExpanded ? 'expand_less' : 'expand_more'}</span>
+              </button>
+              {institutionsExpanded && (
+                <div className="space-y-3 mb-6">
+                  {institutions.map((inst, index) => {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api'
+                    const serverUrl = baseUrl.replace('/api', '')
+                    const logoUrl = inst.logo_url ? `${serverUrl}${inst.logo_url}` : null
+                    
+                    return (
+                      <Card key={index} className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl p-6 flex items-center gap-4 text-white shadow-md">
+                        {logoUrl ? (
+                          <img
+                            src={logoUrl}
+                            alt={inst.name || inst.institute_name}
+                            className="w-16 h-16 object-contain rounded-lg bg-white p-2 flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="material-icons text-purple-600" style={{fontSize: '2rem'}}>school</span>
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h3 className="text-base font-bold mb-1">{inst.name || inst.institute_name}</h3>
+                          <p className="text-sm text-white/90">{inst.certificateCount} Certificates</p>
+                        </div>
+                      </Card>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
-        {/* AI Career Insights Section */}
+        {/* AI Career Insights Section - Desktop View */}
         {careerInsights && (
-          <Card className="bg-white border-2 border-purple-300 rounded-3xl p-8 mb-12 shadow-lg">
+          <Card className="hidden md:block bg-white border-2 border-purple-300 rounded-3xl p-8 mb-12 shadow-lg">
             <div className="flex justify-between items-center mb-8">
               <h3 className="text-2xl font-bold text-purple-600 flex items-center gap-2">
-                <span>🤖</span> AI Career Insights
+                <span className="material-icons">smart_toy</span> AI Career Insights
               </h3>
               {isOwnPortfolio && (
                 <button
                   onClick={regenerateCareerInsights}
-                  className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition-all"
+                  className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition-all flex items-center gap-2"
                 >
-                  🔄 Regenerate
+                  <span className="material-icons text-sm">refresh</span> Regenerate
                 </button>
               )}
             </div>
@@ -509,7 +594,7 @@ export default function StudentPortfolio() {
                   {careerInsights.nextSteps.map((step, index) => (
                     <Card key={index} className="border-l-4 border-green-500 bg-green-50 p-6 rounded-lg">
                       <div className="flex items-start gap-3">
-                        <span className="text-2xl">{step.completed ? '✅' : '📌'}</span>
+                        <span className="material-icons text-2xl">{step.completed ? 'check_circle' : 'push_pin'}</span>
                         <div className="flex-1">
                           <p className="text-xs text-gray-500 font-semibold mb-1">{step.step}</p>
                           <h5 className="font-bold text-gray-800 mb-2">{step.title}</h5>
@@ -530,18 +615,116 @@ export default function StudentPortfolio() {
           </Card>
         )}
 
+        {/* AI Career Insights Section - Mobile Accordion View */}
+        {careerInsights && (
+          <div className="md:hidden mb-12">
+            <button
+              onClick={() => setCareerInsightsExpanded(!careerInsightsExpanded)}
+              className="w-full bg-white border-2 border-purple-300 rounded-xl p-4 mb-3 flex items-center justify-between hover:bg-purple-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="material-icons text-purple-600">smart_toy</span>
+                <h2 className="text-lg font-bold text-purple-600">AI Career Insights</h2>
+              </div>
+              <span className="material-icons text-purple-600">{careerInsightsExpanded ? 'expand_less' : 'expand_more'}</span>
+            </button>
+            {careerInsightsExpanded && (
+              <Card className="bg-white border-2 border-purple-300 rounded-xl p-4 shadow-lg">
+                {isOwnPortfolio && (
+                  <button
+                    onClick={regenerateCareerInsights}
+                    className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-700 transition-all mb-4 flex items-center justify-center gap-2"
+                  >
+                    <span className="material-icons text-sm">refresh</span> Regenerate
+                  </button>
+                )}
+
+                {/* Summary */}
+                {careerInsights.summary && (
+                  <div className="mb-6">
+                    <h4 className="text-base font-bold text-gray-800 mb-2 text-center">Professional Summary</h4>
+                    <p className="text-sm text-gray-700 text-center leading-relaxed">
+                      {careerInsights.summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* Top Skills */}
+                {careerInsights.topSkills && careerInsights.topSkills.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-base font-bold text-gray-800 mb-3 text-center">Top Skills</h4>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {careerInsights.topSkills.map((skill, index) => (
+                        <div key={index} className="bg-blue-100 text-blue-700 rounded-lg px-4 py-2 text-xs font-medium">
+                          {skill}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Career Matches */}
+                {careerInsights.careerMatches && careerInsights.careerMatches.length > 0 && (
+                  <div className="mb-6">
+                    <h4 className="text-base font-bold text-gray-800 mb-3 text-center">Career Matches</h4>
+                    <div className="space-y-2">
+                      {careerInsights.careerMatches.map((career, index) => (
+                        <Card key={index} className="border-l-4 border-purple-500 bg-purple-50 p-4 rounded-lg">
+                          <div className="flex justify-between items-start">
+                            <h5 className="text-sm font-bold text-gray-800">{career.title}</h5>
+                            <span className="bg-purple-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                              {career.matchPercentage}%
+                            </span>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Next Steps */}
+                {careerInsights.nextSteps && careerInsights.nextSteps.length > 0 && (
+                  <div>
+                    <h4 className="text-base font-bold text-gray-800 mb-3 text-center">Recommended Next Steps</h4>
+                    <div className="space-y-3">
+                      {careerInsights.nextSteps.map((step, index) => (
+                        <Card key={index} className="border-l-4 border-green-500 bg-green-50 p-3 rounded-lg">
+                          <div className="flex items-start gap-2">
+                            <span className="material-icons text-lg">{step.completed ? 'check_circle' : 'push_pin'}</span>
+                            <div className="flex-1">
+                              <p className="text-xs text-gray-500 font-semibold mb-0.5">{step.step}</p>
+                              <h5 className="text-sm font-bold text-gray-800 mb-1">{step.title}</h5>
+                              <p className="text-xs text-gray-700">{step.description}</p>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {careerInsights.generatedAt && (
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    Generated on {new Date(careerInsights.generatedAt).toLocaleString()}
+                  </p>
+                )}
+              </Card>
+            )}
+          </div>
+        )}
+
         {/* Generate Career Insights Button (for authenticated users without insights) */}
         {isOwnPortfolio && !careerInsights && certificates.length > 0 && (
-          <Card className="bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 rounded-3xl p-12 text-center mb-12">
-            <div className="text-6xl mb-4">🤖</div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">Get AI Career Insights</h3>
-            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+          <Card className="bg-gradient-to-r from-purple-100 to-blue-100 border-2 border-purple-300 rounded-2xl md:rounded-3xl p-6 md:p-12 text-center mb-12">
+            <div className="mb-4"><span className="material-icons text-purple-600" style={{fontSize: '3.5rem'}}>smart_toy</span></div>
+            <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3 md:mb-4">Get AI Career Insights</h3>
+            <p className="text-sm md:text-base text-gray-700 mb-4 md:mb-6 max-w-2xl mx-auto">
               Let our AI analyze your certificates and provide personalized career recommendations, 
               top skills, and next steps to advance your career.
             </p>
             <button
               onClick={regenerateCareerInsights}
-              className="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-purple-700 transition-all shadow-md"
+              className="bg-purple-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-lg text-base md:text-lg font-bold hover:bg-purple-700 transition-all shadow-md"
             >
               Generate Career Insights
             </button>

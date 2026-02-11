@@ -101,31 +101,31 @@ export default function Homepage() {
             <div className="bg-white border-2 border-gray-300 rounded-3xl p-4 md:p-10 lg:p-12">
               <ul className="space-y-6">
                 <li className="flex items-start gap-3">
-                  <span className="text-xl md:text-2xl shrink-0">🔐</span>
+                  <span className="material-icons text-xl md:text-2xl shrink-0 text-purple-600">lock</span>
                   <span className="text-sm md:text-lg font-semibold text-black">
                     Built on blockchain for trust & immutability
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl md:text-2xl shrink-0">⚡</span>
+                  <span className="material-icons text-xl md:text-2xl shrink-0 text-purple-600">bolt</span>
                   <span className="text-sm md:text-lg font-semibold text-black">
                     Bulk certificate issuance using relay technology
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl md:text-2xl shrink-0">🎓</span>
+                  <span className="material-icons text-xl md:text-2xl shrink-0 text-purple-600">school</span>
                   <span className="text-sm md:text-lg font-semibold text-black">
                     Student portfolios with verified credentials
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl md:text-2xl shrink-0">🌍</span>
+                  <span className="material-icons text-xl md:text-2xl shrink-0 text-purple-600">public</span>
                   <span className="text-sm md:text-lg font-semibold text-black">
                     Instantly verifiable anywhere, anytime
                   </span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="text-xl md:text-2xl shrink-0">📋</span>
+                  <span className="material-icons text-xl md:text-2xl shrink-0 text-purple-600">content_paste</span>
                   <span className="text-sm md:text-lg font-semibold text-black">
                     Standardized certificate templates for consistency
                   </span>

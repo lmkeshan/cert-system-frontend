@@ -53,7 +53,7 @@ export function ProtectedAdminRoute({ children }) {
 export function ProtectedMetaMaskRoute({ children }) {
   const { connected: metamaskConnected, address, loading } = useMetaMaskContext()
 
-  console.log('🔐 ProtectedMetaMaskRoute:', { metamaskConnected, address, loading });
+  console.log('ProtectedMetaMaskRoute:', { metamaskConnected, address, loading });
 
   // Show loading state while checking connection
   if (loading) {
@@ -110,7 +110,7 @@ export function ProtectedMetaMaskRoute({ children }) {
             onClick={() => window.location.reload()}
             className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 px-6 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
           >
-            🔄 Refresh Page
+            <span className="material-icons text-base" style={{verticalAlign: 'middle'}}>refresh</span> Refresh Page
           </button>
         </div>
       </div>

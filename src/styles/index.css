@@ -17,3 +17,39 @@
 	background-image: url("../assets/images/background.webp");
 	background-repeat: repeat;
 }
+
+@media (min-width: 2560px) {
+	.bg-certi-repeat {
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center top;
+		background-attachment: fixed;
+	}
+}
+
+/* Material Icons Styling */
+.material-icons {
+	font-family: 'Material Icons';
+	font-weight: normal;
+	font-style: normal;
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
+	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar for horizontal scroll */
+.scrollbar-hide {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;
+}

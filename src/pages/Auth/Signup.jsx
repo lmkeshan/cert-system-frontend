@@ -562,10 +562,10 @@ export default function Signup() {
                       disabled={connectingWallet}
                       className="w-full border-2 border-orange-500 text-orange-600 rounded-lg px-4 py-2.5 text-sm font-semibold hover:bg-orange-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      🔗 {connectingWallet ? 'Connecting...' : 'Connect MetaMask to fill'}
+                      <span className="material-icons text-sm">link</span> {connectingWallet ? 'Connecting...' : 'Connect MetaMask to fill'}
                     </button>
                     <small className="text-xs text-gray-500 mt-2 block">
-                      💡 This will be your signing wallet for issuing certificates. Must be a valid Ethereum address.
+                      <span className="material-icons" style={{fontSize: '14px', verticalAlign: 'middle'}}>lightbulb</span> This will be your signing wallet for issuing certificates. Must be a valid Ethereum address.
                     </small>
                   </div>
 
@@ -579,10 +579,10 @@ export default function Signup() {
                       id="instituteLogo"
                     />
                     <label htmlFor="instituteLogo" className="w-full border border-blue-500 rounded-lg px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 cursor-pointer flex items-center gap-2 transition-colors">
-                      📁 Upload Institute Logo
+                      <span className="material-icons text-sm">folder</span> Upload Institute Logo
                     </label>
                     {instituteForm.logo && (
-                      <small className="text-xs text-green-600 mt-2 block">✓ {instituteForm.logo.name}</small>
+                      <small className="text-xs text-green-600 mt-2 block"><span className="material-icons" style={{fontSize: '14px', verticalAlign: 'middle'}}>check</span> {instituteForm.logo.name}</small>
                     )}
                   </label>
 
@@ -597,10 +597,10 @@ export default function Signup() {
                       required
                     />
                     <label htmlFor="verificationDocs" className="w-full border border-blue-500 rounded-lg px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 cursor-pointer flex items-center gap-2 transition-colors">
-                      📁 Upload Verified Documents
+                      <span className="material-icons text-sm">folder</span> Upload Verified Documents
                     </label>
                     {instituteForm.verificationDoc && (
-                      <small className="text-xs text-green-600 mt-2 block">✓ {instituteForm.verificationDoc.name}</small>
+                      <small className="text-xs text-green-600 mt-2 block"><span className="material-icons" style={{fontSize: '14px', verticalAlign: 'middle'}}>check</span> {instituteForm.verificationDoc.name}</small>
                     )}
                     <small className="text-xs text-gray-500 mt-2 block">
                       Proof of accreditation/authority. Required for approval.

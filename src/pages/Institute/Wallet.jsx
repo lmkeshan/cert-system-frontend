@@ -165,7 +165,7 @@ const WalletPage = () => {
     e.preventDefault();
     
     if (!depositAmount || isNaN(depositAmount) || parseFloat(depositAmount) <= 0) {
-      setMessage({ type: 'error', text: '❌ Please enter a valid amount' });
+      setMessage({ type: 'error', text: 'Please enter a valid amount' });
       return;
     }
 
@@ -173,7 +173,7 @@ const WalletPage = () => {
     if (!metamaskConnected) {
       setMessage({ 
         type: 'error', 
-        text: '❌ Please connect MetaMask first to deposit POL' 
+        text: 'Please connect MetaMask first to deposit POL' 
       });
       return;
     }
@@ -187,7 +187,7 @@ const WalletPage = () => {
       
       setMessage({ 
         type: 'success', 
-        text: `✅ Successfully deposited ${depositAmount} POL! TX: ${result.hash.substring(0, 10)}...${result.hash.substring(result.hash.length - 8)}` 
+        text: `Successfully deposited ${depositAmount} POL! TX: ${result.hash.substring(0, 10)}...${result.hash.substring(result.hash.length - 8)}` 
       });
       
       setDepositAmount('');
@@ -200,7 +200,7 @@ const WalletPage = () => {
     } catch (err) {
       setMessage({ 
         type: 'error', 
-        text: `❌ Deposit failed: ${err.message}` 
+        text: `Deposit failed: ${err.message}` 
       });
     } finally {
       setDepositing(false);
@@ -226,9 +226,7 @@ const WalletPage = () => {
       {/* 1. Header Banner - Increased Height & Padding */}
       <div className="bg-white rounded-2xl border border-gray-300 px-6 py-8 md:py-10 flex items-center gap-5 shadow-sm min-h-[120px]">
         <div className="text-3xl bg-orange-50 p-3 rounded-xl flex items-center justify-center shrink-0">
-          <span role="img" aria-label="wallet">
-            👛
-          </span>
+          <span className="material-icons text-orange-600" style={{fontSize: '2rem'}}>account_balance_wallet</span>
         </div>
         <div className="flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-gray-800 leading-tight">

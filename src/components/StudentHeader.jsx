@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logoImage from '../assets/images/logo.webp'
 import { clearAllTokens } from '../services/api'
 
 export default function StudentHeader() {
   const navigate = useNavigate()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
     clearAllTokens()
@@ -16,12 +18,12 @@ export default function StudentHeader() {
         {/* Logo/Brand */}
         <div className="flex items-center">
           <Link to="/" className="inline-flex items-center">
-            <img src={logoImage} alt="CertiChain" className="h-7 md:h-8 w-auto" />
+            <img src={logoImage} alt="CertiChain" className="h-6 md:h-8 w-auto" />
           </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex items-center gap-6">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-6">
           <Link
             to="/studentportfolio"
             target="_blank"
@@ -37,7 +39,42 @@ export default function StudentHeader() {
             LOG OUT
           </button>
         </nav>
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+          aria-label="Toggle menu"
+        >
+          <span className="material-icons">{isMobileMenuOpen ? 'close' : 'menu'}</span>
+        </button>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-purple-700 border-t border-white/10">
+          <nav className="flex flex-col py-2">
+            <Link
+              to="/studentportfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white no-underline font-medium hover:bg-white/10 transition-colors px-4 py-3"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              MY PORTFOLIO
+            </Link>
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false)
+                handleLogout()
+              }}
+              className="text-white font-semibold hover:bg-white/10 transition-colors px-4 py-3 text-left"
+            >
+              LOG OUT
+            </button>
+          </nav>
+        </div>
+      )}
     </header>
   )
 }
