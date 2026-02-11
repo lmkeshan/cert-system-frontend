@@ -335,20 +335,20 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="max-w-6xl mx-auto px-4 pt-8">
-        <div className="bg-gradient-primary rounded-3xl px-5 py-8 md:px-10 md:py-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">My Dashboard</h1>
-          <p className="text-white text-base md:text-lg mb-6">
+      <div className="max-w-6xl mx-auto px-4 pt-4 md:pt-8">
+        <div className="bg-gradient-primary rounded-2xl md:rounded-3xl px-4 py-6 md:px-10 md:py-10">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 md:mb-3">My Dashboard</h1>
+          <p className="text-white text-sm md:text-base lg:text-lg mb-4 md:mb-6">
             {student?.full_name}'s verified digital certificates
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 md:gap-3">
             <button 
               onClick={() => navigate('/studentportfolio')}
-              className="bg-white text-purple-600 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-purple-50 transition-colors shadow-md"
+              className="bg-white text-purple-600 rounded-lg px-3 py-2 md:px-5 md:py-2.5 text-xs md:text-sm font-semibold flex items-center gap-1 md:gap-2 hover:bg-purple-50 transition-colors shadow-md"
             >
-              <span className="material-icons text-base">visibility</span> View My Portfolio
+              <span className="material-icons text-sm md:text-base">visibility</span> <span className="hidden sm:inline">View My Portfolio</span><span className="sm:hidden">Portfolio</span>
             </button>
             <button 
               onClick={() => {
@@ -356,15 +356,15 @@ export default function StudentDashboard() {
                 navigator.clipboard.writeText(link)
                 alert('Portfolio link copied to clipboard!')
               }}
-              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 md:px-5 md:py-2.5 text-xs md:text-sm font-semibold flex items-center gap-1 md:gap-2 hover:bg-white/30 transition-colors"
             >
-              <span className="material-icons text-base">share</span> Share Portfolio
+              <span className="material-icons text-sm md:text-base">share</span> <span className="hidden sm:inline">Share Portfolio</span><span className="sm:hidden">Share</span>
             </button>
             <button
               onClick={() => setShowQrModal(true)}
-              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center gap-2 hover:bg-white/30 transition-colors"
+              className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-2 md:px-5 md:py-2.5 text-xs md:text-sm font-semibold flex items-center gap-1 md:gap-2 hover:bg-white/30 transition-colors"
             >
-              <span className="material-icons text-base">download</span> Export
+              <span className="material-icons text-sm md:text-base">download</span> <span className="hidden sm:inline">Export</span>
             </button>
           </div>
         </div>
@@ -372,11 +372,11 @@ export default function StudentDashboard() {
 
       {showQrModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-            <div className="flex items-start justify-between border-b border-gray-100 px-6 py-4">
+          <div className="w-full max-w-lg rounded-xl md:rounded-2xl bg-white shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-start justify-between border-b border-gray-100 px-4 md:px-6 py-3 md:py-4">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">Portfolio Card</h3>
-                <p className="text-sm text-gray-500">Share your public portfolio link</p>
+                <h3 className="text-base md:text-lg font-semibold text-gray-900">Portfolio Card</h3>
+                <p className="text-xs md:text-sm text-gray-500">Share your public portfolio link</p>
               </div>
               <button
                 onClick={() => setShowQrModal(false)}
@@ -387,17 +387,17 @@ export default function StudentDashboard() {
               </button>
             </div>
 
-            <div className="px-6 py-5">
+            <div className="px-4 md:px-6 py-4 md:py-5">
               <div
                 ref={cardRef}
                 data-export-card="true"
-                className="relative overflow-hidden rounded-2xl border border-purple-100 bg-gradient-to-br from-[#f8f4ff] via-[#f2f6ff] to-[#eef7ff] p-5"
+                className="relative overflow-hidden rounded-xl md:rounded-2xl border border-purple-100 bg-gradient-to-br from-[#f8f4ff] via-[#f2f6ff] to-[#eef7ff] p-4 md:p-5"
               >
-                <div className="absolute right-5 top-5 rounded-xl bg-white/95 p-2 shadow-lg ring-1 ring-purple-100">
-                  <QRCodeCanvas value={portfolioLink} size={96} />
+                <div className="absolute right-3 top-3 md:right-5 md:top-5 rounded-lg md:rounded-xl bg-white/95 p-1.5 md:p-2 shadow-lg ring-1 ring-purple-100">
+                  <QRCodeCanvas value={portfolioLink} size={80} className="md:w-24 md:h-24" />
                 </div>
-                <div className="flex items-center gap-4 pr-32 sm:pr-36">
-                  <div className="h-16 w-16 rounded-full bg-gradient-to-br from-purple-500 via-fuchsia-500 to-blue-500 p-[2px] shadow-md shrink-0">
+                <div className="flex items-center gap-3 md:gap-4 pr-24 sm:pr-32 md:pr-36">
+                  <div className="h-12 w-12 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-purple-500 via-fuchsia-500 to-blue-500 p-[2px] shadow-md shrink-0">
                     <div className="h-full w-full rounded-full bg-white overflow-hidden flex items-center justify-center text-purple-700 font-semibold">
                       {showProfileImage ? (
                         <img
@@ -412,33 +412,33 @@ export default function StudentDashboard() {
                     </div>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs uppercase tracking-widest text-purple-500 font-semibold">Student</p>
-                    <p className="text-xl font-bold text-gray-900">{student?.full_name}</p>
-                    <p className="text-sm text-gray-600">ID: {student?.userId}</p>
-                    <p className="text-sm text-gray-600 break-all">{student?.email}</p>
+                    <p className="text-[10px] md:text-xs uppercase tracking-widest text-purple-500 font-semibold">Student</p>
+                    <p className="text-base md:text-xl font-bold text-gray-900">{student?.full_name}</p>
+                    <p className="text-xs md:text-sm text-gray-600">ID: {student?.userId}</p>
+                    <p className="text-xs md:text-sm text-gray-600 break-all">{student?.email}</p>
                   </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-xl bg-white/90 px-3 py-2 ring-1 ring-purple-100">
-                    <p className="text-xs text-gray-500">Institutes</p>
-                    <p className="font-semibold text-gray-900">{statistics.institutionsCount || 0}</p>
+                <div className="mt-3 md:mt-4 grid grid-cols-2 gap-2 md:gap-3 text-sm">
+                  <div className="rounded-lg md:rounded-xl bg-white/90 px-2 md:px-3 py-1.5 md:py-2 ring-1 ring-purple-100">
+                    <p className="text-[10px] md:text-xs text-gray-500">Institutes</p>
+                    <p className="text-sm md:text-base font-semibold text-gray-900">{statistics.institutionsCount || 0}</p>
                   </div>
-                  <div className="rounded-xl bg-white/90 px-3 py-2 ring-1 ring-purple-100">
-                    <p className="text-xs text-gray-500">Certificates</p>
-                    <p className="font-semibold text-gray-900">{statistics.totalCertificates || 0}</p>
+                  <div className="rounded-lg md:rounded-xl bg-white/90 px-2 md:px-3 py-1.5 md:py-2 ring-1 ring-purple-100">
+                    <p className="text-[10px] md:text-xs text-gray-500">Certificates</p>
+                    <p className="text-sm md:text-base font-semibold text-gray-900">{statistics.totalCertificates || 0}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-3 md:mt-4">
                 <p className="text-xs text-gray-500 mb-2">Public link</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     readOnly
                     value={portfolioLink}
-                    className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700"
+                    className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-2 md:px-3 py-2 text-[10px] md:text-xs text-gray-700"
                   />
                   <button
                     type="button"
@@ -454,18 +454,18 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            <div className="flex flex-wrap justify-end gap-2 border-t border-gray-100 px-6 py-4">
+            <div className="flex flex-wrap justify-end gap-2 border-t border-gray-100 px-4 md:px-6 py-3 md:py-4">
               <button
                 type="button"
                 onClick={downloadPortfolioCard}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+                className="rounded-lg border border-gray-200 px-3 md:px-4 py-2 text-xs md:text-sm font-semibold text-gray-600 hover:bg-gray-50"
               >
                 Download Image
               </button>
               <button
                 type="button"
                 onClick={handleSharePortfolio}
-                className="rounded-lg bg-gradient-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+                className="rounded-lg bg-gradient-primary px-3 md:px-4 py-2 text-xs md:text-sm font-semibold text-white hover:opacity-90"
               >
                 Share
               </button>
@@ -543,20 +543,20 @@ export default function StudentDashboard() {
       )}
 
       {/* Share Section */}
-      <div className="max-w-6xl mx-auto px-4 mt-6">
-        <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl p-6 mb-8 border-2 border-purple-300">
-          <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
-            <span className="material-icons">link</span> Share Your Portfolio
+      <div className="max-w-6xl mx-auto px-4 mt-4 md:mt-6">
+        <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-8 border-2 border-purple-300">
+          <h3 className="text-base md:text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+            <span className="material-icons text-base md:text-xl">link</span> Share Your Portfolio
           </h3>
-          <p className="text-gray-600 text-sm mb-4">
+          <p className="text-gray-600 text-xs md:text-sm mb-3 md:mb-4">
             Anyone with this link can view your certificates and career insights:
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
             <input
               type="text"
               value={`${window.location.origin}/portfolio/${student?.userId}`}
               readOnly
-              className="flex-1 bg-white border border-purple-300 rounded-lg px-4 py-2.5 text-sm text-gray-700 font-mono"
+              className="flex-1 bg-white border border-purple-300 rounded-lg px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm text-gray-700 font-mono"
             />
             <button 
               onClick={() => {
@@ -564,62 +564,62 @@ export default function StudentDashboard() {
                 navigator.clipboard.writeText(link)
                 alert('Portfolio link copied!')
               }}
-              className="bg-purple-600 text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2"
+              className="bg-purple-600 text-white rounded-lg px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
             >
-              <span className="material-icons text-base">content_paste</span> Copy Link
+              <span className="material-icons text-sm md:text-base">content_paste</span> Copy Link
             </button>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="max-w-6xl mx-auto px-4 mb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="max-w-6xl mx-auto px-4 mb-6 md:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {/* Total Certificates */}
-          <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="mb-2"><span className="material-icons text-purple-600" style={{fontSize: '2.5rem'}}>image</span></div>
-            <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
+          <div className="bg-purple-100 rounded-xl md:rounded-2xl p-4 md:p-6 text-center">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-purple-600" style={{fontSize: '1.5rem'}}>image</span></div>
+            <div className="text-2xl md:text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.totalCertificates || 0}
             </div>
-            <div className="text-sm font-semibold text-gray-700">Total Certificates</div>
+            <div className="text-xs md:text-sm font-semibold text-gray-700">Total Certificates</div>
           </div>
 
           {/* Blockchain Verified */}
-          <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="mb-2"><span className="material-icons text-green-600" style={{fontSize: '2.5rem'}}>check_circle</span></div>
-            <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
+          <div className="bg-purple-100 rounded-xl md:rounded-2xl p-4 md:p-6 text-center">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-green-600" style={{fontSize: '1.5rem'}}>check_circle</span></div>
+            <div className="text-2xl md:text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.blockchainVerifiedCount || 0}
             </div>
-            <div className="text-sm font-semibold text-gray-700">Blockchain Verified</div>
+            <div className="text-xs md:text-sm font-semibold text-gray-700">Verified</div>
           </div>
 
           {/* Institutions */}
-          <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="mb-2"><span className="material-icons text-purple-600" style={{fontSize: '2.5rem'}}>account_balance</span></div>
-            <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
+          <div className="bg-purple-100 rounded-xl md:rounded-2xl p-4 md:p-6 text-center">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-purple-600" style={{fontSize: '1.5rem'}}>account_balance</span></div>
+            <div className="text-2xl md:text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.institutionsCount || 0}
             </div>
-            <div className="text-sm font-semibold text-gray-700">Institutions</div>
+            <div className="text-xs md:text-sm font-semibold text-gray-700">Institutions</div>
           </div>
 
           {/* Active Certificates */}
-          <div className="bg-purple-100 rounded-2xl p-6 text-center">
-            <div className="mb-2"><span className="material-icons text-yellow-600" style={{fontSize: '2.5rem'}}>bolt</span></div>
-            <div className="text-4xl font-bold text-(--color-primary-violet) mb-1">
+          <div className="bg-purple-100 rounded-xl md:rounded-2xl p-4 md:p-6 text-center">
+            <div className="mb-1 md:mb-2"><span className="material-icons text-yellow-600" style={{fontSize: '1.5rem'}}>bolt</span></div>
+            <div className="text-2xl md:text-4xl font-bold text-(--color-primary-violet) mb-1">
               {statistics.activeCertificatesCount || 0}
             </div>
-            <div className="text-sm font-semibold text-gray-700">Active Certificates</div>
+            <div className="text-xs md:text-sm font-semibold text-gray-700">Active</div>
           </div>
         </div>
       </div>
 
       {/* Tabs and Content */}
-      <div className="max-w-6xl mx-auto px-4 pb-12">
+      <div className="max-w-6xl mx-auto px-4 pb-8 md:pb-12">
         {/* Tab Navigation */}
-        <div className="flex gap-6 mb-6 border-b border-gray-200">
+        <div className="flex gap-4 md:gap-6 mb-4 md:mb-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
           <button
             onClick={() => setActiveTab('all')}
-            className={`pb-3 px-1 font-semibold transition-colors whitespace-nowrap ${
+            className={`pb-2 md:pb-3 px-1 text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'all'
                 ? 'text-(--color-primary-violet) border-b-2 border-(--color-primary-violet)'
                 : 'text-gray-500 hover:text-gray-700'
@@ -629,7 +629,7 @@ export default function StudentDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('institution')}
-            className={`pb-3 px-1 font-semibold transition-colors whitespace-nowrap ${
+            className={`pb-2 md:pb-3 px-1 text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'institution'
                 ? 'text-(--color-primary-violet) border-b-2 border-(--color-primary-violet)'
                 : 'text-gray-500 hover:text-gray-700'
@@ -644,7 +644,7 @@ export default function StudentDashboard() {
                 fetchCareerInsights();
               }
             }}
-            className={`pb-3 px-1 font-semibold transition-colors whitespace-nowrap ${
+            className={`pb-2 md:pb-3 px-1 text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'roadmap'
                 ? 'text-(--color-primary-violet) border-b-2 border-(--color-primary-violet)'
                 : 'text-gray-500 hover:text-gray-700'
@@ -659,7 +659,7 @@ export default function StudentDashboard() {
                 fetchCareerInsights();
               }
             }}
-            className={`pb-3 px-1 font-semibold transition-colors whitespace-nowrap ${
+            className={`pb-2 md:pb-3 px-1 text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'summary'
                 ? 'text-(--color-primary-violet) border-b-2 border-(--color-primary-violet)'
                 : 'text-gray-500 hover:text-gray-700'
@@ -669,7 +669,7 @@ export default function StudentDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('settings')}
-            className={`pb-3 px-1 font-semibold transition-colors whitespace-nowrap ${
+            className={`pb-2 md:pb-3 px-1 text-sm md:text-base font-semibold transition-colors whitespace-nowrap ${
               activeTab === 'settings'
                 ? 'text-(--color-primary-violet) border-b-2 border-(--color-primary-violet)'
                 : 'text-gray-500 hover:text-gray-700'
@@ -681,11 +681,11 @@ export default function StudentDashboard() {
 
         {/* Tab Content */}
         {activeTab === 'all' && (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {certificates.length === 0 ? (
-              <div className="bg-gray-100 rounded-2xl p-12 text-center">
-                <p className="text-gray-600 text-lg">No certificates yet</p>
-                <p className="text-gray-500 text-sm mt-2">
+              <div className="bg-gray-100 rounded-xl md:rounded-2xl p-8 md:p-12 text-center">
+                <p className="text-gray-600 text-base md:text-lg">No certificates yet</p>
+                <p className="text-gray-500 text-xs md:text-sm mt-2">
                   Your certificates will appear here once issued by institutions
                 </p>
               </div>
@@ -696,26 +696,26 @@ export default function StudentDashboard() {
                 const logoUrl = cert.logo_url ? `${serverUrl}${cert.logo_url}` : null
                 
                 return (
-                <div key={cert.certificate_id} className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start mb-4">
+                <div key={cert.certificate_id} className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3 md:mb-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-800 mb-1">
+                      <h3 className="text-base md:text-xl font-bold text-gray-800 mb-1">
                         {cert.certificate_title || cert.course}
                       </h3>
-                      <p className="text-sm text-gray-600 font-semibold">{cert.institute_name}</p>
-                      <p className="text-xs text-gray-500 mt-1">Course: {cert.course}</p>
+                      <p className="text-xs md:text-sm text-gray-600 font-semibold">{cert.institute_name}</p>
+                      <p className="text-[10px] md:text-xs text-gray-500 mt-1">Course: {cert.course}</p>
                     </div>
                     {logoUrl && (
                       <img
                         src={logoUrl}
                         alt={cert.institute_name}
-                        className="w-16 h-16 object-contain rounded-lg border border-gray-200 ml-4"
+                        className="w-12 h-12 md:w-16 md:h-16 object-contain rounded-lg border border-gray-200 ml-2 md:ml-4"
                       />
                     )}
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
                     <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-md flex items-center gap-1">
                       <span className="material-icons" style={{fontSize: '14px'}}>menu_book</span> {cert.course}
                     </span>
@@ -739,7 +739,7 @@ export default function StudentDashboard() {
 
                   {/* Blockchain Transaction Hash */}
                   {cert.blockchain_tx_hash && (
-                    <div className="mb-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <div className="mb-3 md:mb-4 bg-gray-50 rounded-lg p-2 md:p-3 border border-gray-200">
                       <p className="text-xs text-gray-600 font-semibold mb-1">Blockchain Transaction:</p>
                       <a 
                         href={`https://amoy.polygonscan.com/tx/${cert.blockchain_tx_hash}`}
@@ -753,22 +753,22 @@ export default function StudentDashboard() {
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2 md:gap-3">
                     <button
                       onClick={() => openCertificatePdf(cert)}
                       disabled={isGeneratingPdf}
-                      className="bg-purple-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
+                      className="bg-purple-600 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg flex items-center gap-1 md:gap-2 hover:bg-purple-700 transition-colors disabled:opacity-60"
                     >
-                      <span className="material-icons text-base">description</span> View Certificate
+                      <span className="material-icons text-sm md:text-base">description</span> <span className="hidden sm:inline">View Certificate</span><span className="sm:hidden">View</span>
                     </button>
                     {cert.blockchain_tx_hash && (
                       <a 
                         href={`https://amoy.polygonscan.com/tx/${cert.blockchain_tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+                        className="bg-green-600 text-white text-xs md:text-sm font-semibold px-3 md:px-4 py-2 rounded-lg flex items-center gap-1 md:gap-2 hover:bg-green-700 transition-colors"
                       >
-                        <span className="material-icons text-base">check_circle</span> Verify on Blockchain
+                        <span className="material-icons text-sm md:text-base">check_circle</span> <span className="hidden sm:inline">Verify on Blockchain</span><span className="sm:hidden">Verify</span>
                       </a>
                     )}
                   </div>
@@ -779,9 +779,9 @@ export default function StudentDashboard() {
         )}
 
         {activeTab === 'institution' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {institutions.length === 0 ? (
-              <div className="col-span-2 bg-gray-100 rounded-2xl p-12 text-center">
+              <div className="col-span-2 bg-gray-100 rounded-xl md:rounded-2xl p-8 md:p-12 text-center">
                 <p className="text-gray-600">No institutions yet</p>
               </div>
             ) : (
@@ -793,24 +793,24 @@ export default function StudentDashboard() {
                 return (
                 <div
                   key={index}
-                  className="bg-purple-50 rounded-2xl p-8 text-center"
+                  className="bg-purple-50 rounded-xl md:rounded-2xl p-6 md:p-8 text-center"
                 >
                   {logoUrl ? (
                     <img
                       src={logoUrl}
                       alt={inst.institute_name}
-                      className="w-20 h-20 object-contain rounded-lg mx-auto mb-4 border border-gray-200"
+                      className="w-16 h-16 md:w-20 md:h-20 object-contain rounded-lg mx-auto mb-3 md:mb-4 border border-gray-200"
                     />
                   ) : (
-                    <div className="text-5xl mb-4">🏛️</div>
+                    <div className="mb-3 md:mb-4"><span className="material-icons text-purple-600" style={{fontSize: '3rem'}}>account_balance</span></div>
                   )}
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-base md:text-xl font-bold text-gray-800 mb-2">
                     {inst.institute_name}
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm md:text-base text-gray-600 mb-3 md:mb-4">
                     {inst.certificateCount} Certificate{inst.certificateCount !== 1 ? 's' : ''}
                   </p>
-                  <button className="bg-(--color-primary-violet) text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity">
+                  <button className="bg-(--color-primary-violet) text-white rounded-lg px-4 md:px-6 py-2 md:py-2.5 text-xs md:text-sm font-semibold hover:opacity-90 transition-opacity">
                     View All
                   </button>
                 </div>
@@ -821,7 +821,7 @@ export default function StudentDashboard() {
         )}
 
         {activeTab === 'roadmap' && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {loadingInsights ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -830,21 +830,21 @@ export default function StudentDashboard() {
             ) : careerInsights ? (
               <>
                 {/* AI Career Roadmap Section */}
-                <div className="bg-gradient-primary rounded-2xl p-8 text-white">
-                  <h3 className="text-2xl font-bold mb-3">Regenerate your personal career roadmap with AI</h3>
-                  <p className="text-white/90 mb-6">Generate an AI-based career roadmap customized to your performance. Enter prompt or make sure you have certificates uploaded.</p>
+                <div className="bg-gradient-primary rounded-xl md:rounded-2xl p-6 md:p-8 text-white">
+                  <h3 className="text-lg md:text-2xl font-bold mb-2 md:mb-3">Regenerate your personal career roadmap with AI</h3>
+                  <p className="text-sm md:text-base text-white/90 mb-4 md:mb-6">Generate an AI-based career roadmap customized to your performance. Enter prompt or make sure you have certificates uploaded.</p>
                   <button
                     onClick={regenerateInsights}
                     disabled={loadingInsights}
-                    className="bg-white text-purple-600 rounded-lg px-8 py-3 text-sm font-bold hover:shadow-lg transition-shadow disabled:opacity-50"
+                    className="bg-white text-purple-600 rounded-lg px-6 md:px-8 py-2.5 md:py-3 text-xs md:text-sm font-bold hover:shadow-lg transition-shadow disabled:opacity-50 flex items-center gap-2"
                   >
-                    <span className="material-icons text-base">refresh</span> REGENERATE
+                    <span className="material-icons text-sm md:text-base">refresh</span> REGENERATE
                   </button>
                 </div>
 
                 {/* Career Matches */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4 flex items-center gap-2">
                     <span className="material-icons text-purple-600">track_changes</span> Career Matches
                   </h3>
                   <div className="space-y-3">
@@ -858,8 +858,8 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Next Steps */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <h3 className="text-lg font-bold text-gray-800 mb-4">Next Steps</h3>
+                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 mb-3 md:mb-4">Next Steps</h3>
                   <div className="space-y-4">
                     {careerInsights.nextSteps?.map((step, index) => (
                       <div
@@ -881,13 +881,13 @@ export default function StudentDashboard() {
                 </div>
               </>
             ) : (
-              <div className="bg-gray-100 rounded-2xl p-12 text-center">
-                <p className="text-gray-600 mb-4">Get AI-powered career roadmap based on your certificates</p>
+              <div className="bg-gray-100 rounded-xl md:rounded-2xl p-8 md:p-12 text-center">
+                <p className="text-sm md:text-base text-gray-600 mb-4">Get AI-powered career roadmap based on your certificates</p>
                 <button
                   onClick={fetchCareerInsights}
-                  className="bg-(--color-primary-violet) text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
+                  className="bg-(--color-primary-violet) text-white px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold hover:opacity-90 flex items-center gap-2 mx-auto"
                 >
-                  <span className="material-icons text-base">smart_toy</span> Generate Career Roadmap
+                  <span className="material-icons text-sm md:text-base">smart_toy</span> Generate Career Roadmap
                 </button>
               </div>
             )}
@@ -895,7 +895,7 @@ export default function StudentDashboard() {
         )}
 
         {activeTab === 'summary' && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {loadingInsights ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -904,16 +904,16 @@ export default function StudentDashboard() {
             ) : careerInsights ? (
               <>
                 {/* Summary Text */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4">Summary</h3>
-                  <p className="text-gray-700 leading-relaxed text-sm">
+                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">Summary</h3>
+                  <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                     {careerInsights.summary || 'Your professional summary will appear here based on your certificates and achievements.'}
                   </p>
                 </div>
 
                 {/* Top Skills */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Top Skills</h3>
+                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4 text-center">Top Skills</h3>
                   <div className="space-y-3">
                     {careerInsights.topSkills?.map((skill, index) => (
                       <div key={index} className="bg-gray-100 rounded-lg px-4 py-3 text-center font-medium text-gray-700">
@@ -924,8 +924,8 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Recommended Jobs */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Recommended Jobs</h3>
+                <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4 text-center">Recommended Jobs</h3>
                   <div className="space-y-4">
                     {careerInsights.careerMatches?.slice(0, 2).map((career, index) => (
                       <div key={index} className="border border-gray-200 rounded-lg p-4">
@@ -939,13 +939,13 @@ export default function StudentDashboard() {
                 </div>
               </>
             ) : (
-              <div className="bg-gray-100 rounded-2xl p-12 text-center">
-                <p className="text-gray-600 mb-4">Generate your professional summary and job recommendations</p>
+              <div className="bg-gray-100 rounded-xl md:rounded-2xl p-8 md:p-12 text-center">
+                <p className="text-sm md:text-base text-gray-600 mb-4">Generate your professional summary and job recommendations</p>
                 <button
                   onClick={fetchCareerInsights}
-                  className="bg-(--color-primary-violet) text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90"
+                  className="bg-(--color-primary-violet) text-white px-5 md:px-6 py-2.5 md:py-3 rounded-lg text-sm md:text-base font-semibold hover:opacity-90 flex items-center gap-2 mx-auto"
                 >
-                  <span className="material-icons text-base">smart_toy</span> Generate Summary
+                  <span className="material-icons text-sm md:text-base">smart_toy</span> Generate Summary
                 </button>
               </div>
             )}
@@ -953,10 +953,10 @@ export default function StudentDashboard() {
         )}
 
         {activeTab === 'settings' && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Portfolio Settings */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Portfolio Settings</h3>
+            <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-3 md:mb-4">Portfolio Settings</h3>
               <div className="flex items-center gap-3 mb-2">
                 <button
                   onClick={() => !savingVisibility && handlePortfolioVisibilityChange(!isPortfolioPublic)}
@@ -995,31 +995,31 @@ export default function StudentDashboard() {
             </div>
 
             {/* Account Information */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800">Account Information</h3>
+            <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <h3 className="text-lg md:text-xl font-bold text-gray-800">Account Information</h3>
                 {!isEditingProfile ? (
                   <button
                     onClick={handleEditProfile}
-                    className="bg-purple-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2"
+                    className="bg-purple-600 text-white rounded-lg px-3 md:px-4 py-2 text-xs md:text-sm font-semibold hover:bg-purple-700 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
                   >
                     <span className="material-icons text-sm">edit</span> Edit Profile
                   </button>
                 ) : (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     <button
                       onClick={handleCancelEdit}
                       disabled={savingProfile}
-                      className="bg-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-400 transition-colors disabled:opacity-50"
+                      className="bg-gray-300 text-gray-700 rounded-lg px-3 md:px-4 py-2 text-xs md:text-sm font-semibold hover:bg-gray-400 transition-colors disabled:opacity-50 flex-1 sm:flex-none"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleSaveProfile}
                       disabled={savingProfile}
-                      className="bg-green-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="bg-green-600 text-white rounded-lg px-3 md:px-4 py-2 text-xs md:text-sm font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center gap-2 justify-center flex-1 sm:flex-none"
                     >
-                      {savingProfile ? <><span className="material-icons text-sm">hourglass_empty</span> Saving...</> : <><span className="material-icons text-sm">save</span> Save Changes</>}
+                      {savingProfile ? <><span className="material-icons text-sm">hourglass_empty</span> <span className="hidden sm:inline">Saving...</span></> : <><span className="material-icons text-sm">save</span> <span className="hidden sm:inline">Save Changes</span><span className="sm:hidden">Save</span></>}
                     </button>
                   </div>
                 )}
