@@ -1,16 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import { universityAPI, verifyAPI } from "../../services/api";
-import CertificatePdfRenderer from "../../components/CertificatePdfRenderer";
-import { generateCertificatePdfBlob } from "../../utils/certificatePdf";
+import React, { useState, useEffect } from "react";
+import { universityAPI } from "../../services/api";
 
 const HistoryPage = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [pdfCertificate, setPdfCertificate] = useState(null);
-  const templateRef = useRef(null);
-
   useEffect(() => {
     loadCertificates();
   }, []);
@@ -40,7 +34,9 @@ const HistoryPage = () => {
           tx: txHash || 'Pending',
           txUrl: hasTx && txHash.startsWith('0x') ? `https://amoy.polygonscan.com/tx/${txHash}` : '',
           portfolioUrl: studentId ? `${baseUrl}/portfolio/${studentId}` : '',
-          verifyUrl: cert.certificate_id ? `${baseUrl}/verify?certificateId=${cert.certificate_id}` : ''
+          verifyUrl: cert.certificate_id
+            ? `${baseUrl}/verify?certificateId=${cert.certificate_id}&download=1`
+            : ''
         };
       });
       
@@ -52,65 +48,9 @@ const HistoryPage = () => {
     }
   };
 
-  const buildCertificateData = (certificate, onchain) => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-    const serverUrl = baseUrl.replace(/\/api\/?$/, '');
-    const rawLogoUrl = certificate?.logo_url;
-    const logoUrl = rawLogoUrl
-      ? rawLogoUrl.startsWith('http')
-        ? rawLogoUrl
-        : `${serverUrl}${rawLogoUrl}`
-      : null;
-
-    return {
-      certificateId: certificate?.certificate_id,
-      studentName: certificate?.student_name || certificate?.fullName || certificate?.full_name,
-      courseName: certificate?.course || certificate?.courseName || certificate?.course_name || certificate?.certificate_title,
-      instituteName: certificate?.institute_name || certificate?.instituteName,
-      issueDate: certificate?.issued_date || certificate?.issueDate,
-      grade: certificate?.grade,
-      instituteLogoUrl: logoUrl
-    };
-  };
-
-  const viewCertificatePdf = async (certId) => {
-    if (!certId || isGeneratingPdf) return;
-    setIsGeneratingPdf(true);
-
-    try {
-      const response = await verifyAPI.verifyCertificate(certId);
-      if (!response.data?.certificate) {
-        throw new Error('Certificate not found');
-      }
-
-      const data = buildCertificateData(response.data.certificate, response.data.onchain);
-      setPdfCertificate(data);
-
-      const waitForTemplate = async () => {
-        for (let i = 0; i < 10; i += 1) {
-          if (templateRef.current) {
-            return true;
-          }
-          await new Promise((resolve) => requestAnimationFrame(resolve));
-        }
-        return false;
-      };
-
-      const ready = await waitForTemplate();
-      if (!ready) return;
-
-      const blob = await generateCertificatePdfBlob(templateRef.current);
-      if (!blob) return;
-
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_self');
-      window.setTimeout(() => URL.revokeObjectURL(url), 30000);
-    } catch (err) {
-      console.error('Failed to generate certificate PDF:', err);
-      alert('Failed to generate certificate. Please try again.');
-    } finally {
-      setIsGeneratingPdf(false);
-    }
+  const openVerifyDownload = (url) => {
+    if (!url) return;
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -166,6 +106,7 @@ const HistoryPage = () => {
                 <th className="pb-4 px-2">Grade</th>
                 <th className="pb-4 px-2">Issued Date</th>
                 <th className="pb-4 px-2">Blockchain TX</th>
+                <th className="pb-4 px-2">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -200,6 +141,15 @@ const HistoryPage = () => {
                     ) : (
                       item.tx
                     )}
+                  </td>
+                  <td className="py-6 px-2">
+                    <button
+                      onClick={() => openVerifyDownload(item.verifyUrl)}
+                      disabled={!item.verifyUrl}
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-full transition-colors disabled:opacity-60"
+                    >
+                      View Certificate
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -279,6 +229,13 @@ const HistoryPage = () => {
                   )}
                 </p>
                 <div className="flex gap-3">
+                  <button
+                    onClick={() => openVerifyDownload(item.verifyUrl)}
+                    disabled={!item.verifyUrl}
+                    className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 py-2 rounded-full transition-colors disabled:opacity-60"
+                  >
+                    View Certificate
+                  </button>
                 </div>
               </div>
             </div>
@@ -286,7 +243,6 @@ const HistoryPage = () => {
         </div>
       </div>
       )}
-      <CertificatePdfRenderer certificate={pdfCertificate} templateRef={templateRef} />
     </div>
   );
 };
