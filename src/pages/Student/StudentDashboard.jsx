@@ -30,9 +30,26 @@ export default function StudentDashboard() {
   const [pdfCertificate, setPdfCertificate] = useState(null);
   const [showQrModal, setShowQrModal] = useState(false);
   const [profileImageFailed, setProfileImageFailed] = useState(false);
+  const [showCompleteProfilePrompt, setShowCompleteProfilePrompt] = useState(false);
+  const [highlightAccountSection, setHighlightAccountSection] = useState(false);
   const templateRef = useRef(null);
   const cardRef = useRef(null);
   const exportCardRef = useRef(null);
+  const accountInfoRef = useRef(null);
+  const student = dashboardData?.student || null;
+  const studentId = student?.userId || student?.user_id || '';
+  const hasProfilePhoto = Boolean(student?.profile_photo_url || student?.profilePhotoUrl);
+  const hasGithubProfile = Boolean((student?.github_url || '').trim());
+  const hasCvFile = Boolean(student?.cv_url || student?.cvUrl);
+  const isProfileComplete = hasProfilePhoto && hasGithubProfile && hasCvFile;
+
+  const getProfilePromptStorageKeys = () => {
+    const keySuffix = studentId || 'unknown';
+    return {
+      remindLaterKey: `student-profile-prompt-remind-later:${keySuffix}`,
+      doNotShowKey: `student-profile-prompt-do-not-show:${keySuffix}`
+    };
+  };
 
   const formatDateOnly = (value) => {
     if (!value) return '';
@@ -48,6 +65,32 @@ export default function StudentDashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (!studentId) {
+      setShowCompleteProfilePrompt(false);
+      return;
+    }
+
+    if (isProfileComplete) {
+      setShowCompleteProfilePrompt(false);
+      return;
+    }
+
+    const { remindLaterKey, doNotShowKey } = getProfilePromptStorageKeys();
+    const doNotShow = localStorage.getItem(doNotShowKey) === 'true';
+    const remindLater = sessionStorage.getItem(remindLaterKey) === 'true';
+
+    setShowCompleteProfilePrompt(!doNotShow && !remindLater);
+  }, [studentId, isProfileComplete]);
+
+  useEffect(() => {
+    if (!highlightAccountSection) return;
+    const timeout = setTimeout(() => {
+      setHighlightAccountSection(false);
+    }, 2500);
+    return () => clearTimeout(timeout);
+  }, [highlightAccountSection]);
 
   const fetchDashboardData = async () => {
     try {
@@ -191,6 +234,27 @@ export default function StudentDashboard() {
     }
   };
 
+  const goToAccountInformation = () => {
+    setActiveTab('settings');
+    handleEditProfile();
+    setHighlightAccountSection(true);
+    window.setTimeout(() => {
+      accountInfoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleRemindProfileLater = () => {
+    const { remindLaterKey } = getProfilePromptStorageKeys();
+    sessionStorage.setItem(remindLaterKey, 'true');
+    setShowCompleteProfilePrompt(false);
+  };
+
+  const handleDoNotShowProfilePrompt = () => {
+    const { doNotShowKey } = getProfilePromptStorageKeys();
+    localStorage.setItem(doNotShowKey, 'true');
+    setShowCompleteProfilePrompt(false);
+  };
+
   const buildCertificateData = (cert) => {
     const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
     const serverUrl = baseUrl.replace(/\/api\/?$/, '');
@@ -279,7 +343,7 @@ export default function StudentDashboard() {
     return null;
   }
 
-  const { student, certificates = [], statistics = {}, institutions = [] } = dashboardData;
+  const { certificates = [], statistics = {}, institutions = [] } = dashboardData;
   const portfolioLink = `${window.location.origin}/portfolio/${student?.userId}`;
   const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
   const serverBase = apiBase.replace(/\/api\/?$/, '');
@@ -369,6 +433,72 @@ export default function StudentDashboard() {
           </div>
         </div>
       </div>
+
+      {showCompleteProfilePrompt && (
+        <div className="max-w-6xl mx-auto px-4 mt-3 md:mt-4 mb-4 md:mb-6">
+          <div className="rounded-xl md:rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 md:px-5 md:py-5">
+            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 text-amber-700 mb-2">
+                  <span className="material-icons text-base md:text-lg">info</span>
+                  <p className="text-sm md:text-base font-semibold">Complete your profile</p>
+                </div>
+                <p className="text-sm md:text-base text-gray-700">
+                  Add your profile picture, GitHub profile, and CV so your portfolio is complete.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {!hasProfilePhoto && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white border border-amber-200 px-3 py-1 text-xs md:text-sm text-amber-800">
+                      <span className="material-icons" style={{ fontSize: '14px' }}>account_circle</span>
+                      Profile picture missing
+                    </span>
+                  )}
+                  {!hasGithubProfile && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white border border-amber-200 px-3 py-1 text-xs md:text-sm text-amber-800">
+                      <span className="material-icons" style={{ fontSize: '14px' }}>code</span>
+                      GitHub profile missing
+                    </span>
+                  )}
+                  {!hasCvFile && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white border border-amber-200 px-3 py-1 text-xs md:text-sm text-amber-800">
+                      <span className="material-icons" style={{ fontSize: '14px' }}>description</span>
+                      CV missing
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:items-end">
+                <button
+                  type="button"
+                  onClick={goToAccountInformation}
+                  className="bg-purple-600 text-white rounded-lg px-4 py-2 text-xs md:text-sm font-semibold hover:bg-purple-700 transition-colors inline-flex items-center justify-center gap-2"
+                >
+                  <span className="material-icons text-sm">person</span>
+                  Complete Profile
+                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleRemindProfileLater}
+                    className="text-xs md:text-sm text-gray-700 hover:text-gray-900 underline underline-offset-2 inline-flex items-center gap-1"
+                  >
+                    <span className="material-icons" style={{ fontSize: '14px' }}>schedule</span>
+                    Remind me later
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDoNotShowProfilePrompt}
+                    className="text-xs md:text-sm text-gray-700 hover:text-gray-900 underline underline-offset-2 inline-flex items-center gap-1"
+                  >
+                    <span className="material-icons" style={{ fontSize: '14px' }}>visibility_off</span>
+                    Do not show again
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showQrModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
@@ -995,7 +1125,12 @@ export default function StudentDashboard() {
             </div>
 
             {/* Account Information */}
-            <div className="bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6">
+            <div
+              ref={accountInfoRef}
+              className={`bg-white border border-gray-200 rounded-xl md:rounded-2xl p-4 md:p-6 transition-all ${
+                highlightAccountSection ? 'ring-2 ring-purple-300 ring-offset-2' : ''
+              }`}
+            >
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                 <h3 className="text-lg md:text-xl font-bold text-gray-800">Account Information</h3>
                 {!isEditingProfile ? (
@@ -1146,7 +1281,7 @@ export default function StudentDashboard() {
                         rel="noopener noreferrer"
                         className="bg-gray-800 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-gray-900 transition-colors flex items-center gap-2"
                       >
-                        <span>🔗</span> Visit
+                        <span className="material-icons text-sm">open_in_new</span> Visit
                       </a>
                     )}
                   </div>
@@ -1165,7 +1300,7 @@ export default function StudentDashboard() {
                         rel="noopener noreferrer"
                         className="bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2"
                       >
-                        <span>📄</span> View CV
+                        <span className="material-icons text-sm">description</span> View CV
                       </a>
                     ) : (
                       !isEditingProfile && (
@@ -1259,3 +1394,4 @@ export default function StudentDashboard() {
     </div>
   );
 }
+
