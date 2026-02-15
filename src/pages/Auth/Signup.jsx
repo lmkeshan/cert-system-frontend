@@ -14,6 +14,7 @@ export default function Signup() {
   const [successMessage, setSuccessMessage] = useState('')
   const [connectingWallet, setConnectingWallet] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [birthdateInputType, setBirthdateInputType] = useState('text')
   const [pendingVerification, setPendingVerification] = useState(null)
   const [resendLoading, setResendLoading] = useState(false)
   
@@ -383,9 +384,16 @@ export default function Signup() {
                     </select>
 
                     <input
-                      type="date"
+                      type={birthdateInputType}
                       name="birthdate"
+                      placeholder="Date of Birth"
                       value={studentForm.birthdate}
+                      onFocus={() => setBirthdateInputType('date')}
+                      onBlur={(e) => {
+                        if (!e.target.value) {
+                          setBirthdateInputType('text')
+                        }
+                      }}
                       onChange={handleStudentChange}
                       required
                       className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500"
@@ -644,3 +652,4 @@ export default function Signup() {
     </div>
   )
 }
+
