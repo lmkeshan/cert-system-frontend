@@ -19,6 +19,7 @@ export default function Universities() {
   const [issuerStatus, setIssuerStatus] = useState({})
   const [balances, setBalances] = useState({})
   const [actionLoading, setActionLoading] = useState({})
+  const [copiedField, setCopiedField] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -121,6 +122,17 @@ export default function Universities() {
     return address.substring(0, 10) + '...' + address.substring(address.length - 8)
   }
 
+  const copyToClipboard = async (value, key) => {
+    if (!value) return
+    try {
+      await navigator.clipboard.writeText(value)
+      setCopiedField(key)
+      setTimeout(() => setCopiedField(''), 1200)
+    } catch (err) {
+      // no-op: clipboard may be blocked by browser permissions
+    }
+  }
+
   const resolveFileUrl = (path) => {
     if (!path) return null
     if (path.startsWith('http://') || path.startsWith('https://')) return path
@@ -195,26 +207,41 @@ export default function Universities() {
             <p>No universities found</p>
           </div>
         ) : (
-          <table className="min-w-[980px] w-full text-left text-sm">
+          <table className="w-full text-left text-sm table-auto">
             <thead className="text-gray-600">
               <tr className="border-b border-gray-300">
-                <th className="py-3 font-semibold">University Name</th>
-                <th className="py-3 font-semibold">Email</th>
-                <th className="py-3 font-semibold">Logo</th>
-                <th className="py-3 font-semibold">Wallet Address</th>
-                <th className="py-3 font-semibold">Balance (POL)</th>
-                <th className="py-3 font-semibold">On-chain Issuer</th>
-                <th className="py-3 font-semibold">Status</th>
-                <th className="py-3 font-semibold">Registered</th>
-                <th className="py-3 font-semibold">Actions</th>
+                <th className="px-4 py-3 font-semibold">University Name</th>
+                <th className="px-4 py-3 font-semibold">Email</th>
+                <th className="px-4 py-3 font-semibold">Logo</th>
+                <th className="px-4 py-3 font-semibold">Wallet Address</th>
+                <th className="px-4 py-3 font-semibold">Balance (POL)</th>
+                <th className="px-4 py-3 font-semibold">On-chain Issuer</th>
+                <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 font-semibold">Registered</th>
+                <th className="px-4 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {institutes.map((institute) => (
                 <tr key={institute.institute_id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 font-medium text-gray-900">{institute.institute_name || '-'}</td>
-                  <td className="py-4 text-gray-600">{institute.email || '-'}</td>
-                  <td className="py-4">
+                  <td className="px-4 py-4 font-medium text-gray-900">{institute.institute_name || '-'}</td>
+                  <td className="px-4 py-4 text-gray-600">
+                    {institute.email ? (
+                      <button
+                        type="button"
+                        onClick={() => copyToClipboard(institute.email, `email-${institute.institute_id}`)}
+                        className="inline-flex items-center gap-1 text-left hover:text-[#6d34d6] cursor-pointer break-all"
+                        title="Click to copy email"
+                      >
+                        <span>{copiedField === `email-${institute.institute_id}` ? 'Copied' : institute.email}</span>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      </button>
+                    ) : '-'}
+                  </td>
+                  <td className="px-4 py-4">
                     {institute.logo_url ? (
                       <img
                         src={resolveFileUrl(institute.logo_url)}
@@ -225,20 +252,35 @@ export default function Universities() {
                       <ImagePlaceholder />
                     )}
                   </td>
-                  <td className="py-4 font-mono text-xs text-gray-600" title={institute.wallet_address}>
-                    {truncateAddress(institute.wallet_address)}
+                  <td className="px-4 py-4 font-mono text-xs text-gray-600">
+                    {institute.wallet_address ? (
+                      <button
+                        type="button"
+                        onClick={() => copyToClipboard(institute.wallet_address, `wallet-${institute.institute_id}`)}
+                        className="inline-flex items-center gap-1 text-left hover:text-[#6d34d6] cursor-pointer"
+                        title={institute.wallet_address}
+                      >
+                        <span>{copiedField === `wallet-${institute.institute_id}`
+                          ? 'Copied'
+                          : truncateAddress(institute.wallet_address)}</span>
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      </button>
+                    ) : '-'}
                   </td>
-                  <td className="py-4 text-gray-600">
+                  <td className="px-4 py-4 text-gray-600">
                     {balances[institute.institute_id] === undefined
                       ? 'Loading...'
                       : balances[institute.institute_id] === 'Error'
                         ? 'Error'
                         : String(balances[institute.institute_id])}
                   </td>
-                  <td className="py-4 text-gray-600">
+                  <td className="px-4 py-4 text-gray-600">
                     {issuerStatus[institute.institute_id] || 'Loading...'}
                   </td>
-                  <td className="py-4">
+                  <td className="px-4 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                       institute.verification_status === 'approved' 
                         ? 'bg-green-100 text-green-700' 
@@ -249,8 +291,8 @@ export default function Universities() {
                       {institute.verification_status?.charAt(0).toUpperCase() + institute.verification_status?.slice(1) || 'Unknown'}
                     </span>
                   </td>
-                  <td className="py-4 text-gray-600">{formatDate(institute.created_at)}</td>
-                  <td className="py-4">
+                  <td className="px-4 py-4 text-gray-600">{formatDate(institute.created_at)}</td>
+                  <td className="px-4 py-4">
                     {institute.verification_status === 'approved' ? (
                       <button
                         onClick={() => handleRevoke(institute)}
